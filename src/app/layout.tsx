@@ -30,8 +30,17 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased dark`}
+      suppressHydrationWarning
+      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          // Runs before paint so there's no flash of the wrong theme.
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('opendoor-theme');document.documentElement.classList.toggle('dark', t !== 'light');}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <HouseholdProvider>
           <NavHeader />

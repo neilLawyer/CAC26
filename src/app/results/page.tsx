@@ -28,7 +28,7 @@ function ResultCard({ result }: { result: EligibilityResult }) {
   const color = CONFIDENCE_COLOR[confidence];
   return (
     <div
-      className="rounded-xl border border-card-border bg-card p-5 space-y-3 border-l-[3px]"
+      className="hover-lift rounded-xl border border-card-border bg-card p-5 space-y-3 border-l-[3px]"
       style={{ borderLeftColor: color }}
     >
       <div className="flex items-start justify-between gap-3">

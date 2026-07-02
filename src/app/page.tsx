@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { UseCaseSlideshow } from "@/components/UseCaseSlideshow";
 
 const TRUST_PILLS = ["No login, ever", "Not a government site", "Free forever", "Open data only"];
 
@@ -45,6 +46,29 @@ const CATEGORIES: { label: string; color: string; icon: React.ReactNode }[] = [
     label: "Phone & internet",
     color: "#a78bfa",
     icon: <path d="M17 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2zM11 18h2" />,
+  },
+];
+
+const ACCESSIBILITY_ITEMS = [
+  {
+    title: "Plain language",
+    body: "Every program is explained around a 6th-grade reading level — no agency jargon.",
+    icon: <path d="M4 6h16M4 12h10M4 18h7" />,
+  },
+  {
+    title: "Screen-reader friendly",
+    body: "Semantic HTML, labeled controls, and visible keyboard focus throughout.",
+    icon: <path d="M12 3a4 4 0 100 8 4 4 0 000-8zM5 21a7 7 0 0114 0" />,
+  },
+  {
+    title: "Full keyboard navigation",
+    body: "Every question, button, and result is reachable and operable without a mouse.",
+    icon: <path d="M4 6h16v12H4V6zm3 3h.01M11 9h.01M15 9h.01M7 14h10" />,
+  },
+  {
+    title: "Light or dark, your call",
+    body: "Toggle the theme from the top nav — your choice is remembered on this device.",
+    icon: <path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 8a4 4 0 100 8 4 4 0 000-8z" />,
   },
 ];
 
@@ -115,7 +139,7 @@ export default function Home() {
 
           {/* Product mockup card */}
           <div className="relative">
-            <div className="rounded-2xl border border-card-border bg-card shadow-2xl shadow-black/40 overflow-hidden rotate-1">
+            <div className="hover-lift rounded-2xl border border-card-border bg-card shadow-2xl shadow-black/40 overflow-hidden rotate-1 hover:rotate-0">
               <div className="flex items-center gap-1.5 px-4 py-3 border-b border-card-border">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-400/70" />
                 <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/70" />
@@ -148,6 +172,12 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Rotating use-case scenarios */}
+      <section className="max-w-3xl mx-auto px-6 py-16">
+        <p className="text-center text-sm text-muted mb-4">What&apos;s this actually for?</p>
+        <UseCaseSlideshow />
+      </section>
+
       {/* Built for real people */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <h2 className="text-3xl font-bold text-center">Built for the moments life throws at you</h2>
@@ -172,7 +202,10 @@ export default function Home() {
               body: "Students, workers between jobs, anyone unsure what they qualify for.",
             },
           ].map((c) => (
-            <div key={c.title} className="rounded-2xl border border-card-border bg-card overflow-hidden">
+            <div
+              key={c.title}
+              className="hover-lift rounded-2xl border border-card-border bg-card overflow-hidden"
+            >
               <div className="relative h-44">
                 <Image
                   src={c.src}
@@ -203,7 +236,7 @@ export default function Home() {
             {CATEGORIES.map((c) => (
               <div
                 key={c.label}
-                className="rounded-xl border border-card-border bg-card p-4 flex flex-col gap-3"
+                className="hover-lift rounded-xl border border-card-border bg-card p-4 flex flex-col gap-3"
               >
                 <span
                   className="w-9 h-9 rounded-lg flex items-center justify-center"
@@ -220,12 +253,65 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Accessibility */}
+      <section className="max-w-6xl mx-auto px-6 py-20">
+        <h2 className="text-3xl font-bold text-center">Built to be usable by everyone</h2>
+        <p className="text-center text-muted mt-2 max-w-xl mx-auto">
+          Benefits programs are hard enough to parse. OpenDoor shouldn&apos;t be.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+          {ACCESSIBILITY_ITEMS.map((a) => (
+            <div key={a.title} className="hover-lift rounded-xl border border-card-border bg-card p-5">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--accent)"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                {a.icon}
+              </svg>
+              <h3 className="font-semibold text-sm mt-3">{a.title}</h3>
+              <p className="text-sm text-muted mt-1">{a.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* How it works */}
       <section id="how-it-works" className="max-w-6xl mx-auto px-6 py-20">
         <h2 className="text-3xl font-bold text-center">Three steps, a few minutes</h2>
+        <p className="text-center text-muted mt-2 max-w-xl mx-auto">
+          Here&apos;s the actual app — not a mockup.
+        </p>
+
+        <div className="mt-8 max-w-2xl mx-auto rounded-2xl border border-card-border bg-card overflow-hidden shadow-2xl shadow-black/30">
+          <div className="flex items-center gap-1.5 px-4 py-3 border-b border-card-border">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-400/70" />
+            <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/70" />
+            <span className="w-2.5 h-2.5 rounded-full bg-accent/70" />
+            <span className="label-mono text-[10px] text-muted ml-3">opendoor-nj.vercel.app</span>
+          </div>
+          <video
+            src="/demo.webm"
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-label="Demo of filling out the OpenDoor questionnaire and viewing results"
+            className="w-full block"
+          />
+        </div>
+
         <div className="grid sm:grid-cols-3 gap-5 mt-10">
           {STEPS.map((s) => (
-            <div key={s.n} className="rounded-2xl border border-card-border bg-card p-6 relative overflow-hidden">
+            <div
+              key={s.n}
+              className="hover-lift rounded-2xl border border-card-border bg-card p-6 relative overflow-hidden"
+            >
               <span className="absolute -right-2 -top-4 text-7xl font-bold text-card-border select-none">
                 {s.n}
               </span>

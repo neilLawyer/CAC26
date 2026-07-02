@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useHousehold } from "@/lib/household-store";
 import { getState } from "@/lib/states";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const LINKS = [
   { href: "/intake", label: "Check eligibility" },
@@ -22,9 +23,9 @@ export function NavHeader() {
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <span className="w-8 h-8 rounded-lg border border-accent/60 bg-background flex items-center justify-center">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <rect x="5" y="3" width="11" height="18" rx="1.5" stroke="#2DD4BF" strokeWidth="1.6" />
-              <circle cx="13.2" cy="12" r="1" fill="#2DD4BF" />
-              <path d="M16 5.5L20 7v13l-4-1.2" stroke="#22D3EE" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              <rect x="5" y="3" width="11" height="18" rx="1.5" stroke="var(--accent)" strokeWidth="1.6" />
+              <circle cx="13.2" cy="12" r="1" fill="var(--accent)" />
+              <path d="M16 5.5L20 7v13l-4-1.2" stroke="var(--accent-2)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
           <span className="font-semibold tracking-tight">OpenDoor</span>
@@ -52,10 +53,11 @@ export function NavHeader() {
               {stateEntry.name}
             </span>
           )}
-          <span className="flex items-center gap-1.5">
+          <span className="hidden sm:flex items-center gap-1.5">
             <span className="dot-live w-1.5 h-1.5 rounded-full bg-accent" />
             local &amp; private
           </span>
+          <ThemeToggle />
         </div>
       </div>
     </header>
