@@ -1,11 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useSyncExternalStore, type ReactNode } from "react";
+import { DEFAULT_STATE } from "@/lib/states";
 import type { CategoricalFlag, Household } from "@/lib/types";
 
 const STORAGE_KEY = "opendoor-household";
 
-const EMPTY_HOUSEHOLD: Household = { state: "CA", flags: {} };
+const EMPTY_HOUSEHOLD: Household = { state: DEFAULT_STATE, flags: {} };
 
 interface HouseholdContextValue {
   household: Household;
@@ -18,8 +19,15 @@ interface HouseholdContextValue {
 
 const HouseholdContext = createContext<HouseholdContextValue | undefined>(undefined);
 
-function loadStoredHousehold(): Household {
-  if (typeof window === "undefined") return EMPTY_HOUSEHOLD;
+// Everything below is a tiny external store backed by localStorage — nothing
+// is ever sent to a server. useSyncExternalStore lets the server render a
+// consistent empty snapshot while the client swaps in the real one after
+// mount, without a hydration mismatch or a setState-in-effect.
+let cached: Household = EMPTY_HOUSEHOLD;
+let initialized = false;
+const listeners = new Set<() => void>();
+
+function readFromStorage(): Household {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : EMPTY_HOUSEHOLD;
@@ -28,23 +36,41 @@ function loadStoredHousehold(): Household {
   }
 }
 
-export function HouseholdProvider({ children }: { children: ReactNode }) {
-  // Everything here stays in the browser — nothing is sent to a server.
-  const [household, setHousehold] = useState<Household>(loadStoredHousehold);
+function subscribe(callback: () => void) {
+  if (!initialized) {
+    cached = readFromStorage();
+    initialized = true;
+  }
+  listeners.add(callback);
+  return () => listeners.delete(callback);
+}
 
-  useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(household));
-  }, [household]);
+function getSnapshot(): Household {
+  return cached;
+}
+
+function getServerSnapshot(): Household {
+  return EMPTY_HOUSEHOLD;
+}
+
+function updateHousehold(updater: (h: Household) => Household) {
+  cached = updater(cached);
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cached));
+  listeners.forEach((l) => l());
+}
+
+export function HouseholdProvider({ children }: { children: ReactNode }) {
+  const household = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const value: HouseholdContextValue = {
     household,
-    setState: (state) => setHousehold((h) => ({ ...h, state })),
-    setHouseholdSize: (size) => setHousehold((h) => ({ ...h, householdSize: size })),
+    setState: (state) => updateHousehold((h) => ({ ...h, state })),
+    setHouseholdSize: (size) => updateHousehold((h) => ({ ...h, householdSize: size })),
     setIncomeRange: (min, max) =>
-      setHousehold((h) => ({ ...h, monthlyIncomeMin: min, monthlyIncomeMax: max })),
+      updateHousehold((h) => ({ ...h, monthlyIncomeMin: min, monthlyIncomeMax: max })),
     setFlag: (flag, val) =>
-      setHousehold((h) => ({ ...h, flags: { ...h.flags, [flag]: val } })),
-    reset: () => setHousehold(EMPTY_HOUSEHOLD),
+      updateHousehold((h) => ({ ...h, flags: { ...h.flags, [flag]: val } })),
+    reset: () => updateHousehold(() => EMPTY_HOUSEHOLD),
   };
 
   return <HouseholdContext.Provider value={value}>{children}</HouseholdContext.Provider>;

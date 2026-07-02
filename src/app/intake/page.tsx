@@ -29,6 +29,8 @@ const FLAG_QUESTIONS: { flag: CategoricalFlag; question: string }[] = [
   { flag: "utilityHardship", question: "Is the household behind on utility bills?" },
 ];
 
+const STEP_LABELS = ["State", "Household", "Income", "A few more things", "Review"];
+
 export default function IntakePage() {
   const router = useRouter();
   const { household, setState, setHouseholdSize, setIncomeRange, setFlag } = useHousehold();
@@ -63,161 +65,175 @@ export default function IntakePage() {
   }
 
   return (
-    <main className="flex-1 max-w-xl mx-auto w-full px-6 py-12 space-y-8">
-      <EligibilityMeter possible={possible} total={programs.length} />
+    <main className="flex-1 relative">
+      <div className="grid-bg opacity-40" />
+      <div className="corner-glow teal w-[380px] h-[380px] -top-40 left-1/2 -translate-x-1/2" />
 
-      {currentStep === "state" && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Which state are you in?</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {STATES.map((s) => (
-              <button
-                key={s.code}
-                disabled={!s.available}
-                onClick={() => {
-                  setState(s.code);
-                  next();
-                }}
-                className={`rounded-lg border px-4 py-3 text-left transition-colors ${
-                  s.available
-                    ? "border-gray-300 hover:border-blue-500 hover:bg-blue-50 dark:border-gray-700 dark:hover:bg-blue-950/30"
-                    : "border-gray-200 text-gray-400 cursor-not-allowed dark:border-gray-800"
-                }`}
-              >
-                {s.name}
-                {!s.available && <span className="block text-xs">Coming soon</span>}
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
+      <div className="relative max-w-xl mx-auto w-full px-6 py-14 space-y-8">
+        <div className="flex items-center gap-3">
+          <span className="label-mono text-[10px] text-muted">
+            step {step + 1} of {steps.length} · {STEP_LABELS[step]}
+          </span>
+        </div>
 
-      {currentStep === "size" && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">How many people are in your household?</h2>
-          <div className="grid grid-cols-4 gap-3">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-              <button
-                key={n}
-                onClick={() => {
-                  setHouseholdSize(n);
-                  next();
-                }}
-                className={`rounded-lg border px-4 py-3 transition-colors ${
-                  household.householdSize === n
-                    ? "border-blue-600 bg-blue-50 dark:bg-blue-950/30"
-                    : "border-gray-300 hover:border-blue-500 dark:border-gray-700"
-                }`}
-              >
-                {n === 8 ? "8+" : n}
-              </button>
-            ))}
-          </div>
-          <button onClick={back} className="text-sm text-gray-500 hover:underline">
-            ← Back
-          </button>
-        </section>
-      )}
+        <EligibilityMeter possible={possible} total={programs.length} />
 
-      {currentStep === "income" && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">
-            About how much does your household bring in before taxes, per month?
-          </h2>
-          <p className="text-sm text-gray-500">A range is fine — exact numbers aren&apos;t needed.</p>
-          <div className="grid gap-2">
-            {INCOME_BUCKETS.map((b) => (
-              <button
-                key={b.label}
-                onClick={() => {
-                  setIncomeRange(b.min, b.max);
-                  next();
-                }}
-                className={`rounded-lg border px-4 py-3 text-left transition-colors ${
-                  household.monthlyIncomeMin === b.min
-                    ? "border-blue-600 bg-blue-50 dark:bg-blue-950/30"
-                    : "border-gray-300 hover:border-blue-500 dark:border-gray-700"
-                }`}
-              >
-                {b.label}
-              </button>
-            ))}
-          </div>
-          <button onClick={back} className="text-sm text-gray-500 hover:underline">
-            ← Back
-          </button>
-        </section>
-      )}
+        {currentStep === "state" && (
+          <section className="space-y-4">
+            <h2 className="text-2xl font-semibold">Which state are you in?</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {STATES.map((s) => (
+                <button
+                  key={s.code}
+                  disabled={!s.available}
+                  onClick={() => {
+                    setState(s.code);
+                    next();
+                  }}
+                  className={`rounded-xl border px-4 py-3 text-left transition-colors ${
+                    s.available
+                      ? "border-card-border bg-card hover:border-accent/60 hover:bg-accent/5"
+                      : "border-card-border/50 text-muted cursor-not-allowed"
+                  }`}
+                >
+                  {s.name}
+                  {!s.available && <span className="block text-xs">Coming soon</span>}
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
-      {currentStep === "flags" && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">A few more questions</h2>
-          <p className="text-sm text-gray-500">
-            We only ask what still matters based on your answers so far. Skip any you&apos;re not
-            sure about.
-          </p>
-          <div className="space-y-4">
-            {relevantFlags.length === 0 && (
-              <p className="text-sm text-gray-500">Nothing else we need — you&apos;re all set.</p>
-            )}
-            {relevantFlags.map((q) => (
-              <div key={q.flag} className="flex items-center justify-between gap-4">
-                <span>{q.question}</span>
-                <div className="flex gap-2 shrink-0">
-                  {(["Yes", "No", "Skip"] as const).map((opt) => {
-                    const val = opt === "Yes" ? true : opt === "No" ? false : undefined;
-                    const active = household.flags[q.flag] === val;
-                    return (
-                      <button
-                        key={opt}
-                        onClick={() => setFlag(q.flag, val)}
-                        className={`rounded-md border px-3 py-1 text-sm transition-colors ${
-                          active
-                            ? "border-blue-600 bg-blue-50 dark:bg-blue-950/30"
-                            : "border-gray-300 hover:border-blue-500 dark:border-gray-700"
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    );
-                  })}
+        {currentStep === "size" && (
+          <section className="space-y-4">
+            <h2 className="text-2xl font-semibold">How many people are in your household?</h2>
+            <div className="grid grid-cols-4 gap-3">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => {
+                    setHouseholdSize(n);
+                    next();
+                  }}
+                  className={`rounded-xl border px-4 py-3 transition-colors ${
+                    household.householdSize === n
+                      ? "border-accent bg-accent/10 text-accent"
+                      : "border-card-border bg-card hover:border-accent/60"
+                  }`}
+                >
+                  {n === 8 ? "8+" : n}
+                </button>
+              ))}
+            </div>
+            <button onClick={back} className="text-sm text-muted hover:text-accent transition-colors">
+              ← Back
+            </button>
+          </section>
+        )}
+
+        {currentStep === "income" && (
+          <section className="space-y-4">
+            <h2 className="text-2xl font-semibold">
+              About how much does your household bring in before taxes, per month?
+            </h2>
+            <p className="text-sm text-muted">A range is fine — exact numbers aren&apos;t needed.</p>
+            <div className="grid gap-2">
+              {INCOME_BUCKETS.map((b) => (
+                <button
+                  key={b.label}
+                  onClick={() => {
+                    setIncomeRange(b.min, b.max);
+                    next();
+                  }}
+                  className={`rounded-xl border px-4 py-3 text-left transition-colors ${
+                    household.monthlyIncomeMin === b.min
+                      ? "border-accent bg-accent/10 text-accent"
+                      : "border-card-border bg-card hover:border-accent/60"
+                  }`}
+                >
+                  {b.label}
+                </button>
+              ))}
+            </div>
+            <button onClick={back} className="text-sm text-muted hover:text-accent transition-colors">
+              ← Back
+            </button>
+          </section>
+        )}
+
+        {currentStep === "flags" && (
+          <section className="space-y-4">
+            <h2 className="text-2xl font-semibold">A few more questions</h2>
+            <p className="text-sm text-muted">
+              We only ask what still matters based on your answers so far. Skip any you&apos;re not
+              sure about.
+            </p>
+            <div className="space-y-3">
+              {relevantFlags.length === 0 && (
+                <p className="text-sm text-muted">Nothing else we need — you&apos;re all set.</p>
+              )}
+              {relevantFlags.map((q) => (
+                <div
+                  key={q.flag}
+                  className="flex items-center justify-between gap-4 rounded-xl border border-card-border bg-card px-4 py-3"
+                >
+                  <span className="text-sm">{q.question}</span>
+                  <div className="flex gap-2 shrink-0">
+                    {(["Yes", "No", "Skip"] as const).map((opt) => {
+                      const val = opt === "Yes" ? true : opt === "No" ? false : undefined;
+                      const active = household.flags[q.flag] === val;
+                      return (
+                        <button
+                          key={opt}
+                          onClick={() => setFlag(q.flag, val)}
+                          className={`rounded-md border px-3 py-1 text-sm transition-colors ${
+                            active
+                              ? "border-accent bg-accent/10 text-accent"
+                              : "border-card-border hover:border-accent/60"
+                          }`}
+                        >
+                          {opt}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between pt-2">
-            <button onClick={back} className="text-sm text-gray-500 hover:underline">
-              ← Back
-            </button>
-            <button
-              onClick={next}
-              className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 transition-colors"
-            >
-              Continue
-            </button>
-          </div>
-        </section>
-      )}
+              ))}
+            </div>
+            <div className="flex justify-between pt-2">
+              <button onClick={back} className="text-sm text-muted hover:text-accent transition-colors">
+                ← Back
+              </button>
+              <button
+                onClick={next}
+                className="rounded-full bg-accent text-[#04201c] font-semibold px-6 py-2 hover:brightness-110 transition-all"
+              >
+                Continue
+              </button>
+            </div>
+          </section>
+        )}
 
-      {currentStep === "review" && (
-        <section className="space-y-4 text-center">
-          <h2 className="text-xl font-semibold">Ready to see your results</h2>
-          <p className="text-gray-500">
-            {possible} of {programs.length} programs still look possible based on your answers.
-          </p>
-          <button
-            onClick={() => router.push("/results")}
-            className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 transition-colors"
-          >
-            See my results
-          </button>
-          <div>
-            <button onClick={back} className="text-sm text-gray-500 hover:underline">
-              ← Back
+        {currentStep === "review" && (
+          <section className="space-y-4 text-center">
+            <h2 className="text-2xl font-semibold">Ready to see your results</h2>
+            <p className="text-muted">
+              {possible} of {programs.length} programs still look possible based on your answers.
+            </p>
+            <button
+              onClick={() => router.push("/results")}
+              className="rounded-full bg-accent text-[#04201c] font-semibold px-8 py-3 hover:brightness-110 transition-all"
+            >
+              See my results
             </button>
-          </div>
-        </section>
-      )}
+            <div>
+              <button onClick={back} className="text-sm text-muted hover:text-accent transition-colors">
+                ← Back
+              </button>
+            </div>
+          </section>
+        )}
+      </div>
     </main>
   );
 }

@@ -1,3 +1,4 @@
+import { NJ_PROGRAMS } from "@/data/states/NJ/programs";
 import { CA_PROGRAMS } from "@/data/states/CA/programs";
 import type { Program } from "@/lib/types";
 
@@ -8,7 +9,10 @@ export interface StateEntry {
   programs: Program[];
 }
 
+export const DEFAULT_STATE = "NJ";
+
 export const STATES: StateEntry[] = [
+  { code: "NJ", name: "New Jersey", available: true, programs: NJ_PROGRAMS },
   { code: "CA", name: "California", available: true, programs: CA_PROGRAMS },
   { code: "TX", name: "Texas", available: false, programs: [] },
   { code: "NY", name: "New York", available: false, programs: [] },

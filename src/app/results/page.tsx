@@ -14,46 +14,49 @@ const CONFIDENCE_LABEL: Record<Confidence, string> = {
   unlikely: "Not likely",
 };
 
-const CONFIDENCE_STYLE: Record<Confidence, string> = {
-  likely: "bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-400",
-  possible: "bg-yellow-100 text-yellow-800 dark:bg-yellow-950/50 dark:text-yellow-400",
-  needsInfo: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-  unlikely: "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400",
+const CONFIDENCE_COLOR: Record<Confidence, string> = {
+  likely: "#2dd4bf",
+  possible: "#f9d34c",
+  needsInfo: "#8b9bb0",
+  unlikely: "#f87171",
 };
 
 const ORDER: Confidence[] = ["likely", "possible", "needsInfo", "unlikely"];
 
 function ResultCard({ result }: { result: EligibilityResult }) {
   const { program, confidence, reasons, counterfactual } = result;
+  const color = CONFIDENCE_COLOR[confidence];
   return (
-    <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-5 space-y-3">
+    <div
+      className="rounded-xl border border-card-border bg-card p-5 space-y-3 border-l-[3px]"
+      style={{ borderLeftColor: color }}
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="font-semibold">{program.name}</h3>
-          <p className="text-sm text-gray-500">{program.agencyName}</p>
+          <p className="text-sm text-muted">{program.agencyName}</p>
         </div>
         <span
-          className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${CONFIDENCE_STYLE[confidence]}`}
+          className="label-mono shrink-0 rounded-full px-3 py-1 text-[10px]"
+          style={{ color, backgroundColor: `${color}1f` }}
         >
           {CONFIDENCE_LABEL[confidence]}
         </span>
       </div>
       <p className="text-sm">{program.summary}</p>
-      <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc list-inside space-y-1">
+      <ul className="text-sm text-muted list-disc list-inside space-y-1">
         {reasons.map((r, i) => (
           <li key={i}>{r}</li>
         ))}
       </ul>
-      {counterfactual && (
-        <p className="text-sm italic text-blue-700 dark:text-blue-400">{counterfactual}</p>
-      )}
-      <div className="flex items-center justify-between pt-2 text-xs text-gray-400">
+      {counterfactual && <p className="text-sm italic text-accent-2">{counterfactual}</p>}
+      <div className="flex items-center justify-between pt-2 text-xs text-muted">
         <span>Checked against source: {program.lastVerified}</span>
         <a
           href={program.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="underline hover:text-gray-600 dark:hover:text-gray-300"
+          className="underline hover:text-foreground"
         >
           Source
         </a>
@@ -62,7 +65,7 @@ function ResultCard({ result }: { result: EligibilityResult }) {
         href={program.applyUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-block rounded-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 transition-colors"
+        className="inline-block rounded-full bg-accent text-[#04201c] text-sm font-semibold px-4 py-2 hover:brightness-110 transition-all"
       >
         Verify &amp; apply with {program.agencyName} →
       </a>
@@ -86,8 +89,8 @@ export default function ResultsPage() {
   if (!household.householdSize || household.monthlyIncomeMin === undefined) {
     return (
       <main className="flex-1 flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
-        <p className="text-gray-500">We need a few answers first.</p>
-        <Link href="/intake" className="text-blue-600 hover:underline">
+        <p className="text-muted">We need a few answers first.</p>
+        <Link href="/intake" className="text-accent hover:underline">
           Go to the questionnaire →
         </Link>
       </main>
@@ -97,8 +100,9 @@ export default function ResultsPage() {
   return (
     <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-8">
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold">Your results</h1>
-        <p className="text-sm text-gray-500">
+        <p className="label-mono text-[10px] text-accent">your results</p>
+        <h1 className="text-3xl font-bold">Here&apos;s what we found</h1>
+        <p className="text-sm text-muted">
           Based on what you told us for a household of {household.householdSize} in{" "}
           {stateEntry?.name}. This is general information, not an official decision — every
           program links to the real agency so they can confirm.
@@ -106,25 +110,25 @@ export default function ResultsPage() {
       </div>
 
       {(value.min > 0 || value.max > 0) && (
-        <div className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 p-5">
-          <p className="text-sm font-medium">Estimated value you may be leaving unclaimed</p>
-          <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
+        <div className="rounded-xl border border-accent/30 bg-accent/10 p-5">
+          <p className="label-mono text-[10px] text-accent">est. value you may be leaving unclaimed</p>
+          <p className="text-2xl font-bold mt-1">
             ${value.min.toLocaleString()} – ${value.max.toLocaleString()} / year
           </p>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-muted mt-1">
             A rough estimate across programs you may qualify for — not a guarantee.
           </p>
         </div>
       )}
 
       {cascades.length > 0 && (
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-5 space-y-1">
+        <div className="rounded-xl border border-card-border bg-card p-5 space-y-1">
           <p className="text-sm font-medium">Because you may qualify for one program, also check:</p>
-          <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc list-inside">
+          <ul className="text-sm text-muted list-disc list-inside">
             {[...new Map(cascades.map((c) => [c.suggested.id, c])).values()].map((c) => (
               <li key={c.suggested.id}>
                 {c.suggested.name}{" "}
-                <span className="text-gray-400">(often paired with {c.from.shortName})</span>
+                <span className="text-muted/70">(often paired with {c.from.shortName})</span>
               </li>
             ))}
           </ul>
@@ -133,7 +137,9 @@ export default function ResultsPage() {
 
       {grouped.map((g) => (
         <section key={g.confidence} className="space-y-3">
-          <h2 className="text-lg font-semibold">{CONFIDENCE_LABEL[g.confidence]}</h2>
+          <h2 className="text-lg font-semibold" style={{ color: CONFIDENCE_COLOR[g.confidence] }}>
+            {CONFIDENCE_LABEL[g.confidence]}
+          </h2>
           <div className="grid gap-4">
             {g.items.map((r) => (
               <ResultCard key={r.program.id} result={r} />
@@ -142,14 +148,14 @@ export default function ResultsPage() {
         </section>
       ))}
 
-      <div className="flex gap-4 pt-4 border-t border-gray-200 dark:border-gray-800">
-        <Link href="/intake" className="text-sm text-blue-600 hover:underline">
+      <div className="flex flex-wrap gap-4 pt-4 border-t border-card-border">
+        <Link href="/intake" className="text-sm text-accent hover:underline">
           ← Edit my answers
         </Link>
-        <Link href="/cliff-simulator" className="text-sm text-blue-600 hover:underline">
+        <Link href="/cliff-simulator" className="text-sm text-accent hover:underline">
           Try the benefits-cliff simulator →
         </Link>
-        <button onClick={reset} className="text-sm text-gray-400 hover:underline ml-auto">
+        <button onClick={reset} className="text-sm text-muted hover:underline ml-auto">
           Clear my answers
         </button>
       </div>
