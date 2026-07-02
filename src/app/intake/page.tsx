@@ -6,6 +6,7 @@ import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState, STATES } from "@/lib/states";
 import { evaluateAll, stillPossibleCount } from "@/lib/engine";
 import { EligibilityMeter } from "@/components/EligibilityMeter";
+import { IntakeSidebar } from "@/components/IntakeSidebar";
 import type { CategoricalFlag } from "@/lib/types";
 
 const INCOME_BUCKETS: { label: string; min: number; max: number }[] = [
@@ -64,12 +65,15 @@ export default function IntakePage() {
     setStep((s) => Math.max(s - 1, 0));
   }
 
-  return (
-    <main className="flex-1 relative">
-      <div className="grid-bg opacity-40" />
-      <div className="corner-glow teal w-[380px] h-[380px] -top-40 left-1/2 -translate-x-1/2" />
+  const categories = useMemo(
+    () => [...new Set(programs.map((p) => p.category.replace("-", " & ")))],
+    [programs]
+  );
 
-      <div className="relative max-w-xl mx-auto w-full px-6 py-14 space-y-8">
+  return (
+    <main className="flex-1">
+      <div className="max-w-4xl mx-auto w-full px-6 py-14 grid lg:grid-cols-[1fr_280px] gap-10">
+        <div className="space-y-8">
         <div className="flex items-center gap-3">
           <span className="label-mono text-[10px] text-muted">
             step {step + 1} of {steps.length} · {STEP_LABELS[step]}
@@ -233,6 +237,15 @@ export default function IntakePage() {
             </div>
           </section>
         )}
+        </div>
+
+        <IntakeSidebar
+          step={currentStep}
+          stateName={stateEntry?.name}
+          categories={categories}
+          programCount={programs.length}
+          results={results}
+        />
       </div>
     </main>
   );

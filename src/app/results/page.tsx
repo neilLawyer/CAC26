@@ -49,7 +49,7 @@ function ResultCard({ result }: { result: EligibilityResult }) {
           <li key={i}>{r}</li>
         ))}
       </ul>
-      {counterfactual && <p className="text-sm italic text-accent-2">{counterfactual}</p>}
+      {counterfactual && <p className="text-sm italic text-foreground/70">{counterfactual}</p>}
       <div className="flex items-center justify-between pt-2 text-xs text-muted">
         <span>Checked against source: {program.lastVerified}</span>
         <a

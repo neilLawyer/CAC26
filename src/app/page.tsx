@@ -82,10 +82,7 @@ export default function Home() {
             </span>
             <h1 className="mt-6 text-5xl sm:text-6xl font-bold leading-[1.05] tracking-tight">
               Open every door<br />
-              you already{" "}
-              <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
-                qualify for.
-              </span>
+              you already <span className="text-accent">qualify for.</span>
             </h1>
             <p className="mt-6 text-lg text-muted max-w-md">
               Food, health, energy, and cash assistance — explained in plain language, with a real
@@ -153,8 +150,7 @@ export default function Home() {
 
       {/* Built for real people */}
       <section className="max-w-6xl mx-auto px-6 py-20">
-        <p className="label-mono text-[11px] text-accent text-center">who this is for</p>
-        <h2 className="text-3xl font-bold text-center mt-2">Built for the moments life throws at you</h2>
+        <h2 className="text-3xl font-bold text-center">Built for the moments life throws at you</h2>
         <div className="grid sm:grid-cols-3 gap-5 mt-10">
           {[
             {
@@ -178,7 +174,13 @@ export default function Home() {
           ].map((c) => (
             <div key={c.title} className="rounded-2xl border border-card-border bg-card overflow-hidden">
               <div className="relative h-44">
-                <Image src={c.src} alt={c.alt} fill className="object-cover" />
+                <Image
+                  src={c.src}
+                  alt={c.alt}
+                  fill
+                  sizes="(min-width: 640px) 33vw, 100vw"
+                  className="object-cover"
+                />
               </div>
               <div className="p-5">
                 <h3 className="font-semibold">{c.title}</h3>
@@ -192,8 +194,11 @@ export default function Home() {
       {/* Categories */}
       <section className="border-y border-card-border bg-card/40">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <p className="label-mono text-[11px] text-accent text-center">what&apos;s covered</p>
-          <h2 className="text-3xl font-bold text-center mt-2">One engine, every kind of help</h2>
+          <h2 className="text-3xl font-bold text-center">One engine, every kind of help</h2>
+          <p className="text-center text-muted mt-2 max-w-xl mx-auto">
+            The same rules-as-data engine covers every category below — adding a new program or a
+            new state never touches the code, just the data.
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10">
             {CATEGORIES.map((c) => (
               <div
@@ -217,8 +222,7 @@ export default function Home() {
 
       {/* How it works */}
       <section id="how-it-works" className="max-w-6xl mx-auto px-6 py-20">
-        <p className="label-mono text-[11px] text-accent text-center">how it works</p>
-        <h2 className="text-3xl font-bold text-center mt-2">Three steps, a few minutes</h2>
+        <h2 className="text-3xl font-bold text-center">Three steps, a few minutes</h2>
         <div className="grid sm:grid-cols-3 gap-5 mt-10">
           {STEPS.map((s) => (
             <div key={s.n} className="rounded-2xl border border-card-border bg-card p-6 relative overflow-hidden">
@@ -233,10 +237,8 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="relative overflow-hidden border-t border-card-border">
-        <div className="grid-bg" />
-        <div className="corner-glow teal w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-        <div className="relative max-w-2xl mx-auto px-6 py-24 text-center">
+      <section className="border-t border-card-border bg-card/40">
+        <div className="max-w-2xl mx-auto px-6 py-24 text-center">
           <h2 className="text-4xl font-bold tracking-tight">
             You may be leaving money on the table.
           </h2>

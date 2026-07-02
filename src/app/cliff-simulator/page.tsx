@@ -70,16 +70,25 @@ export default function CliffSimulatorPage() {
   }
 
   return (
-    <main className="flex-1 relative">
-      <div className="grid-bg opacity-30" />
-      <div className="relative max-w-2xl mx-auto w-full px-6 py-12 space-y-8">
+    <main className="flex-1">
+      <div className="max-w-2xl mx-auto w-full px-6 py-12 space-y-8">
         <div className="space-y-2">
-          <p className="label-mono text-[10px] text-accent">flagship feature</p>
           <h1 className="text-3xl font-bold">Benefits-cliff simulator</h1>
           <p className="text-sm text-muted">
             An <strong className="text-foreground">educational estimate</strong>, not financial
             advice. See roughly what happens to your total resources if your income changes —
             sometimes a raise costs you more in lost benefits than you gain in pay.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-card-border bg-card/60 p-5">
+          <h2 className="font-semibold text-sm">What&apos;s a &ldquo;benefits cliff&rdquo;?</h2>
+          <p className="text-sm text-muted mt-2 leading-relaxed">
+            Most assistance programs cut off once your income crosses a limit — sometimes all at
+            once, not gradually. That means a modest raise or extra shift can push your income just
+            over the line and cost you more in lost benefits than you gained in pay. This tool
+            walks through that math using the programs from your results, so you can see the
+            trade-off before it happens, not after.
           </p>
         </div>
 
