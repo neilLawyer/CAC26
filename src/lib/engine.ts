@@ -141,22 +141,71 @@ function testCategorical(
   };
 }
 
+function testAssets(
+  rules: ProgramRules,
+  household: Household
+): { status: TestStatus; reason: string; counterfactual?: string } {
+  if (rules.assetLimitDollar === undefined) {
+    // No resource test for this program — nothing to check.
+    return { status: "pass", reason: "" };
+  }
+  const limit = rules.assetLimitDollar;
+  if (household.liquidAssetsMin === undefined && household.liquidAssetsMax === undefined) {
+    return {
+      status: "unknown",
+      reason: `This program has a resource limit of about ${money(
+        limit
+      )} — we still need your rough savings to check it.`,
+    };
+  }
+
+  const assetsMin = household.liquidAssetsMin ?? household.liquidAssetsMax!;
+  const assetsMax = household.liquidAssetsMax ?? household.liquidAssetsMin!;
+
+  if (assetsMax <= limit) {
+    return {
+      status: "pass",
+      reason: `Your savings look within this program's resource limit of about ${money(limit)}.`,
+    };
+  }
+  if (assetsMin > limit) {
+    return {
+      status: "fail",
+      reason: `This program limits countable resources to about ${money(
+        limit
+      )}, and your savings look higher than that.`,
+      counterfactual: `Programs like this one only count resources up to about ${money(
+        limit
+      )} — some savings (like a home or one car) usually don't count.`,
+    };
+  }
+  return {
+    status: "borderline",
+    reason: `Your savings are close to this program's resource limit of about ${money(
+      limit
+    )} — worth checking with the agency.`,
+  };
+}
+
 export function evaluateProgram(program: Program, household: Household): EligibilityResult {
   const income = testIncome(program.rules, household);
   const categorical = testCategorical(program.rules, household);
+  const assets = testAssets(program.rules, household);
 
   const reasons = [income.reason, categorical.reason];
-  const counterfactual = income.counterfactual ?? categorical.counterfactual;
+  // Only surface the resource reason for programs that actually test assets.
+  if (program.rules.assetLimitDollar !== undefined) reasons.push(assets.reason);
+  const counterfactual = income.counterfactual ?? categorical.counterfactual ?? assets.counterfactual;
 
   let confidence: Confidence;
-  if (income.status === "fail" || categorical.status === "fail") {
+  if (income.status === "fail" || categorical.status === "fail" || assets.status === "fail") {
     confidence = "unlikely";
-  } else if (income.status === "unknown") {
+  } else if (income.status === "unknown" || assets.status === "unknown") {
     confidence = "needsInfo";
-  } else if (income.status === "pass" && categorical.status === "pass") {
+  } else if (income.status === "pass" && categorical.status === "pass" && assets.status === "pass") {
     confidence = "likely";
   } else {
-    // income pass/borderline + categorical pass/borderline/unknown, or vice versa
+    // some dimension is borderline or categorical is unknown
     confidence = "possible";
   }
 

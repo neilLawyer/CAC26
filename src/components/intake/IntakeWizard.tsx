@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState, STATES } from "@/data/states";
 import { evaluateAll, stillPossibleCount } from "@/lib/engine";
-import { FLAG_QUESTIONS, INCOME_BUCKETS, STEP_LABELS } from "@/data/questions";
+import { ASSET_BUCKETS, FLAG_QUESTIONS, INCOME_BUCKETS, STEP_LABELS } from "@/data/questions";
 import { activePopulations, POPULATION_TRIGGER_FLAGS } from "@/data/populations";
 import { EligibilityMeter } from "@/components/intake/EligibilityMeter";
 import { IntakeSidebar } from "@/components/intake/IntakeSidebar";
@@ -15,17 +15,31 @@ import { BackLink } from "@/components/intake/BackLink";
 import { Button } from "@/components/ui/Button";
 import type { CategoricalFlag } from "@/lib/types";
 
-const STEPS = ["state", "size", "income", "flags", "review"] as const;
-
 export function IntakeWizard() {
   const router = useRouter();
-  const { household, setState, setHouseholdSize, setIncomeRange, setFlag } = useHousehold();
+  const { household, setState, setHouseholdSize, setIncomeRange, setAssetsRange, setFlag } =
+    useHousehold();
   const [step, setStep] = useState(0);
 
   const stateEntry = getState(household.state);
   const programs = stateEntry?.programs ?? EMPTY_PROGRAMS;
   const results = useMemo(() => evaluateAll(programs, household), [programs, household]);
   const possible = stillPossibleCount(results);
+
+  // The savings step only appears when a program that tests resource limits
+  // (e.g. SSI, CAPI) is still in play — most people never see it.
+  const needsAssets = useMemo(
+    () =>
+      results.some(
+        (r) => r.confidence !== "unlikely" && r.program.rules.assetLimitDollar !== undefined
+      ),
+    [results]
+  );
+
+  const steps = useMemo(
+    () => ["state", "size", "income", "flags", ...(needsAssets ? ["assets"] : []), "review"],
+    [needsAssets]
+  );
 
   // Which flag questions to ask: program-required flags for programs not yet
   // ruled out, plus population triggers (so users can self-identify), plus the
@@ -45,10 +59,13 @@ export function IntakeWizard() {
     return FLAG_QUESTIONS.filter((q) => flagSet.has(q.flag));
   }, [results, household.flags]);
 
-  const currentStep = STEPS[step];
+  // Clamp in case the step list shrank (e.g. the savings step dropped out after
+  // an answer) so the index always points at a real step.
+  const safeStep = Math.min(step, steps.length - 1);
+  const currentStep = steps[safeStep];
 
   function next() {
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    setStep((s) => Math.min(s + 1, steps.length - 1));
   }
   function back() {
     setStep((s) => Math.max(s - 1, 0));
@@ -65,7 +82,7 @@ export function IntakeWizard() {
         <div className="space-y-8">
           <div className="flex items-center gap-3">
             <span className="label-mono text-[10px] text-muted">
-              step {step + 1} of {STEPS.length} · {STEP_LABELS[step]}
+              step {safeStep + 1} of {steps.length} · {STEP_LABELS[currentStep]}
             </span>
           </div>
 
@@ -140,6 +157,25 @@ export function IntakeWizard() {
               onAnswer={setFlag}
               onBack={back}
               onNext={next}
+            />
+          )}
+
+          {currentStep === "assets" && (
+            <QuestionStep
+              title="About how much does your household have in savings and other resources?"
+              subtitle="Think checking, savings, and cash — a home and usually one car don't count."
+              gridClassName="grid gap-2"
+              onBack={back}
+              options={ASSET_BUCKETS.map((b) => ({
+                key: b.label,
+                label: b.label,
+                active: household.liquidAssetsMin === b.min,
+                className: "text-left",
+                onSelect: () => {
+                  setAssetsRange(b.min, b.max);
+                  next();
+                },
+              }))}
             />
           )}
 

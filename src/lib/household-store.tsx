@@ -13,6 +13,7 @@ interface HouseholdContextValue {
   setState: (state: string) => void;
   setHouseholdSize: (size: number) => void;
   setIncomeRange: (min: number, max: number | undefined) => void;
+  setAssetsRange: (min: number, max: number | undefined) => void;
   setFlag: (flag: CategoricalFlag, value: boolean | undefined) => void;
   reset: () => void;
 }
@@ -68,6 +69,8 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
     setHouseholdSize: (size) => updateHousehold((h) => ({ ...h, householdSize: size })),
     setIncomeRange: (min, max) =>
       updateHousehold((h) => ({ ...h, monthlyIncomeMin: min, monthlyIncomeMax: max })),
+    setAssetsRange: (min, max) =>
+      updateHousehold((h) => ({ ...h, liquidAssetsMin: min, liquidAssetsMax: max })),
     setFlag: (flag, val) =>
       updateHousehold((h) => ({ ...h, flags: { ...h.flags, [flag]: val } })),
     reset: () => updateHousehold(() => EMPTY_HOUSEHOLD),

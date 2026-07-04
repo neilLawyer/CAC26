@@ -77,8 +77,25 @@ export const INCOME_BUCKETS: IncomeBucket[] = [
   { label: "$7,000+/mo", min: 7000, max: 999999 },
 ];
 
-// The intake wizard's step order and their short labels.
-export const STEP_LABELS = ["State", "Household", "Income", "A few more things", "Review"];
+// Rough savings/resources ranges, for the programs that test countable assets
+// (e.g. SSI, CAPI). Only shown when such a program is still in play.
+export const ASSET_BUCKETS: IncomeBucket[] = [
+  { label: "Under $2,000", min: 0, max: 2000 },
+  { label: "$2,000 – $5,000", min: 2000, max: 5000 },
+  { label: "$5,000 – $10,000", min: 5000, max: 10000 },
+  { label: "More than $10,000", min: 10000, max: 9999999 },
+];
+
+// Short label for each step, keyed by step id (steps are assembled dynamically
+// in the wizard — the "savings" step only appears when a program needs it).
+export const STEP_LABELS: Record<string, string> = {
+  state: "State",
+  size: "Household",
+  income: "Income",
+  flags: "A few more things",
+  assets: "Savings",
+  review: "Review",
+};
 
 // The "why we ask this" note shown in the intake sidebar, keyed by step id.
 export const STEP_NOTES: Record<string, string> = {
@@ -89,6 +106,8 @@ export const STEP_NOTES: Record<string, string> = {
     "Most programs use a percentage of the federal poverty level based on household size. A range is all we need — nothing exact.",
   flags:
     "Some programs, like PAAD or Senior Freeze, are restricted to specific groups. We only ask about the ones that could still apply to you.",
+  assets:
+    "A few programs, like SSI, also cap how much you can have in savings and resources. A home and usually one car don't count.",
   review:
     "That's everything we need. Your answers stay in this browser and are never sent anywhere.",
 };

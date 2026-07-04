@@ -18,6 +18,8 @@ export interface Household {
   householdSize?: number;
   monthlyIncomeMin?: number; // lower bound of selected income range
   monthlyIncomeMax?: number; // upper bound of selected income range
+  liquidAssetsMin?: number; // lower bound of selected savings/resources range
+  liquidAssetsMax?: number; // upper bound of selected savings/resources range
   flags: Partial<Record<CategoricalFlag, boolean>>;
 }
 

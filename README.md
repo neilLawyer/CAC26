@@ -19,19 +19,28 @@ in [`OpenDoor_feature_plan.md`](./OpenDoor_feature_plan.md).
 
 ## How it works
 
-- `src/lib/types.ts` — core data shapes (`Household`, `Program`, `EligibilityResult`).
-- `src/data/states/<STATE>/programs.ts` — rules-as-data. Adding a new program or
-  state means adding a data file here, never touching the engine.
-- `src/lib/engine.ts` — evaluates a household against program rules and produces
-  a confidence label + plain-language reason trace per program.
-- `src/app/intake` — adaptive intake wizard with a live "eligibility so far" meter.
-- `src/app/results` — results dashboard: confidence, reasons, source citations,
-  "money left on the table" estimate, cascade suggestions.
-- `src/app/cliff-simulator` — the benefits-cliff simulator (flagship feature):
-  models the net effect of a hypothetical income change on pay vs. lost benefits.
+Everything the app screens against is data — adding a program, state, question,
+or population is a data edit, never a code change.
 
-Currently ships with one fully-built state (California, ~13 programs) per the
-suggested build order in the feature plan.
+- `src/lib/types.ts` — core data shapes (`Household`, `Program`, `EligibilityResult`,
+  `FlagQuestion`, `StateMeta`).
+- `src/data/states/<STATE>/{meta,programs}.ts` — rules-as-data program packs.
+- `src/data/questions.ts` — the intake question catalog (the single source of
+  truth for every screening dimension; the engine and wizard both read it).
+- `src/data/populations.ts` — data-defined population modules (seniors, families,
+  veterans, students, immigrants) that tailor intake and results.
+- `src/lib/engine.ts` — evaluates a household against program rules (income,
+  categorical requirements, and resource/asset limits) and produces a confidence
+  label + plain-language reason trace per program.
+- `src/components/{intake,results,marketing,ui,layout}` — the design system and
+  the composed views.
+- `src/app/(screener)/{intake,results,cliff-simulator}` — the screener flow,
+  including the benefits-cliff simulator (flagship feature).
+- `src/app/(marketing)/{page,about,how-it-works,for/[population]}` — the marketing
+  pages, including data-driven per-population landings.
+
+Currently ships with two states: New Jersey (the default, 14 programs) and
+California (13) — about 27 programs in total.
 
 ## Getting started
 
