@@ -5,6 +5,7 @@ import { CategoryGrid } from "@/components/marketing/CategoryGrid";
 import { AccessibilityGrid } from "@/components/marketing/AccessibilityGrid";
 import { HowItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { ButtonLink } from "@/components/ui/Button";
+import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
   return (
@@ -35,12 +36,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-card-border">
-        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row justify-between gap-3 text-xs text-muted">
-          <span>OpenDoor is informational only — not affiliated with any government agency.</span>
-          <span>Built for the Congressional App Challenge 2026.</span>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

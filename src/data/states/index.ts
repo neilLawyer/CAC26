@@ -31,6 +31,15 @@ export function getState(code: string): StateEntry | undefined {
   return STATES.find((s) => s.code === code);
 }
 
+/** Find a program by id across every state (used by the per-population landings). */
+export function getProgramById(id: string): Program | undefined {
+  for (const s of STATES) {
+    const found = s.programs.find((p) => p.id === id);
+    if (found) return found;
+  }
+  return undefined;
+}
+
 /** Stable reference so callers doing `getState(x)?.programs ?? EMPTY_PROGRAMS` don't
  * create a new array identity every render (which would defeat useMemo/useEffect deps). */
 export const EMPTY_PROGRAMS: Program[] = [];
