@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code local state / worktrees (never commit; caused a stray gitlink on main)
+.claude/
