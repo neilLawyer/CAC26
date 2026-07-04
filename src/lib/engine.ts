@@ -1,4 +1,5 @@
 import { monthlyFPL } from "@/data/fpl";
+import { FLAG_QUESTIONS } from "@/data/questions";
 import { money } from "@/lib/format";
 import type {
   CategoricalFlag,
@@ -11,16 +12,11 @@ import type {
 
 type TestStatus = "pass" | "fail" | "borderline" | "unknown";
 
-const FLAG_LABELS: Record<CategoricalFlag, string> = {
-  age65Plus: "someone in the household is 65 or older",
-  disabled: "someone in the household has a disability",
-  veteran: "someone in the household is a veteran",
-  pregnantOrChildUnder5: "someone is pregnant or there's a child under 5",
-  schoolAgeChild: "there's a school-age child in the household",
-  utilityHardship: "the household is behind on utility bills",
-  student: "someone in the household is a student",
-  unemployed: "someone in the household is unemployed",
-};
+// Plain-language labels for reason traces, derived from the shared question
+// catalog so the wording lives in exactly one place (src/data/questions.ts).
+const FLAG_LABELS = Object.fromEntries(
+  FLAG_QUESTIONS.map((q) => [q.flag, q.label])
+) as Record<CategoricalFlag, string>;
 
 function monthlyIncomeLimits(rules: ProgramRules, householdSize: number) {
   let maxMonthly: number | undefined;

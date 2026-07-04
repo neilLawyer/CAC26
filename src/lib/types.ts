@@ -24,6 +24,19 @@ export interface CategoricalRequirement {
   type: CategoricalFlag;
 }
 
+/**
+ * One screening dimension, defined once as data. `label` feeds the engine's
+ * plain-language reason traces; `question` is the intake prompt; `help` is an
+ * optional "why we ask" note. Adding a dimension = one entry in
+ * `src/data/questions.ts` (+ one member of `CategoricalFlag` above).
+ */
+export interface FlagQuestion {
+  flag: CategoricalFlag;
+  label: string;
+  question: string;
+  help?: string;
+}
+
 export type IncomeBasis = "gross" | "net";
 export type IncomePeriod = "monthly" | "annual";
 

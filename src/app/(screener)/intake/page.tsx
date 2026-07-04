@@ -9,30 +9,8 @@ import { EligibilityMeter } from "@/components/EligibilityMeter";
 import { IntakeSidebar } from "@/components/IntakeSidebar";
 import { Button } from "@/components/ui/Button";
 import { Choice } from "@/components/ui/Choice";
+import { FLAG_QUESTIONS, INCOME_BUCKETS, STEP_LABELS } from "@/data/questions";
 import type { CategoricalFlag } from "@/lib/types";
-
-const INCOME_BUCKETS: { label: string; min: number; max: number }[] = [
-  { label: "Under $1,000/mo", min: 0, max: 1000 },
-  { label: "$1,000 – $1,500/mo", min: 1000, max: 1500 },
-  { label: "$1,500 – $2,000/mo", min: 1500, max: 2000 },
-  { label: "$2,000 – $2,500/mo", min: 2000, max: 2500 },
-  { label: "$2,500 – $3,000/mo", min: 2500, max: 3000 },
-  { label: "$3,000 – $4,000/mo", min: 3000, max: 4000 },
-  { label: "$4,000 – $5,000/mo", min: 4000, max: 5000 },
-  { label: "$5,000 – $7,000/mo", min: 5000, max: 7000 },
-  { label: "$7,000+/mo", min: 7000, max: 999999 },
-];
-
-const FLAG_QUESTIONS: { flag: CategoricalFlag; question: string }[] = [
-  { flag: "age65Plus", question: "Is anyone in your household 65 or older?" },
-  { flag: "disabled", question: "Does anyone in your household have a disability?" },
-  { flag: "veteran", question: "Is anyone in your household a veteran?" },
-  { flag: "pregnantOrChildUnder5", question: "Is anyone pregnant, or is there a child under 5?" },
-  { flag: "schoolAgeChild", question: "Is there a school-age child in the household?" },
-  { flag: "utilityHardship", question: "Is the household behind on utility bills?" },
-];
-
-const STEP_LABELS = ["State", "Household", "Income", "A few more things", "Review"];
 
 export default function IntakePage() {
   const router = useRouter();
