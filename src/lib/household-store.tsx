@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useSyncExternalStore, type ReactNode } from "react";
-import { DEFAULT_STATE } from "@/lib/states";
+import { DEFAULT_STATE } from "@/data/states";
 import type { CategoricalFlag, Household } from "@/lib/types";
 
 const STORAGE_KEY = "opendoor-household";

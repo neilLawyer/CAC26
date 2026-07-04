@@ -1,4 +1,4 @@
-import { monthlyFPL } from "@/lib/fpl";
+import { monthlyFPL } from "@/data/fpl";
 import type {
   CategoricalFlag,
   Confidence,

@@ -44,6 +44,12 @@ export interface ProgramRules {
   requireAllCategorical: boolean;
 }
 
+export interface StateMeta {
+  code: string; // e.g. "NJ"
+  name: string; // e.g. "New Jersey"
+  available: boolean; // true = has a data pack; false = "coming soon"
+}
+
 export interface Program {
   id: string;
   name: string;

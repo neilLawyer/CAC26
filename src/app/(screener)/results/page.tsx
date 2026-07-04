@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useHousehold } from "@/lib/household-store";
-import { EMPTY_PROGRAMS, getState } from "@/lib/states";
+import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { cascadeSuggestions, estimatedAnnualValue, evaluateAll } from "@/lib/engine";
 import type { Confidence, EligibilityResult } from "@/lib/types";
 

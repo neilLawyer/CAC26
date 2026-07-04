@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useHousehold } from "@/lib/household-store";
-import { EMPTY_PROGRAMS, getState, STATES } from "@/lib/states";
+import { EMPTY_PROGRAMS, getState, STATES } from "@/data/states";
 import { evaluateAll, stillPossibleCount } from "@/lib/engine";
 import { EligibilityMeter } from "@/components/EligibilityMeter";
 import { IntakeSidebar } from "@/components/IntakeSidebar";

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useHousehold } from "@/lib/household-store";
-import { EMPTY_PROGRAMS, getState } from "@/lib/states";
+import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { evaluateAll, estimatedAnnualValueMidpoint } from "@/lib/engine";
 import type { Household } from "@/lib/types";
 

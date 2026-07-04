@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useHousehold } from "@/lib/household-store";
-import { getState } from "@/lib/states";
+import { getState } from "@/data/states";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const LINKS = [
