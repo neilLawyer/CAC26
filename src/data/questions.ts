@@ -6,9 +6,10 @@ import type { FlagQuestion } from "@/lib/types";
 // entry here (+ one member of the `CategoricalFlag` union in lib/types.ts) —
 // no changes to the engine or the wizard.
 //
-// The wizard only shows a question when a not-yet-ruled-out program actually
-// requires that flag, so dimensions no current program uses (veteran, student,
-// unemployed, utilityHardship) stay in the catalog but simply don't render.
+// The wizard shows a question when a not-yet-ruled-out program requires that
+// flag, or when it's a population trigger / active-population extra question
+// (see src/data/populations.ts). Dimensions that are neither (e.g. unemployed,
+// utilityHardship) stay in the catalog but simply don't render yet.
 export const FLAG_QUESTIONS: FlagQuestion[] = [
   {
     flag: "age65Plus",
@@ -49,6 +50,11 @@ export const FLAG_QUESTIONS: FlagQuestion[] = [
     flag: "unemployed",
     label: "someone in the household is unemployed",
     question: "Is anyone in your household unemployed?",
+  },
+  {
+    flag: "immigrant",
+    label: "someone in the household is an immigrant or non-citizen",
+    question: "Is anyone in your household an immigrant or non-citizen?",
   },
 ];
 

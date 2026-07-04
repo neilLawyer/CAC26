@@ -9,6 +9,7 @@ import { CONFIDENCE_COLOR, CONFIDENCE_LABEL, CONFIDENCE_ORDER } from "@/componen
 import { ResultCard } from "@/components/results/ResultCard";
 import { ValueEstimate } from "@/components/results/ValueEstimate";
 import { CascadePanel } from "@/components/results/CascadePanel";
+import { PopulationSpotlight } from "@/components/results/PopulationSpotlight";
 
 export function ResultsView() {
   const { household, reset } = useHousehold();
@@ -47,6 +48,8 @@ export function ResultsView() {
       </div>
 
       <ValueEstimate min={value.min} max={value.max} />
+
+      <PopulationSpotlight flags={household.flags} results={results} />
 
       <CascadePanel cascades={cascades} />
 

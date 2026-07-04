@@ -10,7 +10,8 @@ export type CategoricalFlag =
   | "schoolAgeChild"
   | "utilityHardship"
   | "student"
-  | "unemployed";
+  | "unemployed"
+  | "immigrant";
 
 export interface Household {
   state: string; // e.g. "CA"

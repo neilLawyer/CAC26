@@ -1,33 +1,6 @@
 // Home-page marketing content, kept as data. Icons are referenced by key
-// (see components/ui/icons.tsx).
-
-export interface Audience {
-  title: string;
-  body: string;
-  iconKey: string;
-  color: string;
-}
-
-export const AUDIENCES: Audience[] = [
-  {
-    title: "Families",
-    body: "New baby, lost a job, or just stretched thin — see what's there for your household.",
-    iconKey: "families",
-    color: "#2dd4bf",
-  },
-  {
-    title: "Seniors & people with disabilities",
-    body: "PAAD, SSI, Senior Freeze — the programs built specifically around these needs.",
-    iconKey: "seniors",
-    color: "#22d3ee",
-  },
-  {
-    title: "Everyone in between",
-    body: "Students, workers between jobs, anyone unsure what they qualify for.",
-    iconKey: "everyone",
-    color: "#a78bfa",
-  },
-];
+// (see components/ui/icons.tsx). The "Built for real people" section is now
+// driven by src/data/populations.ts (see components/marketing/PopulationGrid).
 
 export interface AccessibilityItem {
   title: string;

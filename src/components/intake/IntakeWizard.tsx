@@ -6,6 +6,7 @@ import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState, STATES } from "@/data/states";
 import { evaluateAll, stillPossibleCount } from "@/lib/engine";
 import { FLAG_QUESTIONS, INCOME_BUCKETS, STEP_LABELS } from "@/data/questions";
+import { activePopulations, POPULATION_TRIGGER_FLAGS } from "@/data/populations";
 import { EligibilityMeter } from "@/components/intake/EligibilityMeter";
 import { IntakeSidebar } from "@/components/intake/IntakeSidebar";
 import { QuestionStep } from "@/components/intake/QuestionStep";
@@ -26,8 +27,9 @@ export function IntakeWizard() {
   const results = useMemo(() => evaluateAll(programs, household), [programs, household]);
   const possible = stillPossibleCount(results);
 
-  // Adaptive pruning: only ask about flags that still matter for at least one
-  // program that hasn't already been ruled out.
+  // Which flag questions to ask: program-required flags for programs not yet
+  // ruled out, plus population triggers (so users can self-identify), plus the
+  // extra questions for any population they're already in.
   const relevantFlags = useMemo(() => {
     const flagSet = new Set<CategoricalFlag>();
     for (const r of results) {
@@ -36,8 +38,12 @@ export function IntakeWizard() {
         flagSet.add(req.type);
       }
     }
+    for (const f of POPULATION_TRIGGER_FLAGS) flagSet.add(f);
+    for (const p of activePopulations(household.flags)) {
+      for (const f of p.extraQuestions) flagSet.add(f);
+    }
     return FLAG_QUESTIONS.filter((q) => flagSet.has(q.flag));
-  }, [results]);
+  }, [results, household.flags]);
 
   const currentStep = STEPS[step];
 

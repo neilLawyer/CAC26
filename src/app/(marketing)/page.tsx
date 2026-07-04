@@ -1,6 +1,6 @@
 import { UseCaseSlideshow } from "@/components/marketing/UseCaseSlideshow";
 import { Hero } from "@/components/marketing/Hero";
-import { AudienceGrid } from "@/components/marketing/AudienceGrid";
+import { PopulationGrid } from "@/components/marketing/PopulationGrid";
 import { CategoryGrid } from "@/components/marketing/CategoryGrid";
 import { AccessibilityGrid } from "@/components/marketing/AccessibilityGrid";
 import { HowItWorksSteps } from "@/components/marketing/HowItWorksSteps";
@@ -17,7 +17,7 @@ export default function Home() {
         <UseCaseSlideshow />
       </section>
 
-      <AudienceGrid />
+      <PopulationGrid />
       <CategoryGrid />
       <AccessibilityGrid />
       <HowItWorksSteps />
