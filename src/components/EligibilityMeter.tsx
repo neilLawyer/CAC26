@@ -1,3 +1,5 @@
+import { Meter } from "@/components/ui/Meter";
+
 interface EligibilityMeterProps {
   possible: number;
   total: number;
@@ -13,12 +15,7 @@ export function EligibilityMeter({ possible, total }: EligibilityMeterProps) {
           {possible} of {total} still possible
         </span>
       </div>
-      <div className="h-1.5 rounded-full bg-card-border overflow-hidden">
-        <div
-          className="h-full bg-gradient-to-r from-accent to-accent-2 transition-all duration-300"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
+      <Meter pct={pct} />
     </div>
   );
 }

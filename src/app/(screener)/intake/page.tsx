@@ -7,6 +7,8 @@ import { EMPTY_PROGRAMS, getState, STATES } from "@/data/states";
 import { evaluateAll, stillPossibleCount } from "@/lib/engine";
 import { EligibilityMeter } from "@/components/EligibilityMeter";
 import { IntakeSidebar } from "@/components/IntakeSidebar";
+import { Button } from "@/components/ui/Button";
+import { Choice } from "@/components/ui/Choice";
 import type { CategoricalFlag } from "@/lib/types";
 
 const INCOME_BUCKETS: { label: string; min: number; max: number }[] = [
@@ -113,20 +115,16 @@ export default function IntakePage() {
             <h2 className="text-2xl font-semibold">How many people are in your household?</h2>
             <div className="grid grid-cols-4 gap-3">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                <button
+                <Choice
                   key={n}
+                  active={household.householdSize === n}
                   onClick={() => {
                     setHouseholdSize(n);
                     next();
                   }}
-                  className={`rounded-xl border px-4 py-3 transition-colors ${
-                    household.householdSize === n
-                      ? "border-accent bg-accent/10 text-accent"
-                      : "border-card-border bg-card hover:border-accent/60"
-                  }`}
                 >
                   {n === 8 ? "8+" : n}
-                </button>
+                </Choice>
               ))}
             </div>
             <button onClick={back} className="text-sm text-muted hover:text-accent transition-colors">
@@ -143,20 +141,17 @@ export default function IntakePage() {
             <p className="text-sm text-muted">A range is fine — exact numbers aren&apos;t needed.</p>
             <div className="grid gap-2">
               {INCOME_BUCKETS.map((b) => (
-                <button
+                <Choice
                   key={b.label}
+                  active={household.monthlyIncomeMin === b.min}
                   onClick={() => {
                     setIncomeRange(b.min, b.max);
                     next();
                   }}
-                  className={`rounded-xl border px-4 py-3 text-left transition-colors ${
-                    household.monthlyIncomeMin === b.min
-                      ? "border-accent bg-accent/10 text-accent"
-                      : "border-card-border bg-card hover:border-accent/60"
-                  }`}
+                  className="text-left"
                 >
                   {b.label}
-                </button>
+                </Choice>
               ))}
             </div>
             <button onClick={back} className="text-sm text-muted hover:text-accent transition-colors">
@@ -208,12 +203,9 @@ export default function IntakePage() {
               <button onClick={back} className="text-sm text-muted hover:text-accent transition-colors">
                 ← Back
               </button>
-              <button
-                onClick={next}
-                className="rounded-full bg-accent text-[#04201c] font-semibold px-6 py-2 hover:brightness-110 transition-all"
-              >
+              <Button onClick={next} className="px-6 py-2">
                 Continue
-              </button>
+              </Button>
             </div>
           </section>
         )}
@@ -224,12 +216,9 @@ export default function IntakePage() {
             <p className="text-muted">
               {possible} of {programs.length} programs still look possible based on your answers.
             </p>
-            <button
-              onClick={() => router.push("/results")}
-              className="rounded-full bg-accent text-[#04201c] font-semibold px-8 py-3 hover:brightness-110 transition-all"
-            >
+            <Button onClick={() => router.push("/results")} className="px-8 py-3">
               See my results
-            </button>
+            </Button>
             <div>
               <button onClick={back} className="text-sm text-muted hover:text-accent transition-colors">
                 ← Back

@@ -5,6 +5,10 @@ import { useMemo } from "react";
 import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { cascadeSuggestions, estimatedAnnualValue, evaluateAll } from "@/lib/engine";
+import { moneyRange } from "@/lib/format";
+import { Badge } from "@/components/ui/Badge";
+import { ButtonLink } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import type { Confidence, EligibilityResult } from "@/lib/types";
 
 const CONFIDENCE_LABEL: Record<Confidence, string> = {
@@ -27,8 +31,8 @@ function ResultCard({ result }: { result: EligibilityResult }) {
   const { program, confidence, reasons, counterfactual } = result;
   const color = CONFIDENCE_COLOR[confidence];
   return (
-    <div
-      className="hover-lift rounded-xl border border-card-border bg-card p-5 space-y-3 border-l-[3px]"
+    <Card
+      className="hover-lift p-5 space-y-3 border-l-[3px]"
       style={{ borderLeftColor: color }}
     >
       <div className="flex items-start justify-between gap-3">
@@ -36,12 +40,9 @@ function ResultCard({ result }: { result: EligibilityResult }) {
           <h3 className="font-semibold">{program.name}</h3>
           <p className="text-sm text-muted">{program.agencyName}</p>
         </div>
-        <span
-          className="label-mono shrink-0 rounded-full px-3 py-1 text-[10px]"
-          style={{ color, backgroundColor: `${color}1f` }}
-        >
+        <Badge color={color} className="label-mono shrink-0 px-3 py-1 text-[10px]">
           {CONFIDENCE_LABEL[confidence]}
-        </span>
+        </Badge>
       </div>
       <p className="text-sm">{program.summary}</p>
       <ul className="text-sm text-muted list-disc list-inside space-y-1">
@@ -61,15 +62,10 @@ function ResultCard({ result }: { result: EligibilityResult }) {
           Source
         </a>
       </div>
-      <a
-        href={program.applyUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block rounded-full bg-accent text-[#04201c] text-sm font-semibold px-4 py-2 hover:brightness-110 transition-all"
-      >
+      <ButtonLink href={program.applyUrl} external className="inline-block text-sm px-4 py-2">
         Verify &amp; apply with {program.agencyName} →
-      </a>
-    </div>
+      </ButtonLink>
+    </Card>
   );
 }
 
@@ -112,9 +108,7 @@ export default function ResultsPage() {
       {(value.min > 0 || value.max > 0) && (
         <div className="rounded-xl border border-accent/30 bg-accent/10 p-5">
           <p className="label-mono text-[10px] text-accent">est. value you may be leaving unclaimed</p>
-          <p className="text-2xl font-bold mt-1">
-            ${value.min.toLocaleString()} – ${value.max.toLocaleString()} / year
-          </p>
+          <p className="text-2xl font-bold mt-1">{moneyRange(value.min, value.max)} / year</p>
           <p className="text-xs text-muted mt-1">
             A rough estimate across programs you may qualify for — not a guarantee.
           </p>
@@ -122,7 +116,7 @@ export default function ResultsPage() {
       )}
 
       {cascades.length > 0 && (
-        <div className="rounded-xl border border-card-border bg-card p-5 space-y-1">
+        <Card className="p-5 space-y-1">
           <p className="text-sm font-medium">Because you may qualify for one program, also check:</p>
           <ul className="text-sm text-muted list-disc list-inside">
             {[...new Map(cascades.map((c) => [c.suggested.id, c])).values()].map((c) => (
@@ -132,7 +126,7 @@ export default function ResultsPage() {
               </li>
             ))}
           </ul>
-        </div>
+        </Card>
       )}
 
       {grouped.map((g) => (

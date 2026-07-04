@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { evaluateAll, estimatedAnnualValueMidpoint } from "@/lib/engine";
+import { money } from "@/lib/format";
+import { Card } from "@/components/ui/Card";
 import type { Household } from "@/lib/types";
 
 const STEP = 100;
@@ -92,10 +94,10 @@ export default function CliffSimulatorPage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-card-border bg-card p-5 space-y-3">
+        <Card className="p-5 space-y-3">
           <label className="block text-sm font-medium">
             If your monthly income went up by{" "}
-            <span className="text-accent font-semibold">${increase.toLocaleString()}</span>...
+            <span className="text-accent font-semibold">{money(increase)}</span>...
           </label>
           <input
             type="range"
@@ -108,21 +110,21 @@ export default function CliffSimulatorPage() {
           />
           <div className="flex justify-between text-xs text-muted">
             <span>+$0</span>
-            <span>+${MAX_INCREASE.toLocaleString()}</span>
+            <span>+{money(MAX_INCREASE)}</span>
           </div>
-        </div>
+        </Card>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-xl border border-card-border bg-card p-4">
+          <Card className="p-4">
             <p className="label-mono text-[10px] text-muted">now</p>
-            <p className="font-semibold mt-1">${baselineIncome.toLocaleString()}/mo income</p>
-            <p className="text-sm text-muted">~${baselineValue.toLocaleString()}/yr est. benefits</p>
-          </div>
-          <div className="rounded-xl border border-card-border bg-card p-4">
+            <p className="font-semibold mt-1">{money(baselineIncome)}/mo income</p>
+            <p className="text-sm text-muted">~{money(baselineValue)}/yr est. benefits</p>
+          </Card>
+          <Card className="p-4">
             <p className="label-mono text-[10px] text-muted">if income rises</p>
-            <p className="font-semibold mt-1">${hypotheticalIncome.toLocaleString()}/mo income</p>
-            <p className="text-sm text-muted">~${hypotheticalValue.toLocaleString()}/yr est. benefits</p>
-          </div>
+            <p className="font-semibold mt-1">{money(hypotheticalIncome)}/mo income</p>
+            <p className="text-sm text-muted">~{money(hypotheticalValue)}/yr est. benefits</p>
+          </Card>
         </div>
 
         <div
@@ -138,11 +140,11 @@ export default function CliffSimulatorPage() {
             style={{ color: netEffect >= 0 ? "#2dd4bf" : "#f87171" }}
           >
             {netEffect >= 0 ? "+" : ""}
-            ${netEffect.toLocaleString()}
+            {money(netEffect)}
           </p>
           <p className="text-xs text-muted mt-1">
-            Extra pay (${extraPay.toLocaleString()}/yr) {benefitChange <= 0 ? "minus" : "plus"} the
-            change in estimated benefits (${Math.abs(benefitChange).toLocaleString()}/yr{" "}
+            Extra pay ({money(extraPay)}/yr) {benefitChange <= 0 ? "minus" : "plus"} the
+            change in estimated benefits ({money(Math.abs(benefitChange))}/yr{" "}
             {benefitChange <= 0 ? "lost" : "gained"}).
           </p>
         </div>
@@ -150,7 +152,7 @@ export default function CliffSimulatorPage() {
         {safeRaise !== undefined && (
           <div className="rounded-xl border border-accent/30 bg-accent/10 p-5">
             <p className="label-mono text-[10px] text-accent">roughly how much more you could earn safely</p>
-            <p className="text-xl font-bold mt-1">up to about ${safeRaise.toLocaleString()}/mo more</p>
+            <p className="text-xl font-bold mt-1">up to about {money(safeRaise)}/mo more</p>
             <p className="text-xs text-muted mt-1">
               Before the estimated loss in benefits outweighs the extra pay, based on the programs
               in your results.

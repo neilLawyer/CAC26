@@ -1,4 +1,5 @@
 import { monthlyFPL } from "@/data/fpl";
+import { money } from "@/lib/format";
 import type {
   CategoricalFlag,
   Confidence,
@@ -71,23 +72,23 @@ function testIncome(
   if (upper === "fail") {
     return {
       status: "fail",
-      reason: `Your household income looks like it's above the limit for this program (about $${Math.round(
+      reason: `Your household income looks like it's above the limit for this program (about ${money(
         maxMonthly!
-      ).toLocaleString()}/month for a household of ${household.householdSize}).`,
-      counterfactual: `If your monthly household income were below about $${Math.round(
+      )}/month for a household of ${household.householdSize}).`,
+      counterfactual: `If your monthly household income were below about ${money(
         maxMonthly!
-      ).toLocaleString()}, you'd likely qualify on income.`,
+      )}, you'd likely qualify on income.`,
     };
   }
   if (lower === "fail") {
     return {
       status: "fail",
-      reason: `This program has an income floor of about $${Math.round(
+      reason: `This program has an income floor of about ${money(
         minMonthly!
-      ).toLocaleString()}/month, and your income looks like it's below that.`,
-      counterfactual: `This one kicks in once household income is above about $${Math.round(
+      )}/month, and your income looks like it's below that.`,
+      counterfactual: `This one kicks in once household income is above about ${money(
         minMonthly!
-      ).toLocaleString()}/month.`,
+      )}/month.`,
     };
   }
   if (upper === "borderline" || lower === "borderline") {

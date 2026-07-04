@@ -1,6 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { UseCaseSlideshow } from "@/components/UseCaseSlideshow";
+import { Badge } from "@/components/ui/Badge";
+import { BrowserFrame } from "@/components/ui/BrowserFrame";
+import { ButtonLink } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Icon } from "@/components/ui/Icon";
 
 const TRUST_PILLS = ["No login, ever", "Not a government site", "Free forever", "Open data only"];
 
@@ -101,9 +106,9 @@ export default function Home() {
 
         <div className="relative max-w-6xl mx-auto px-6 pt-20 pb-24 grid lg:grid-cols-2 gap-14 items-center">
           <div>
-            <span className="label-mono text-[11px] text-accent border border-accent/30 rounded-full px-3 py-1">
+            <Badge className="label-mono text-[11px] text-accent border border-accent/30 px-3 py-1">
               Now open in New Jersey
-            </span>
+            </Badge>
             <h1 className="mt-6 text-5xl sm:text-6xl font-bold leading-[1.05] tracking-tight">
               Open every door<br />
               you already <span className="text-accent">qualify for.</span>
@@ -114,12 +119,9 @@ export default function Home() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Link
-                href="/intake"
-                className="rounded-full bg-accent text-[#04201c] font-semibold px-7 py-3 hover:brightness-110 transition-all"
-              >
+              <ButtonLink href="/intake" className="px-7 py-3">
                 Check my eligibility
-              </Link>
+              </ButtonLink>
               <Link href="#how-it-works" className="text-sm text-foreground/80 hover:text-accent transition-colors">
                 See how it works →
               </Link>
@@ -127,25 +129,22 @@ export default function Home() {
 
             <div className="mt-10 flex flex-wrap gap-2">
               {TRUST_PILLS.map((p) => (
-                <span
+                <Badge
                   key={p}
-                  className="label-mono text-[10px] text-muted border border-card-border rounded-full px-3 py-1.5"
+                  className="label-mono text-[10px] text-muted border border-card-border px-3 py-1.5"
                 >
                   {p}
-                </span>
+                </Badge>
               ))}
             </div>
           </div>
 
           {/* Product mockup card */}
           <div className="relative">
-            <div className="hover-lift rounded-2xl border border-card-border bg-card shadow-2xl shadow-black/40 overflow-hidden rotate-1 hover:rotate-0">
-              <div className="flex items-center gap-1.5 px-4 py-3 border-b border-card-border">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-400/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-accent/70" />
-                <span className="label-mono text-[10px] text-muted ml-3">your results</span>
-              </div>
+            <BrowserFrame
+              label="your results"
+              className="hover-lift shadow-2xl shadow-black/40 rotate-1 hover:rotate-0"
+            >
               <div className="p-5 space-y-3">
                 {[
                   { name: "NJ SNAP", conf: "Likely eligible", color: "#2dd4bf" },
@@ -154,12 +153,9 @@ export default function Home() {
                 ].map((r) => (
                   <div key={r.name} className="rounded-lg border border-card-border bg-background/60 p-3 flex items-center justify-between">
                     <span className="text-sm font-medium">{r.name}</span>
-                    <span
-                      className="label-mono text-[9px] rounded-full px-2 py-1"
-                      style={{ color: r.color, backgroundColor: `${r.color}22` }}
-                    >
+                    <Badge color={r.color} bgAlpha="22" className="label-mono text-[9px] px-2 py-1">
                       {r.conf}
-                    </span>
+                    </Badge>
                   </div>
                 ))}
                 <div className="rounded-lg bg-accent/10 border border-accent/30 p-3">
@@ -167,7 +163,7 @@ export default function Home() {
                   <p className="text-xl font-bold mt-1">$4,200 – $9,600 / yr</p>
                 </div>
               </div>
-            </div>
+            </BrowserFrame>
           </div>
         </div>
       </section>
@@ -234,20 +230,17 @@ export default function Home() {
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10">
             {CATEGORIES.map((c) => (
-              <div
-                key={c.label}
-                className="hover-lift rounded-xl border border-card-border bg-card p-4 flex flex-col gap-3"
-              >
+              <Card key={c.label} className="hover-lift p-4 flex flex-col gap-3">
                 <span
                   className="w-9 h-9 rounded-lg flex items-center justify-center"
                   style={{ backgroundColor: `${c.color}1f` }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c.color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <Icon size={18} stroke={c.color}>
                     {c.icon}
-                  </svg>
+                  </Icon>
                 </span>
                 <span className="text-sm font-medium">{c.label}</span>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -261,22 +254,13 @@ export default function Home() {
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
           {ACCESSIBILITY_ITEMS.map((a) => (
-            <div key={a.title} className="hover-lift rounded-xl border border-card-border bg-card p-5">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--accent)"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
+            <Card key={a.title} className="hover-lift p-5">
+              <Icon size={20} stroke="var(--accent)">
                 {a.icon}
-              </svg>
+              </Icon>
               <h3 className="font-semibold text-sm mt-3">{a.title}</h3>
               <p className="text-sm text-muted mt-1">{a.body}</p>
-            </div>
+            </Card>
           ))}
         </div>
       </section>
@@ -288,13 +272,10 @@ export default function Home() {
           Here&apos;s the actual app — not a mockup.
         </p>
 
-        <div className="mt-8 max-w-2xl mx-auto rounded-2xl border border-card-border bg-card overflow-hidden shadow-2xl shadow-black/30">
-          <div className="flex items-center gap-1.5 px-4 py-3 border-b border-card-border">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-400/70" />
-            <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/70" />
-            <span className="w-2.5 h-2.5 rounded-full bg-accent/70" />
-            <span className="label-mono text-[10px] text-muted ml-3">opendoor-nj.vercel.app</span>
-          </div>
+        <BrowserFrame
+          label="opendoor-nj.vercel.app"
+          className="mt-8 max-w-2xl mx-auto shadow-2xl shadow-black/30"
+        >
           <video
             src="/demo.webm"
             autoPlay
@@ -304,7 +285,7 @@ export default function Home() {
             aria-label="Demo of filling out the OpenDoor questionnaire and viewing results"
             className="w-full block"
           />
-        </div>
+        </BrowserFrame>
 
         <div className="grid sm:grid-cols-3 gap-5 mt-10">
           {STEPS.map((s) => (
@@ -329,12 +310,9 @@ export default function Home() {
             You may be leaving money on the table.
           </h2>
           <p className="mt-4 text-muted">Takes about three minutes. No account needed.</p>
-          <Link
-            href="/intake"
-            className="inline-block mt-8 rounded-full bg-accent text-[#04201c] font-semibold px-8 py-3.5 hover:brightness-110 transition-all"
-          >
+          <ButtonLink href="/intake" className="inline-block mt-8 px-8 py-3.5">
             Check my eligibility
-          </Link>
+          </ButtonLink>
         </div>
       </section>
 
