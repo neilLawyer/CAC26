@@ -18,7 +18,7 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "California Department of Social Services",
     applyUrl: "https://www.getcalfresh.org/",
     sourceUrl: "https://www.cdss.ca.gov/calfresh",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -42,11 +42,16 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "California Dept. of Health Care Services",
     applyUrl: "https://www.coveredca.com/",
     sourceUrl: "https://www.dhcs.ca.gov/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
+      // 138% FPL is the MAGI adult-expansion limit; kids qualify to ~266% FPL and
+      // pregnancy coverage (via MCAP) extends to ~322% FPL — raise the ceiling
+      // instead of screening those households out at the adult rate.
       maxIncomePctFPL: 138,
+      raisedIncomeLimitFlags: ["pregnantOrChildUnder5", "schoolAgeChild"],
+      raisedMaxIncomePctFPL: 322,
       categoricalRequirements: [],
       requireAllCategorical: false,
     },
@@ -66,11 +71,23 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "CA Dept. of Community Services & Development",
     applyUrl: "https://www.csd.ca.gov/pages/liheap",
     sourceUrl: "https://www.csd.ca.gov/pages/liheap",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
-      maxIncomePctFPL: 200,
+      // CA tests LIHEAP against the greater of 200% FPL or 60% State Median Income —
+      // SMI is the binding (higher) limit in practice, so model that directly.
+      maxIncomeSizeTable: {
+        1: 3331.66,
+        2: 4356.83,
+        3: 5382.0,
+        4: 6407.16,
+        5: 7432.25,
+        6: 8457.41,
+        7: 8649.66,
+        8: 8841.83,
+      },
+      sizeTableExtraPerPerson: 192.21,
       categoricalRequirements: [],
       requireAllCategorical: false,
     },
@@ -91,7 +108,7 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "California WIC Program (CDPH)",
     applyUrl: "https://www.myfamily.wic.ca.gov/",
     sourceUrl: "https://www.myfamily.wic.ca.gov/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -115,11 +132,23 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "California Department of Social Services",
     applyUrl: "https://benefitscal.com/",
     sourceUrl: "https://www.cdss.ca.gov/calworks",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
-      incomeBasis: "net",
+      incomeBasis: "gross",
       incomePeriod: "monthly",
-      maxIncomePctFPL: 60,
+      // CalWORKs isn't a flat % of FPL — entry uses the Minimum Basic Standard of
+      // Adequate Care (MBSAC), a gross-income table by family size (Region 1, FY25-26).
+      maxIncomeSizeTable: {
+        1: 930,
+        2: 1526,
+        3: 1892,
+        4: 2244,
+        5: 2561,
+        6: 2880,
+        7: 3166,
+        8: 3445,
+      },
+      sizeTableExtraPerPerson: 279,
       categoricalRequirements: [
         { type: "schoolAgeChild" },
         { type: "pregnantOrChildUnder5" },
@@ -143,7 +172,7 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "California Department of Education",
     applyUrl: "https://www.cde.ca.gov/ls/nu/sn/universalmealsfaq.asp",
     sourceUrl: "https://www.cde.ca.gov/ls/nu/sn/universalmealsfaq.asp",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -167,11 +196,13 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "Social Security Administration + CA SSP",
     applyUrl: "https://www.ssa.gov/benefits/ssi/",
     sourceUrl: "https://www.ssa.gov/benefits/ssi/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "net",
       incomePeriod: "monthly",
-      maxIncomeFlatDollar: 1300,
+      // Combined federal SSI + CA state supplement (SSP) max for an individual living
+      // independently, effective 1/1/2026.
+      maxIncomeFlatDollar: 1234,
       assetLimitDollar: 2000,
       categoricalRequirements: [{ type: "age65Plus" }, { type: "disabled" }],
       requireAllCategorical: false,
@@ -193,11 +224,12 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "California Department of Social Services",
     applyUrl: "https://www.cdss.ca.gov/capi",
     sourceUrl: "https://www.cdss.ca.gov/capi",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "net",
       incomePeriod: "monthly",
-      maxIncomeFlatDollar: 1300,
+      // CAPI is designed to mirror SSI/SSP payment standards exactly.
+      maxIncomeFlatDollar: 1234,
       assetLimitDollar: 2000,
       categoricalRequirements: [{ type: "age65Plus" }, { type: "disabled" }],
       requireAllCategorical: false,
@@ -218,7 +250,7 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "California Public Utilities Commission",
     applyUrl: "https://www.californialifeline.com/",
     sourceUrl: "https://www.californialifeline.com/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -243,11 +275,13 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "California Franchise Tax Board",
     applyUrl: "https://www.ftb.ca.gov/file/personal/credits/california-earned-income-tax-credit.html",
     sourceUrl: "https://www.ftb.ca.gov/file/personal/credits/california-earned-income-tax-credit.html",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "annual",
-      maxIncomeFlatDollar: 31000,
+      // 2025 tax year — unlike federal/NJ EITC, CalEITC's earned-income ceiling
+      // doesn't vary by number of qualifying children (only the credit amount does).
+      maxIncomeFlatDollar: 32900,
       categoricalRequirements: [],
       requireAllCategorical: false,
     },
@@ -293,11 +327,11 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "California State Controller's Office",
     applyUrl: "https://www.sco.ca.gov/ardtax_prop_tax_postponement.html",
     sourceUrl: "https://www.sco.ca.gov/ardtax_prop_tax_postponement.html",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "annual",
-      maxIncomeFlatDollar: 53574,
+      maxIncomeFlatDollar: 55181,
       categoricalRequirements: [{ type: "age65Plus" }, { type: "disabled" }],
       requireAllCategorical: false,
     },
@@ -318,10 +352,13 @@ export const CA_PROGRAMS: Program[] = [
     agencyName: "Covered California",
     applyUrl: "https://www.coveredca.com/",
     sourceUrl: "https://www.coveredca.com/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "annual",
+      // Federal enhanced subsidies (ARPA/IRA, which removed the 400% FPL cliff)
+      // expired 12/31/2025 and the hard cutoff returned for 2026. CA's own state
+      // subsidy only reaches ~150-165% FPL, so it doesn't extend this ceiling further.
       minIncomePctFPL: 138,
       maxIncomePctFPL: 400,
       categoricalRequirements: [],

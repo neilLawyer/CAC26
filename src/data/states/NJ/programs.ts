@@ -16,7 +16,7 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "NJ Dept. of Human Services, Division of Family Development",
     applyUrl: "https://njhelps.org/",
     sourceUrl: "https://www.nj.gov/humanservices/dfd/programs/njsnap/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -40,11 +40,16 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "NJ Dept. of Human Services",
     applyUrl: "https://www.njfamilycare.org/",
     sourceUrl: "https://www.njfamilycare.org/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
+      // 138% FPL is the ACA expansion-adult limit; kids and pregnant applicants
+      // qualify at much higher tiered limits (up to ~355% FPL for kids) — raise
+      // the ceiling rather than screening those households out at the adult rate.
       maxIncomePctFPL: 138,
+      raisedIncomeLimitFlags: ["pregnantOrChildUnder5", "schoolAgeChild"],
+      raisedMaxIncomePctFPL: 355,
       categoricalRequirements: [],
       requireAllCategorical: false,
     },
@@ -64,11 +69,23 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "NJ Dept. of Community Affairs",
     applyUrl: "https://www.nj.gov/dca/dhcr/programs/liheap/",
     sourceUrl: "https://www.nj.gov/dca/dhcr/programs/liheap/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
-      maxIncomePctFPL: 200,
+      // NJ tests LIHEAP against 60% of State Median Income, not a % of FPL — the
+      // real ceiling is much higher than FPL-based programs. FY2026 table, NJ DCA.
+      maxIncomeSizeTable: {
+        1: 4167,
+        2: 5449,
+        3: 6732,
+        4: 8014,
+        5: 9296,
+        6: 10578,
+        7: 10819,
+        8: 11059,
+      },
+      sizeTableExtraPerPerson: 241,
       categoricalRequirements: [],
       requireAllCategorical: false,
     },
@@ -88,7 +105,7 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "NJ Dept. of Health",
     applyUrl: "https://www.nj.gov/health/fhs/wic/",
     sourceUrl: "https://www.nj.gov/health/fhs/wic/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -112,11 +129,23 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "County Board of Social Services",
     applyUrl: "https://njhelps.org/",
     sourceUrl: "https://www.nj.gov/humanservices/dfd/programs/wfnj/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "net",
       incomePeriod: "monthly",
-      maxIncomePctFPL: 60,
+      // WFNJ isn't tested against FPL at all — N.J.A.C. 10:90-3.3 sets a fixed,
+      // rarely-updated "Schedule I" needs table by household size.
+      maxIncomeSizeTable: {
+        1: 321,
+        2: 638,
+        3: 839,
+        4: 966,
+        5: 1092,
+        6: 1221,
+        7: 1341,
+        8: 1442,
+      },
+      sizeTableExtraPerPerson: 99,
       categoricalRequirements: [
         { type: "schoolAgeChild" },
         { type: "pregnantOrChildUnder5" },
@@ -162,11 +191,12 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "Social Security Administration",
     applyUrl: "https://www.ssa.gov/benefits/ssi/",
     sourceUrl: "https://www.ssa.gov/benefits/ssi/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "net",
       incomePeriod: "monthly",
-      maxIncomeFlatDollar: 1300,
+      // 2026 Federal Benefit Rate (NJ has no state SSI supplement, unlike CA's SSP).
+      maxIncomeFlatDollar: 994,
       assetLimitDollar: 2000,
       categoricalRequirements: [{ type: "age65Plus" }, { type: "disabled" }],
       requireAllCategorical: false,
@@ -187,11 +217,12 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "NJ Dept. of Human Services, Division of Aging Services",
     applyUrl: "https://www.nj.gov/humanservices/doas/services/paad/",
     sourceUrl: "https://www.nj.gov/humanservices/doas/services/paad/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "annual",
-      maxIncomeFlatDollar: 52142,
+      // 2026 single-filer limit; married limit is $62,390 (not modeled — this app doesn't track marital status).
+      maxIncomeFlatDollar: 54943,
       categoricalRequirements: [{ type: "age65Plus" }, { type: "disabled" }],
       requireAllCategorical: false,
     },
@@ -211,11 +242,11 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "NJ Board of Public Utilities",
     applyUrl: "https://www.nj.gov/dca/dhcr/programs/usf/",
     sourceUrl: "https://www.nj.gov/dca/dhcr/programs/usf/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
-      maxIncomePctFPL: 150,
+      maxIncomePctFPL: 175,
       categoricalRequirements: [],
       requireAllCategorical: false,
     },
@@ -235,11 +266,17 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "NJ Division of Taxation",
     applyUrl: "https://www.nj.gov/treasury/taxation/eitc/index.shtml",
     sourceUrl: "https://www.nj.gov/treasury/taxation/eitc/index.shtml",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "annual",
-      maxIncomeFlatDollar: 57000,
+      // NJEITC mirrors federal EITC limits, which scale steeply with qualifying children
+      // (2025, single filer: $19,104 with none up to $61,555 with 3+) — a flat number
+      // badly overstates the limit for childless filers, so use the "no kids" floor
+      // and raise it for households with a child-related flag.
+      maxIncomeFlatDollar: 19104,
+      raisedIncomeLimitFlags: ["pregnantOrChildUnder5", "schoolAgeChild"],
+      raisedMaxIncomeFlatDollar: 61555,
       categoricalRequirements: [],
       requireAllCategorical: false,
     },
@@ -283,11 +320,11 @@ export const NJ_PROGRAMS: Program[] = [
     agencyName: "NJ Division of Taxation",
     applyUrl: "https://www.nj.gov/treasury/taxation/ptr/index.shtml",
     sourceUrl: "https://www.nj.gov/treasury/taxation/ptr/index.shtml",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "annual",
-      maxIncomeFlatDollar: 150000,
+      maxIncomeFlatDollar: 172475,
       categoricalRequirements: [{ type: "age65Plus" }, { type: "disabled" }],
       requireAllCategorical: false,
     },
@@ -303,16 +340,18 @@ export const NJ_PROGRAMS: Program[] = [
     shortName: "Get Covered NJ",
     state: "NJ",
     category: "health",
-    summary: "Lowers your monthly health insurance premium if you buy a plan through New Jersey's own marketplace and earn too much for NJ FamilyCare.",
+    summary: "Lowers your monthly health insurance premium if you buy a plan through New Jersey's own marketplace and earn too much for NJ FamilyCare. New Jersey's own subsidy (NJHPS) extends help up to 600% of the poverty level, well past the federal cutoff.",
     agencyName: "Get Covered New Jersey",
     applyUrl: "https://www.getcoverednj.gov/",
     sourceUrl: "https://www.getcoverednj.gov/",
-    lastVerified: "2025-02-01",
+    lastVerified: "2026-07-04",
     rules: {
       incomeBasis: "gross",
       incomePeriod: "annual",
+      // Federal subsidies hard-cut at 400% FPL again in 2026 (the ARPA/IRA cliff-removal
+      // expired 12/31/2025), but NJ's own NJHPS state subsidy fills the gap up to 600% FPL.
       minIncomePctFPL: 138,
-      maxIncomePctFPL: 400,
+      maxIncomePctFPL: 600,
       categoricalRequirements: [],
       requireAllCategorical: false,
     },

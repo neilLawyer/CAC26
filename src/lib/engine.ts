@@ -18,19 +18,50 @@ const FLAG_LABELS = Object.fromEntries(
   FLAG_QUESTIONS.map((q) => [q.flag, q.label])
 ) as Record<CategoricalFlag, string>;
 
-function monthlyIncomeLimits(rules: ProgramRules, householdSize: number) {
+/** Looks up a size-varying monthly dollar ceiling, extending past the table's largest key. */
+function sizeTableMonthlyLimit(
+  table: Record<number, number>,
+  extraPerPerson: number | undefined,
+  householdSize: number
+): number {
+  const keys = Object.keys(table).map(Number);
+  const maxKey = Math.max(...keys);
+  const size = Math.max(1, Math.round(householdSize));
+  if (size <= maxKey) return table[size] ?? table[maxKey];
+  return table[maxKey] + (extraPerPerson ?? 0) * (size - maxKey);
+}
+
+function monthlyIncomeLimits(rules: ProgramRules, household: Household) {
   let maxMonthly: number | undefined;
   let minMonthly: number | undefined;
+  const householdSize = household.householdSize!;
 
-  if (rules.maxIncomePctFPL !== undefined) {
-    maxMonthly = monthlyFPL(householdSize) * (rules.maxIncomePctFPL / 100);
+  const raised =
+    rules.raisedIncomeLimitFlags?.some((f) => household.flags[f] === true) ?? false;
+  const effectivePctFPL = raised && rules.raisedMaxIncomePctFPL !== undefined
+    ? rules.raisedMaxIncomePctFPL
+    : rules.maxIncomePctFPL;
+  const effectiveFlatDollar = raised && rules.raisedMaxIncomeFlatDollar !== undefined
+    ? rules.raisedMaxIncomeFlatDollar
+    : rules.maxIncomeFlatDollar;
+
+  if (effectivePctFPL !== undefined) {
+    maxMonthly = monthlyFPL(householdSize) * (effectivePctFPL / 100);
   }
   if (rules.minIncomePctFPL !== undefined) {
     minMonthly = monthlyFPL(householdSize) * (rules.minIncomePctFPL / 100);
   }
-  if (rules.maxIncomeFlatDollar !== undefined) {
+  if (rules.maxIncomeSizeTable !== undefined) {
+    const tableMonthly = sizeTableMonthlyLimit(
+      rules.maxIncomeSizeTable,
+      rules.sizeTableExtraPerPerson,
+      householdSize
+    );
+    maxMonthly = maxMonthly === undefined ? tableMonthly : Math.min(maxMonthly, tableMonthly);
+  }
+  if (effectiveFlatDollar !== undefined) {
     const flatMonthly =
-      rules.incomePeriod === "annual" ? rules.maxIncomeFlatDollar / 12 : rules.maxIncomeFlatDollar;
+      rules.incomePeriod === "annual" ? effectiveFlatDollar / 12 : effectiveFlatDollar;
     maxMonthly = maxMonthly === undefined ? flatMonthly : Math.min(maxMonthly, flatMonthly);
   }
   return { minMonthly, maxMonthly };
@@ -49,7 +80,7 @@ function testIncome(
 
   const incMin = household.monthlyIncomeMin ?? household.monthlyIncomeMax!;
   const incMax = household.monthlyIncomeMax ?? household.monthlyIncomeMin!;
-  const { minMonthly, maxMonthly } = monthlyIncomeLimits(rules, household.householdSize);
+  const { minMonthly, maxMonthly } = monthlyIncomeLimits(rules, household);
 
   let upper: TestStatus = "pass";
   if (maxMonthly !== undefined) {

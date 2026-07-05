@@ -1,10 +1,10 @@
-// 2025 HHS Federal Poverty Guidelines (48 contiguous states + DC), annual dollars.
+// 2026 HHS Federal Poverty Guidelines (48 contiguous states + DC), annual dollars.
 // Source: https://aspe.hhs.gov/poverty-guidelines — verify against the current
 // year before relying on this for a real determination (ground rule: data-freshness).
-export const FPL_LAST_VERIFIED = "2025-02-01";
+export const FPL_LAST_VERIFIED = "2026-01-15";
 
-const FPL_BASE_1_PERSON = 15650;
-const FPL_PER_ADDITIONAL_PERSON = 5500;
+const FPL_BASE_1_PERSON = 15960;
+const FPL_PER_ADDITIONAL_PERSON = 5680;
 
 export function annualFPL(householdSize: number): number {
   const size = Math.max(1, Math.round(householdSize));
