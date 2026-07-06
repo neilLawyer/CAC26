@@ -14,6 +14,11 @@ export interface Population {
   triggerFlags: CategoricalFlag[];
   /** Program ids to feature in the spotlight/landing (only current-state ones resolve). */
   highlightProgramIds: string[];
+  /**
+   * Every program relevant to this population's /intake/[scope] deep-dive page
+   * (superset of the highlights; only ids present in the user's state resolve).
+   */
+  programIds: string[];
   /** Extra intake questions to surface once the population is active. */
   extraQuestions: CategoricalFlag[];
   /** Copy for the /for/[id] landing page (Phase 8). */
@@ -29,6 +34,16 @@ export const POPULATIONS: Population[] = [
     color: "#22d3ee",
     triggerFlags: ["age65Plus"],
     highlightProgramIds: ["nj-ssi", "nj-paad", "nj-senior-freeze", "ca-ssi-ssp", "ca-ptp"],
+    programIds: [
+      "nj-ssi",
+      "nj-paad",
+      "nj-senior-freeze",
+      "ca-ssi-ssp",
+      "ca-ptp",
+      "us-msp",
+      "us-extra-help",
+      "us-ssdi",
+    ],
     extraQuestions: ["disabled"],
     landing: {
       headline: "OpenDoor for seniors",
@@ -52,6 +67,18 @@ export const POPULATIONS: Population[] = [
       "ca-school-meals",
       "ca-medi-cal",
     ],
+    programIds: [
+      "nj-wic",
+      "nj-wfnj",
+      "nj-school-meals",
+      "nj-familycare",
+      "ca-wic",
+      "ca-calworks",
+      "ca-school-meals",
+      "ca-medi-cal",
+      "us-ctc",
+      "us-eitc",
+    ],
     extraQuestions: [],
     landing: {
       headline: "OpenDoor for families",
@@ -65,7 +92,8 @@ export const POPULATIONS: Population[] = [
     iconKey: "veteran",
     color: "#a78bfa",
     triggerFlags: ["veteran"],
-    highlightProgramIds: [],
+    highlightProgramIds: ["us-va-disability", "us-va-pension", "us-gi-bill", "us-va-home-loan"],
+    programIds: ["us-va-disability", "us-va-pension", "us-gi-bill", "us-va-home-loan"],
     extraQuestions: [],
     landing: {
       headline: "OpenDoor for veterans",
@@ -79,7 +107,8 @@ export const POPULATIONS: Population[] = [
     iconKey: "education",
     color: "#f97316",
     triggerFlags: ["student"],
-    highlightProgramIds: [],
+    highlightProgramIds: ["us-pell", "us-scholarships"],
+    programIds: ["us-pell", "us-scholarships", "us-job-training"],
     extraQuestions: [],
     landing: {
       headline: "OpenDoor for students",
@@ -94,6 +123,9 @@ export const POPULATIONS: Population[] = [
     color: "#f9d34c",
     triggerFlags: ["immigrant"],
     highlightProgramIds: ["ca-capi"],
+    // The open-regardless-of-status set: WIC, universal school meals, food banks —
+    // plus CAPI, which exists specifically for immigrants excluded from SSI.
+    programIds: ["ca-capi", "nj-wic", "ca-wic", "nj-school-meals", "ca-school-meals", "us-tefap"],
     extraQuestions: [],
     landing: {
       headline: "OpenDoor for immigrants",

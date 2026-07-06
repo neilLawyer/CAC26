@@ -1,0 +1,230 @@
+"use client";
+
+import { ASSET_BUCKETS, FLAG_QUESTION_MAP, INCOME_BUCKETS } from "@/data/questions";
+import { useHousehold } from "@/lib/household-store";
+import { Choice } from "@/components/ui/Choice";
+import type { CategoricalFlag, Household, QuestionInput, ScreeningQuestion } from "@/lib/types";
+
+// The coverage-driven form generator. Give it ANY scope's questions and it
+// renders the form — there is zero scope- or category-specific branching here,
+// and no question text or eligibility number lives in this file: prompts come
+// from the question records / flag registry, and buckets from the data layer.
+
+function QuestionShell({
+  question,
+  children,
+}: {
+  question: ScreeningQuestion;
+  children: React.ReactNode;
+}) {
+  const registryEntry =
+    question.input.kind === "flag" ? FLAG_QUESTION_MAP[question.input.flag] : undefined;
+  const prompt = question.prompt ?? registryEntry?.question;
+  const help = question.help ?? registryEntry?.help;
+
+  return (
+    <div className="rounded-xl border border-card-border bg-card px-4 py-4 space-y-3">
+      <div className="space-y-1">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-sm font-medium">{prompt}</p>
+          {question.optional && (
+            <span className="label-mono shrink-0 text-[9px] text-accent border border-accent/30 rounded-full px-2 py-0.5">
+              optional
+            </span>
+          )}
+        </div>
+        {question.optional && (
+          <p className="text-xs text-muted italic">Why we ask: {question.optional.whyWeAsk}</p>
+        )}
+        {help && <p className="text-xs text-muted">{help}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function FlagInput({ flag }: { flag: CategoricalFlag }) {
+  const { household, setFlag } = useHousehold();
+  return (
+    <div className="flex gap-2">
+      {([
+        ["Yes", true],
+        ["No", false],
+        ["Skip", undefined],
+      ] as const).map(([label, val]) => (
+        <Choice
+          key={label}
+          active={val !== undefined && household.flags[flag] === val}
+          className="rounded-md px-3 py-1 text-sm"
+          onClick={() => setFlag(flag, val)}
+        >
+          {label}
+        </Choice>
+      ))}
+    </div>
+  );
+}
+
+function FlagGroupInput({
+  options,
+  noneLabel,
+}: {
+  options: { flag: CategoricalFlag; label: string }[];
+  noneLabel?: string;
+}) {
+  const { household, setFlag } = useHousehold();
+  const noneActive = options.every((o) => household.flags[o.flag] === false);
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map((o) => {
+        const active = household.flags[o.flag] === true;
+        return (
+          <Choice
+            key={o.flag}
+            active={active}
+            className="rounded-md px-3 py-1 text-sm"
+            onClick={() => setFlag(o.flag, active ? undefined : true)}
+          >
+            {o.label}
+          </Choice>
+        );
+      })}
+      {noneLabel && (
+        <Choice
+          active={noneActive}
+          className="rounded-md px-3 py-1 text-sm"
+          onClick={() => {
+            for (const o of options) setFlag(o.flag, false);
+          }}
+        >
+          {noneLabel}
+        </Choice>
+      )}
+    </div>
+  );
+}
+
+function SelectInput({
+  field,
+  options,
+}: {
+  field: "employmentStatus" | "housingTenure" | "filingStatus";
+  options: { value: string; label: string }[];
+}) {
+  const { household, patch } = useHousehold();
+  return (
+    <div className="grid gap-2">
+      {options.map((o) => (
+        <Choice
+          key={o.value}
+          active={household[field] === o.value}
+          className="text-left text-sm"
+          onClick={() => patch({ [field]: o.value })}
+        >
+          {o.label}
+        </Choice>
+      ))}
+    </div>
+  );
+}
+
+function CountInput({
+  field,
+  min,
+  max,
+}: {
+  field: "kidsUnder17Count" | "householdSize";
+  min: number;
+  max: number;
+}) {
+  const { household, patch } = useHousehold();
+  const values: number[] = [];
+  for (let n = min; n <= max; n++) values.push(n);
+  return (
+    <div className="flex flex-wrap gap-2">
+      {values.map((n) => (
+        <Choice
+          key={n}
+          active={household[field] === n}
+          className="rounded-md px-3.5 py-1.5 text-sm"
+          onClick={() => patch({ [field]: n })}
+        >
+          {n === max ? `${n}+` : n}
+        </Choice>
+      ))}
+    </div>
+  );
+}
+
+function BucketInput({
+  minField,
+  maxField,
+}: {
+  minField: "monthlyIncomeMin" | "liquidAssetsMin";
+  maxField: "monthlyIncomeMax" | "liquidAssetsMax";
+}) {
+  const { household, patch } = useHousehold();
+  const buckets = minField === "monthlyIncomeMin" ? INCOME_BUCKETS : ASSET_BUCKETS;
+  return (
+    <div className="grid gap-2">
+      {buckets.map((b) => (
+        <Choice
+          key={b.label}
+          active={household[minField] === b.min}
+          className="text-left text-sm"
+          onClick={() => patch({ [minField]: b.min, [maxField]: b.max } as Partial<Household>)}
+        >
+          {b.label}
+        </Choice>
+      ))}
+    </div>
+  );
+}
+
+function QuestionField({ input }: { input: QuestionInput }) {
+  switch (input.kind) {
+    case "flag":
+      return <FlagInput flag={input.flag} />;
+    case "flagGroup":
+      return <FlagGroupInput options={input.options} noneLabel={input.noneLabel} />;
+    case "select":
+      return <SelectInput field={input.field} options={input.options} />;
+    case "count":
+      return <CountInput field={input.field} min={input.min} max={input.max} />;
+    case "bucket":
+      return <BucketInput minField={input.minField} maxField={input.maxField} />;
+  }
+}
+
+export function DeepForm({ questions }: { questions: ScreeningQuestion[] }) {
+  const required = questions.filter((q) => !q.optional);
+  const optional = questions.filter((q) => !!q.optional);
+
+  if (questions.length === 0) return null;
+
+  return (
+    <div className="space-y-6">
+      {required.length > 0 && (
+        <div className="space-y-3">
+          {required.map((q) => (
+            <QuestionShell key={q.id} question={q}>
+              <QuestionField input={q.input} />
+            </QuestionShell>
+          ))}
+        </div>
+      )}
+      {optional.length > 0 && (
+        <div className="space-y-3">
+          <p className="label-mono text-[10px] text-accent">
+            optional — answering can only unlock more options
+          </p>
+          {optional.map((q) => (
+            <QuestionShell key={q.id} question={q}>
+              <QuestionField input={q.input} />
+            </QuestionShell>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

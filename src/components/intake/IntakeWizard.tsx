@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState, STATES } from "@/data/states";
 import { evaluateAll, stillPossibleCount } from "@/lib/engine";
-import { ASSET_BUCKETS, FLAG_QUESTIONS, INCOME_BUCKETS, STEP_LABELS } from "@/data/questions";
+import {
+  ASSET_BUCKETS,
+  FLAG_QUESTIONS,
+  GENERAL_INTAKE_FLAGS,
+  INCOME_BUCKETS,
+  STEP_LABELS,
+} from "@/data/questions";
 import { activePopulations, POPULATION_TRIGGER_FLAGS } from "@/data/populations";
 import { EligibilityMeter } from "@/components/intake/EligibilityMeter";
 import { IntakeSidebar } from "@/components/intake/IntakeSidebar";
@@ -43,7 +49,10 @@ export function IntakeWizard() {
 
   // Which flag questions to ask: program-required flags for programs not yet
   // ruled out, plus population triggers (so users can self-identify), plus the
-  // extra questions for any population they're already in.
+  // extra questions for any population they're already in. Restricted to the
+  // GENERAL intake's flags — category-scoped questions (Medicare, energy bills,
+  // work history, …) live on their /intake/[scope] deep-dive page instead, so
+  // this step stays short.
   const relevantFlags = useMemo(() => {
     const flagSet = new Set<CategoricalFlag>();
     for (const r of results) {
@@ -56,7 +65,7 @@ export function IntakeWizard() {
     for (const p of activePopulations(household.flags)) {
       for (const f of p.extraQuestions) flagSet.add(f);
     }
-    return FLAG_QUESTIONS.filter((q) => flagSet.has(q.flag));
+    return FLAG_QUESTIONS.filter((q) => flagSet.has(q.flag) && GENERAL_INTAKE_FLAGS.has(q.flag));
   }, [results, household.flags]);
 
   // Clamp in case the step list shrank (e.g. the savings step dropped out after

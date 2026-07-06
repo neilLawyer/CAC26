@@ -1,3 +1,4 @@
+import { FEDERAL_PROGRAMS } from "@/data/federal/programs";
 import { NJ_META } from "@/data/states/NJ/meta";
 import { NJ_PROGRAMS } from "@/data/states/NJ/programs";
 import { CA_META } from "@/data/states/CA/meta";
@@ -21,9 +22,13 @@ const UPCOMING: StateMeta[] = [
   { code: "PA", name: "Pennsylvania", available: false },
 ];
 
+// Every available state's list = its own pack + the federal pack (nationwide
+// rules — EITC, CTC, Lifeline, VA benefits, Pell, Section 8, …). State packs
+// keep their state-administered SNAP/Medicaid/LIHEAP/WIC versions; the federal
+// pack holds only programs no state pack duplicates.
 export const STATES: StateEntry[] = [
-  { ...NJ_META, programs: NJ_PROGRAMS },
-  { ...CA_META, programs: CA_PROGRAMS },
+  { ...NJ_META, programs: [...NJ_PROGRAMS, ...FEDERAL_PROGRAMS] },
+  { ...CA_META, programs: [...CA_PROGRAMS, ...FEDERAL_PROGRAMS] },
   ...UPCOMING.map((m) => ({ ...m, programs: [] as Program[] })),
 ];
 

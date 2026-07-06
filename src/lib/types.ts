@@ -3,6 +3,7 @@
 // "undefined" means "not answered yet," not "no."
 
 export type CategoricalFlag =
+  // population / self-identification
   | "age65Plus"
   | "disabled"
   | "veteran"
@@ -11,7 +12,33 @@ export type CategoricalFlag =
   | "utilityHardship"
   | "student"
   | "unemployed"
-  | "immigrant";
+  | "immigrant"
+  // income & taxes (earned income derives from employmentStatus, not a flag)
+  | "filesTaxes"
+  | "investmentIncomeOverCap"
+  // benefits already received (adjunctive/categorical eligibility for others)
+  | "receivesSnap"
+  | "receivesMedicaid"
+  | "receivesTanf"
+  | "receivesSsi"
+  // housing & energy
+  | "paysHomeEnergy"
+  | "behindOnRent"
+  | "atRiskHomelessness"
+  | "disasterAffected"
+  // health
+  | "medicareEnrolled"
+  // work history & service
+  | "workedFiveOfLastTenYears"
+  | "servedActiveDuty"
+  | "serviceConnectedCondition"
+  // education
+  | "planningCollege";
+
+/** Single-choice household fields set by "select"-style questions. */
+export type EmploymentStatus = "working" | "selfEmployed" | "unemployed" | "retired" | "unableToWork";
+export type HousingTenure = "own" | "rent" | "other";
+export type FilingStatus = "single" | "joint" | "headOfHousehold";
 
 export interface Household {
   state: string; // e.g. "CA"
@@ -20,6 +47,10 @@ export interface Household {
   monthlyIncomeMax?: number; // upper bound of selected income range
   liquidAssetsMin?: number; // lower bound of selected savings/resources range
   liquidAssetsMax?: number; // upper bound of selected savings/resources range
+  kidsUnder17Count?: number; // qualifying children for CTC/EITC-style tiered credits
+  employmentStatus?: EmploymentStatus;
+  housingTenure?: HousingTenure;
+  filingStatus?: FilingStatus;
   flags: Partial<Record<CategoricalFlag, boolean>>;
 }
 
@@ -76,6 +107,47 @@ export interface ProgramRules {
   categoricalRequirements: CategoricalRequirement[];
   /** true = must meet ALL categorical requirements; false = ANY one qualifies. */
   requireAllCategorical: boolean;
+  /**
+   * Adjunctive/categorical eligibility: if the household already receives ANY of these
+   * (e.g. WIC auto-income-qualifies via SNAP/Medicaid/TANF; Lifeline via SNAP/Medicaid/SSI),
+   * the income test is waived entirely. Can only ADD matches, never remove them.
+   */
+  incomeWaivedByFlags?: CategoricalFlag[];
+  /**
+   * Hard disqualifiers, e.g. EITC's investment-income cap. Any of these flags being true
+   * fails the program. Must never reference a sensitive/optional flag — optional questions
+   * may only add matches.
+   */
+  disqualifyingFlags?: CategoricalFlag[];
+  /**
+   * Requirements on single-choice household fields, e.g. Senior Freeze requires
+   * housingTenure === "own"; ERA requires housingTenure === "rent"; SBA paths require
+   * employmentStatus === "selfEmployed". Unanswered → unknown (needsInfo), never fail.
+   */
+  fieldRequirements?: FieldRequirement[];
+  /**
+   * Annual income ceilings that scale with the number of qualifying children
+   * (federal/state EITC, CTC). The engine picks the highest tier whose `atLeastKids`
+   * the household meets; `maxAnnualJoint` applies when filingStatus === "joint".
+   * If kid count is unanswered, the income test is unknown (needsInfo), never fail.
+   */
+  kidCountIncomeTiers?: KidCountIncomeTier[];
+  /** Requires at least one qualifying child under 17 (CTC). Unanswered → unknown, never fail. */
+  requireKidsUnder17?: boolean;
+}
+
+export interface FieldRequirement {
+  field: "employmentStatus" | "housingTenure" | "filingStatus";
+  /** The answer must be one of these values (e.g. EITC: employmentStatus in [working, selfEmployed]). */
+  oneOf: string[];
+  /** Plain-language label for reason traces, e.g. "you own your home". */
+  label: string;
+}
+
+export interface KidCountIncomeTier {
+  atLeastKids: number;
+  maxAnnualSingle: number;
+  maxAnnualJoint?: number;
 }
 
 export interface StateMeta {
@@ -104,6 +176,12 @@ export interface Program {
   sourceUrl: string;
   lastVerified: string; // ISO date the rule data was last checked against the source
   rules: ProgramRules;
+  /**
+   * Ceiling on the confidence we'll ever show. For programs where qualifying is decided
+   * by a formula, rating, or lottery we can't model (Pell's SAI, VA disability ratings,
+   * Section 8 waitlists, capped funds), "likely" would overpromise — cap at "possible".
+   */
+  confidenceCap?: "possible";
   estimatedAnnualValueMin?: number;
   estimatedAnnualValueMax?: number;
   estimatedTimeToBenefitWeeksMin?: number;
@@ -118,4 +196,63 @@ export interface EligibilityResult {
   confidence: Confidence;
   reasons: string[]; // plain-language reason trace
   counterfactual?: string; // what would change the outcome, for near misses
+}
+
+// ---------------------------------------------------------------------------
+// Screening questions — the coverage-driven form layer.
+// Every question is DATA: the DeepForm generator renders any scope's form from
+// these records with zero scope-specific branching. A question exists only
+// because some program's rules read the answer (coverage-driven), and the
+// sensitive ones are optional and may only ADD matches.
+// ---------------------------------------------------------------------------
+
+/** Where a question can appear: the general intake, a category page, or a persona page. */
+export type QuestionScope =
+  | "general"
+  | Program["category"]
+  | "seniors"
+  | "families"
+  | "veterans"
+  | "students"
+  | "immigrants";
+
+/** What answering the question writes into the household. */
+export type QuestionInput =
+  | { kind: "flag"; flag: CategoricalFlag } // Yes / No / Skip
+  | {
+      kind: "flagGroup"; // multi-select chips, each toggling one flag
+      options: { flag: CategoricalFlag; label: string }[];
+      noneLabel?: string; // explicit "none of these" choice → sets all listed flags false
+    }
+  | {
+      kind: "select"; // single choice writing one household field
+      field: FieldRequirement["field"];
+      options: { value: string; label: string }[];
+    }
+  | { kind: "count"; field: "kidsUnder17Count" | "householdSize"; min: number; max: number }
+  | {
+      kind: "bucket"; // range choice writing a min/max pair
+      minField: "monthlyIncomeMin" | "liquidAssetsMin";
+      maxField: "monthlyIncomeMax" | "liquidAssetsMax";
+    };
+
+export type QuestionCondition =
+  | { flag: CategoricalFlag; equals: boolean }
+  | { field: FieldRequirement["field"] | "kidsUnder17Count"; answered: true };
+
+export interface ScreeningQuestion {
+  id: string; // stable, e.g. "general.employment", "housing.behind-on-rent"
+  scope: QuestionScope;
+  order: number;
+  /** Prompt shown to the user. For kind:"flag" this may be omitted to reuse the flag registry's question. */
+  prompt?: string;
+  help?: string;
+  /**
+   * Present = optional/sensitive. Rendered under "Optional — answering can only unlock
+   * more options", individually skippable, with this one-line "why we ask".
+   */
+  optional?: { whyWeAsk: string };
+  /** ALL conditions must hold for the question to render. */
+  showIf?: QuestionCondition[];
+  input: QuestionInput;
 }

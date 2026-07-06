@@ -82,6 +82,8 @@ These aren't benefit programs — they're the raw data/API layer some of the pro
 | CHIP (Children's Health Insurance Program) | https://www.medicaid.gov/chip | Health coverage for kids in families that earn too much for Medicaid but not enough for private insurance | 🟢 Entitlement |
 | Healthcare.gov | https://www.healthcare.gov | ACA Marketplace plans \+ subsidy calculator | 🟢 |
 | Medicaid.gov state eligibility pages | https://www.medicaid.gov/about-us/beneficiary-resources/index.html | Directory of every state's Medicaid agency | 🟢 (directory) |
+| Medicare Savings Programs (QMB/SLMB/QI) | https://www.medicare.gov/basics/costs/help/medicare-savings-programs | State-run programs that pay Medicare premiums (and sometimes cost-sharing) for lower-income Medicare enrollees; income tiers set by statute up to 135% FPL, plus a resource test | 🟢 Entitlement |
+| Extra Help / Part D Low-Income Subsidy | https://www.ssa.gov/medicare/part-d-extra-help | Lowers Medicare prescription drug costs for enrollees up to 150% FPL (statutory since 2024); SSA applies a resource test. Widely under-claimed | 🟢 Entitlement |
 
 ---
 

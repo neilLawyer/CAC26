@@ -36,6 +36,23 @@ function monthlyIncomeLimits(rules: ProgramRules, household: Household) {
   let minMonthly: number | undefined;
   const householdSize = household.householdSize!;
 
+  // Kid-count-tiered annual ceilings (EITC/CTC-style credits). testIncome
+  // guarantees kidsUnder17Count is answered before this runs.
+  if (rules.kidCountIncomeTiers !== undefined) {
+    const kids = household.kidsUnder17Count ?? 0;
+    const tier = [...rules.kidCountIncomeTiers]
+      .sort((a, b) => b.atLeastKids - a.atLeastKids)
+      .find((t) => kids >= t.atLeastKids);
+    if (tier) {
+      const annual =
+        household.filingStatus === "joint" && tier.maxAnnualJoint !== undefined
+          ? tier.maxAnnualJoint
+          : tier.maxAnnualSingle;
+      const tierMonthly = annual / 12;
+      maxMonthly = maxMonthly === undefined ? tierMonthly : Math.min(maxMonthly, tierMonthly);
+    }
+  }
+
   const raised =
     rules.raisedIncomeLimitFlags?.some((f) => household.flags[f] === true) ?? false;
   const effectivePctFPL = raised && rules.raisedMaxIncomePctFPL !== undefined
@@ -71,11 +88,29 @@ function testIncome(
   rules: ProgramRules,
   household: Household
 ): { status: TestStatus; reason: string; counterfactual?: string } {
+  // Adjunctive/categorical eligibility: already receiving a qualifying program
+  // waives the income test entirely (e.g. WIC via SNAP/Medicaid/TANF; Lifeline
+  // via SNAP/Medicaid/SSI). Can only add matches, never remove them.
+  const waiver = (rules.incomeWaivedByFlags ?? []).find((f) => household.flags[f] === true);
+  if (waiver !== undefined) {
+    return {
+      status: "pass",
+      reason: `Because ${FLAG_LABELS[waiver]}, this program's income test is automatically met.`,
+    };
+  }
+
   if (!household.householdSize) {
     return { status: "unknown", reason: "We still need your household size to check the income rule." };
   }
   if (household.monthlyIncomeMin === undefined && household.monthlyIncomeMax === undefined) {
     return { status: "unknown", reason: "We still need your income range to check this program." };
+  }
+  if (rules.kidCountIncomeTiers !== undefined && household.kidsUnder17Count === undefined) {
+    return {
+      status: "unknown",
+      reason:
+        "This credit's income limit depends on how many children under 17 live with you — we still need that number.",
+    };
   }
 
   const incMin = household.monthlyIncomeMin ?? household.monthlyIncomeMax!;
@@ -218,26 +253,109 @@ function testAssets(
   };
 }
 
+function testFields(
+  rules: ProgramRules,
+  household: Household
+): { status: TestStatus; reason: string; counterfactual?: string } {
+  if (rules.requireKidsUnder17) {
+    if (household.kidsUnder17Count === undefined) {
+      return {
+        status: "unknown",
+        reason: "We still need to know how many children under 17 live with you.",
+      };
+    }
+    if (household.kidsUnder17Count === 0) {
+      return {
+        status: "fail",
+        reason: "This credit requires at least one qualifying child under 17.",
+      };
+    }
+  }
+
+  const reqs = rules.fieldRequirements ?? [];
+  if (reqs.length === 0) return { status: "pass", reason: "" };
+
+  const missing = reqs.filter((r) => household[r.field] === undefined);
+  const failed = reqs.filter(
+    (r) => household[r.field] !== undefined && !r.oneOf.includes(household[r.field] as string)
+  );
+
+  if (failed.length > 0) {
+    return {
+      status: "fail",
+      reason: `This program requires that ${failed.map((r) => r.label).join(" and ")}.`,
+    };
+  }
+  if (missing.length > 0) {
+    return {
+      status: "unknown",
+      reason: `We still need to confirm: ${missing.map((r) => r.label).join(" and ")}.`,
+    };
+  }
+  return {
+    status: "pass",
+    reason: `Matches the requirement: ${reqs.map((r) => r.label).join(" and ")}.`,
+  };
+}
+
+function testDisqualifiers(
+  rules: ProgramRules,
+  household: Household
+): { status: TestStatus; reason: string } {
+  const hit = (rules.disqualifyingFlags ?? []).find((f) => household.flags[f] === true);
+  if (hit !== undefined) {
+    return { status: "fail", reason: `This program isn't available when ${FLAG_LABELS[hit]}.` };
+  }
+  // Unanswered disqualifiers don't block or nag — they're refinement questions
+  // on the relevant category page, and most households are nowhere near them.
+  return { status: "pass", reason: "" };
+}
+
 export function evaluateProgram(program: Program, household: Household): EligibilityResult {
   const income = testIncome(program.rules, household);
   const categorical = testCategorical(program.rules, household);
   const assets = testAssets(program.rules, household);
+  const fields = testFields(program.rules, household);
+  const disqualifiers = testDisqualifiers(program.rules, household);
 
   const reasons = [income.reason, categorical.reason];
   // Only surface the resource reason for programs that actually test assets.
   if (program.rules.assetLimitDollar !== undefined) reasons.push(assets.reason);
-  const counterfactual = income.counterfactual ?? categorical.counterfactual ?? assets.counterfactual;
+  if (fields.reason !== "") reasons.push(fields.reason);
+  if (disqualifiers.reason !== "") reasons.push(disqualifiers.reason);
+  const counterfactual =
+    income.counterfactual ?? categorical.counterfactual ?? assets.counterfactual ?? fields.counterfactual;
 
   let confidence: Confidence;
-  if (income.status === "fail" || categorical.status === "fail" || assets.status === "fail") {
+  if (
+    income.status === "fail" ||
+    categorical.status === "fail" ||
+    assets.status === "fail" ||
+    fields.status === "fail" ||
+    disqualifiers.status === "fail"
+  ) {
     confidence = "unlikely";
   } else if (income.status === "unknown" || assets.status === "unknown") {
     confidence = "needsInfo";
-  } else if (income.status === "pass" && categorical.status === "pass" && assets.status === "pass") {
+  } else if (
+    income.status === "pass" &&
+    categorical.status === "pass" &&
+    assets.status === "pass" &&
+    fields.status === "pass"
+  ) {
     confidence = "likely";
   } else {
-    // some dimension is borderline or categorical is unknown
+    // some dimension is borderline, or a categorical/field answer is still unknown
     confidence = "possible";
+  }
+
+  // Programs decided by a formula, rating, or waitlist we can't model never
+  // show better than "possible" — "likely" would overpromise.
+  if (program.confidenceCap === "possible" && confidence === "likely") {
+    confidence = "possible";
+    reasons.push(
+      "The agency makes the final call here (its own formula, rating, or waitlist) — we can't promise this one."
+    );
   }
 
   return { program, confidence, reasons, counterfactual };

@@ -15,6 +15,8 @@ interface HouseholdContextValue {
   setIncomeRange: (min: number, max: number | undefined) => void;
   setAssetsRange: (min: number, max: number | undefined) => void;
   setFlag: (flag: CategoricalFlag, value: boolean | undefined) => void;
+  /** Generic setter for the newer single-value fields (employmentStatus, housingTenure, …). */
+  patch: (fields: Partial<Omit<Household, "flags">>) => void;
   reset: () => void;
 }
 
@@ -73,6 +75,7 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
       updateHousehold((h) => ({ ...h, liquidAssetsMin: min, liquidAssetsMax: max })),
     setFlag: (flag, val) =>
       updateHousehold((h) => ({ ...h, flags: { ...h.flags, [flag]: val } })),
+    patch: (fields) => updateHousehold((h) => ({ ...h, ...fields })),
     reset: () => updateHousehold(() => EMPTY_HOUSEHOLD),
   };
 

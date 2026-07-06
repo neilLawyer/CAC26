@@ -86,8 +86,10 @@ export const NJ_PROGRAMS: Program[] = [
         8: 11059,
       },
       sizeTableExtraPerPerson: 241,
-      categoricalRequirements: [],
-      requireAllCategorical: false,
+      // LIHEAP is for households responsible for home energy costs (directly
+      // or as part of rent).
+      categoricalRequirements: [{ type: "paysHomeEnergy" }],
+      requireAllCategorical: true,
     },
     estimatedAnnualValueMin: 200,
     estimatedAnnualValueMax: 1000,
@@ -112,6 +114,9 @@ export const NJ_PROGRAMS: Program[] = [
       maxIncomePctFPL: 185,
       categoricalRequirements: [{ type: "pregnantOrChildUnder5" }],
       requireAllCategorical: true,
+      // Adjunctive eligibility: already receiving SNAP, Medicaid, or TANF
+      // automatically meets WIC's income test (federal WIC rule).
+      incomeWaivedByFlags: ["receivesSnap", "receivesMedicaid", "receivesTanf"],
     },
     estimatedAnnualValueMin: 600,
     estimatedAnnualValueMax: 1600,
@@ -247,8 +252,9 @@ export const NJ_PROGRAMS: Program[] = [
       incomeBasis: "gross",
       incomePeriod: "monthly",
       maxIncomePctFPL: 175,
-      categoricalRequirements: [],
-      requireAllCategorical: false,
+      // USF credits apply to the household's own gas/electric account.
+      categoricalRequirements: [{ type: "paysHomeEnergy" }],
+      requireAllCategorical: true,
     },
     estimatedAnnualValueMin: 120,
     estimatedAnnualValueMax: 480,
@@ -277,8 +283,16 @@ export const NJ_PROGRAMS: Program[] = [
       maxIncomeFlatDollar: 19104,
       raisedIncomeLimitFlags: ["pregnantOrChildUnder5", "schoolAgeChild"],
       raisedMaxIncomeFlatDollar: 61555,
-      categoricalRequirements: [],
-      requireAllCategorical: false,
+      // Like the federal EITC it mirrors: earned income + a filed return.
+      categoricalRequirements: [{ type: "filesTaxes" }],
+      requireAllCategorical: true,
+      fieldRequirements: [
+        {
+          field: "employmentStatus",
+          oneOf: ["working", "selfEmployed"],
+          label: "you have earnings from a job or self-employment",
+        },
+      ],
     },
     estimatedAnnualValueMin: 300,
     estimatedAnnualValueMax: 3000,
@@ -327,6 +341,10 @@ export const NJ_PROGRAMS: Program[] = [
       maxIncomeFlatDollar: 172475,
       categoricalRequirements: [{ type: "age65Plus" }, { type: "disabled" }],
       requireAllCategorical: false,
+      // Senior Freeze reimburses property tax on a home you own and live in.
+      fieldRequirements: [
+        { field: "housingTenure", oneOf: ["own"], label: "you own your home" },
+      ],
     },
     estimatedAnnualValueMin: 500,
     estimatedAnnualValueMax: 6000,

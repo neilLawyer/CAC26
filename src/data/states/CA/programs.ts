@@ -88,8 +88,10 @@ export const CA_PROGRAMS: Program[] = [
         8: 8841.83,
       },
       sizeTableExtraPerPerson: 192.21,
-      categoricalRequirements: [],
-      requireAllCategorical: false,
+      // LIHEAP is for households responsible for home energy costs (directly
+      // or as part of rent).
+      categoricalRequirements: [{ type: "paysHomeEnergy" }],
+      requireAllCategorical: true,
     },
     estimatedAnnualValueMin: 200,
     estimatedAnnualValueMax: 1000,
@@ -115,6 +117,9 @@ export const CA_PROGRAMS: Program[] = [
       maxIncomePctFPL: 185,
       categoricalRequirements: [{ type: "pregnantOrChildUnder5" }],
       requireAllCategorical: true,
+      // Adjunctive eligibility: already receiving SNAP/CalFresh, Medi-Cal, or
+      // CalWORKs automatically meets WIC's income test (federal WIC rule).
+      incomeWaivedByFlags: ["receivesSnap", "receivesMedicaid", "receivesTanf"],
     },
     estimatedAnnualValueMin: 600,
     estimatedAnnualValueMax: 1600,
@@ -257,6 +262,9 @@ export const CA_PROGRAMS: Program[] = [
       maxIncomePctFPL: 150,
       categoricalRequirements: [],
       requireAllCategorical: false,
+      // Program-based eligibility: CA LifeLine also qualifies households already
+      // on CalFresh/SNAP, Medi-Cal, or SSI regardless of income.
+      incomeWaivedByFlags: ["receivesSnap", "receivesMedicaid", "receivesSsi"],
     },
     estimatedAnnualValueMin: 120,
     estimatedAnnualValueMax: 240,
@@ -282,8 +290,16 @@ export const CA_PROGRAMS: Program[] = [
       // 2025 tax year — unlike federal/NJ EITC, CalEITC's earned-income ceiling
       // doesn't vary by number of qualifying children (only the credit amount does).
       maxIncomeFlatDollar: 32900,
-      categoricalRequirements: [],
-      requireAllCategorical: false,
+      // Like the federal EITC: earned income + a filed state return.
+      categoricalRequirements: [{ type: "filesTaxes" }],
+      requireAllCategorical: true,
+      fieldRequirements: [
+        {
+          field: "employmentStatus",
+          oneOf: ["working", "selfEmployed"],
+          label: "you have earnings from a job or self-employment",
+        },
+      ],
     },
     estimatedAnnualValueMin: 300,
     estimatedAnnualValueMax: 3600,
@@ -334,6 +350,10 @@ export const CA_PROGRAMS: Program[] = [
       maxIncomeFlatDollar: 55181,
       categoricalRequirements: [{ type: "age65Plus" }, { type: "disabled" }],
       requireAllCategorical: false,
+      // PTP postpones property tax on a home you own and live in.
+      fieldRequirements: [
+        { field: "housingTenure", oneOf: ["own"], label: "you own your home" },
+      ],
     },
     estimatedAnnualValueMin: 500,
     estimatedAnnualValueMax: 6000,
