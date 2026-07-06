@@ -45,6 +45,11 @@ export const CATEGORIES: CategoryMeta[] = [
     iconKey: "health",
     intro:
       "Health coverage and cost help: Medicaid, kids' coverage, marketplace subsidies, and — for Medicare enrollees — premium and prescription help many people never claim.",
+    localPointer: {
+      finderName: "Medicaid.gov's state agency directory",
+      finderUrl: "https://www.medicaid.gov/about-us/beneficiary-resources/index.html",
+      note: "Some states run 'medically needy' Medicaid for people with high medical costs, even above the usual income line — we can't calculate that one precisely yet, since the thresholds vary by state. Your state Medicaid office can tell you if it applies.",
+    },
   },
   {
     id: "energy",
@@ -97,9 +102,9 @@ export const CATEGORIES: CategoryMeta[] = [
     intro:
       "Tax credits are the single biggest pile of unclaimed money — the EITC alone goes unclaimed by about 1 in 5 eligible workers. Filing is how you collect.",
     localPointer: {
-      finderName: "IRS free tax prep locator (VITA/TCE) & GetYourRefund",
+      finderName: "IRS free tax prep locator (VITA/TCE)",
       finderUrl: "https://irs.treasury.gov/freetaxprep/",
-      note: "Since these credits are claimed by filing, free IRS-certified help can prepare your return for you at no cost — even if you've never filed before.",
+      note: "Since these credits are claimed by filing, free IRS-certified help can prepare your return for you at no cost — even if you've never filed before. GetYourRefund.org (from Code for America) is another free option built specifically for claiming the EITC and Child Tax Credit.",
     },
   },
   {

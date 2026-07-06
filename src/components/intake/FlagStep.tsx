@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { BackLink } from "@/components/intake/BackLink";
+import { FLAG_OPTIONAL_INFO } from "@/data/questions";
 import type { CategoricalFlag, FlagQuestion, Household } from "@/lib/types";
 
 // The adaptive "a few more questions" step: renders one Yes/No/Skip row per
@@ -24,33 +25,48 @@ export function FlagStep({ questions, flags, onAnswer, onBack, onNext }: FlagSte
         {questions.length === 0 && (
           <p className="text-sm text-muted">Nothing else we need — you&apos;re all set.</p>
         )}
-        {questions.map((q) => (
-          <div
-            key={q.flag}
-            className="flex items-center justify-between gap-4 rounded-xl border border-card-border bg-card px-4 py-3"
-          >
-            <span className="text-sm">{q.question}</span>
-            <div className="flex gap-2 shrink-0">
-              {(["Yes", "No", "Skip"] as const).map((opt) => {
-                const val = opt === "Yes" ? true : opt === "No" ? false : undefined;
-                const active = flags[q.flag] === val;
-                return (
-                  <button
-                    key={opt}
-                    onClick={() => onAnswer(q.flag, val)}
-                    className={`rounded-md border px-3 py-1 text-sm transition-colors ${
-                      active
-                        ? "border-accent bg-accent/10 text-accent"
-                        : "border-card-border hover:border-accent/60"
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
+        {questions.map((q) => {
+          const optionalInfo = FLAG_OPTIONAL_INFO[q.flag];
+          return (
+            <div
+              key={q.flag}
+              className="rounded-xl border border-card-border bg-card px-4 py-3 space-y-2"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-start gap-2">
+                  <span className="text-sm">{q.question}</span>
+                  {optionalInfo && (
+                    <span className="label-mono shrink-0 text-[9px] text-accent border border-accent/30 rounded-full px-2 py-0.5">
+                      optional
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  {(["Yes", "No", "Skip"] as const).map((opt) => {
+                    const val = opt === "Yes" ? true : opt === "No" ? false : undefined;
+                    const active = flags[q.flag] === val;
+                    return (
+                      <button
+                        key={opt}
+                        onClick={() => onAnswer(q.flag, val)}
+                        className={`rounded-md border px-3 py-1 text-sm transition-colors ${
+                          active
+                            ? "border-accent bg-accent/10 text-accent"
+                            : "border-card-border hover:border-accent/60"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              {optionalInfo && (
+                <p className="text-xs text-muted italic">Why we ask: {optionalInfo.whyWeAsk}</p>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div className="flex justify-between pt-2">
         <BackLink onClick={onBack} />
