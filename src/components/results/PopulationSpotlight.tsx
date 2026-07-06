@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { CONFIDENCE_COLOR, CONFIDENCE_LABEL } from "@/components/results/confidence";
@@ -48,6 +49,13 @@ export function PopulationSpotlight({
                 landing page points you to the official resources in the meantime.
               </p>
             )}
+            <Link
+              href={`/intake/${p.id}`}
+              className="inline-block text-sm hover:underline"
+              style={{ color: p.color }}
+            >
+              Go deeper: the {p.label.toLowerCase()} questions →
+            </Link>
           </Card>
         );
       })}

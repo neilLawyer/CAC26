@@ -4,7 +4,8 @@ import { ICON_PATHS } from "@/components/ui/icons";
 import { POPULATIONS } from "@/data/populations";
 
 // "Built for real people" — one card per population module, data-driven. Each
-// links to that population's /for/[id] landing page.
+// routes straight to that population's /intake/[scope] deep-dive form (its
+// marketing landing stays reachable at /for/[id]).
 export function PopulationGrid() {
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
@@ -16,7 +17,7 @@ export function PopulationGrid() {
         {POPULATIONS.map((p) => (
           <Link
             key={p.id}
-            href={`/for/${p.id}`}
+            href={`/intake/${p.id}`}
             className="hover-lift block rounded-2xl border border-card-border bg-card overflow-hidden"
           >
             <div

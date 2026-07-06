@@ -6,6 +6,7 @@ import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { cascadeSuggestions, estimatedAnnualValue, evaluateAll } from "@/lib/engine";
 import { CONFIDENCE_COLOR, CONFIDENCE_LABEL, CONFIDENCE_ORDER } from "@/components/results/confidence";
+import { CategoryTabs } from "@/components/results/CategoryTabs";
 import { ResultCard } from "@/components/results/ResultCard";
 import { ValueEstimate } from "@/components/results/ValueEstimate";
 import { CascadePanel } from "@/components/results/CascadePanel";
@@ -48,6 +49,8 @@ export function ResultsView() {
       </div>
 
       <ValueEstimate min={value.min} max={value.max} />
+
+      <CategoryTabs results={results} />
 
       <PopulationSpotlight flags={household.flags} results={results} />
 

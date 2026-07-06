@@ -24,6 +24,14 @@ export const SCOPE_QUESTIONS: ScreeningQuestion[] = [
   },
   // --- housing -----------------------------------------------------------------
   {
+    id: "housing.zip",
+    scope: "housing",
+    order: 5,
+    prompt: "What ZIP code do you live in?",
+    help: "Housing help is run by LOCAL housing authorities, so where you live matters more here than anywhere else. Your ZIP stays in this browser — we only use it to point you at the right local office.",
+    input: { kind: "zip" },
+  },
+  {
     id: "housing.behind-on-rent",
     scope: "housing",
     order: 10,

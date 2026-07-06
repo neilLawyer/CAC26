@@ -8,6 +8,17 @@ export interface CategoryMeta {
   iconKey: string;
   /** Plain-language intro for the category's deep-dive page. */
   intro: string;
+  /**
+   * Honest interim pointer for categories whose real answers are LOCAL and we
+   * don't carry county-level data yet: show what we do have, say so, and link
+   * the official local finder. Same pattern as the state-coverage model —
+   * never blank, never invented.
+   */
+  localPointer?: {
+    finderName: string;
+    finderUrl: string;
+    note: string;
+  };
 }
 
 // Display + deep-dive metadata for the eight program categories. Used by the
@@ -61,6 +72,12 @@ export const CATEGORIES: CategoryMeta[] = [
     iconKey: "housing",
     intro:
       "Rent help and housing programs — honestly framed: vouchers are real but waitlisted, while rental assistance and property-tax relief can move faster.",
+    localPointer: {
+      finderName: "HUD's official housing authority directory",
+      // Verified live 2026-07-05 (docs/sources.md §3).
+      finderUrl: "https://www.hud.gov/program_offices/public_indian_housing/pha/contacts",
+      note: "Housing aid is run by your LOCAL housing authority, and deeper county-level data is coming to OpenDoor. Until then, this is the official directory for finding yours — it covers every county in the country.",
+    },
   },
   {
     id: "tax",

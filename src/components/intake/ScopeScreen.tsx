@@ -74,6 +74,26 @@ export function ScopeScreen({ scopeId }: { scopeId: string }) {
         </p>
       )}
 
+      {scope.localPointer && (
+        <div className="rounded-xl border border-accent/30 bg-accent/10 p-5 space-y-2">
+          <p className="label-mono text-[10px] text-accent">your local office</p>
+          <p className="text-sm">
+            {scope.localPointer.note}
+            {household.zip && (
+              <span className="text-muted"> (You told us ZIP {household.zip} — search for it there.)</span>
+            )}
+          </p>
+          <a
+            href={scope.localPointer.finderUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block text-sm text-accent underline hover:no-underline"
+          >
+            {scope.localPointer.finderName} →
+          </a>
+        </div>
+      )}
+
       {grouped.map((g) => (
         <section key={g.confidence} className="space-y-3">
           <h2 className="text-lg font-semibold" style={{ color: CONFIDENCE_COLOR[g.confidence] }}>

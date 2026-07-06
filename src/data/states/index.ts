@@ -1,4 +1,5 @@
 import { FEDERAL_PROGRAMS } from "@/data/federal/programs";
+import { assertAddOnlyInvariant } from "@/lib/data-invariants";
 import { NJ_META } from "@/data/states/NJ/meta";
 import { NJ_PROGRAMS } from "@/data/states/NJ/programs";
 import { CA_META } from "@/data/states/CA/meta";
@@ -31,6 +32,10 @@ export const STATES: StateEntry[] = [
   { ...CA_META, programs: [...CA_PROGRAMS, ...FEDERAL_PROGRAMS] },
   ...UPCOMING.map((m) => ({ ...m, programs: [] as Program[] })),
 ];
+
+// Fail the build loudly if any pack violates the add-only guarantee for
+// optional/sensitive questions (see lib/data-invariants.ts).
+assertAddOnlyInvariant(STATES.flatMap((s) => s.programs));
 
 export function getState(code: string): StateEntry | undefined {
   return STATES.find((s) => s.code === code);

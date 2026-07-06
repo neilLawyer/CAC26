@@ -16,7 +16,7 @@ import type {
 // category page never sends the user back to the general intake, and that a
 // question only renders when some live program actually reads its answer.
 
-type FieldKey = FieldRequirement["field"] | "kidsUnder17Count" | "householdSize";
+type FieldKey = FieldRequirement["field"] | "kidsUnder17Count" | "householdSize" | "zip";
 type FactKey =
   | { kind: "flag"; flag: CategoricalFlag }
   | { kind: "field"; field: FieldKey }
@@ -61,6 +61,8 @@ function writtenFacts(q: ScreeningQuestion): FactKey[] {
       return [{ kind: "field", field: q.input.field }];
     case "bucket":
       return [q.input.minField === "monthlyIncomeMin" ? { kind: "income" } : { kind: "assets" }];
+    case "zip":
+      return [{ kind: "field", field: "zip" }];
   }
 }
 
@@ -84,6 +86,8 @@ export function isAnswered(q: ScreeningQuestion, household: Household): boolean 
       return household[q.input.field] !== undefined;
     case "bucket":
       return household[q.input.minField] !== undefined || household[q.input.maxField] !== undefined;
+    case "zip":
+      return household.zip !== undefined;
   }
 }
 

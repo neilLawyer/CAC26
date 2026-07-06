@@ -51,6 +51,8 @@ export interface Household {
   employmentStatus?: EmploymentStatus;
   housingTenure?: HousingTenure;
   filingStatus?: FilingStatus;
+  /** 5-digit ZIP — used only to point at local resources (housing authority finders). Never sent anywhere. */
+  zip?: string;
   flags: Partial<Record<CategoricalFlag, boolean>>;
 }
 
@@ -234,7 +236,8 @@ export type QuestionInput =
       kind: "bucket"; // range choice writing a min/max pair
       minField: "monthlyIncomeMin" | "liquidAssetsMin";
       maxField: "monthlyIncomeMax" | "liquidAssetsMax";
-    };
+    }
+  | { kind: "zip" }; // 5-digit ZIP text input → household.zip
 
 export type QuestionCondition =
   | { flag: CategoricalFlag; equals: boolean }

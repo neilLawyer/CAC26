@@ -53,9 +53,12 @@ export default async function PopulationLandingPage({
           </span>
           <h1 className="text-4xl font-bold tracking-tight">{pop.landing.headline}</h1>
           <p className="text-lg text-muted">{pop.landing.body}</p>
-          <div className="pt-2">
-            <ButtonLink href="/intake" className="px-7 py-3">
-              Check my eligibility
+          <div className="pt-2 flex flex-wrap items-center gap-4">
+            <ButtonLink href={`/intake/${pop.id}`} className="px-7 py-3">
+              See what fits your situation
+            </ButtonLink>
+            <ButtonLink href="/intake" className="px-5 py-2.5 text-sm">
+              Full eligibility check
             </ButtonLink>
           </div>
         </div>

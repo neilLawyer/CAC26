@@ -181,6 +181,30 @@ function BucketInput({
   );
 }
 
+function ZipInput() {
+  const { household, patch } = useHousehold();
+  return (
+    <div className="flex gap-2 items-center">
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]{5}"
+        maxLength={5}
+        placeholder="e.g. 07102"
+        defaultValue={household.zip ?? ""}
+        aria-label="ZIP code"
+        className="w-32 rounded-xl border border-card-border bg-background px-3 py-2 text-sm focus:border-accent/60 focus:outline-none"
+        onChange={(e) => {
+          const v = e.target.value.replace(/\D/g, "").slice(0, 5);
+          e.target.value = v;
+          patch({ zip: v.length === 5 ? v : undefined });
+        }}
+      />
+      {household.zip && <span className="text-xs text-accent">saved</span>}
+    </div>
+  );
+}
+
 function QuestionField({ input }: { input: QuestionInput }) {
   switch (input.kind) {
     case "flag":
@@ -193,6 +217,8 @@ function QuestionField({ input }: { input: QuestionInput }) {
       return <CountInput field={input.field} min={input.min} max={input.max} />;
     case "bucket":
       return <BucketInput minField={input.minField} maxField={input.maxField} />;
+    case "zip":
+      return <ZipInput />;
   }
 }
 

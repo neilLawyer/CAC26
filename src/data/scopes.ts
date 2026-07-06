@@ -13,6 +13,8 @@ export interface ScopeMeta {
   label: string;
   color: string;
   intro: string;
+  /** Honest interim pointer to the official LOCAL finder (see CategoryMeta.localPointer). */
+  localPointer?: { finderName: string; finderUrl: string; note: string };
   /** Keeps only this scope's programs from the state's evaluated results. */
   filterResults: (results: EligibilityResult[]) => EligibilityResult[];
 }
@@ -23,6 +25,7 @@ const CATEGORY_SCOPES: ScopeMeta[] = CATEGORIES.map((c) => ({
   label: c.label,
   color: c.color,
   intro: c.intro,
+  localPointer: c.localPointer,
   filterResults: (results) => results.filter((r) => r.program.category === c.id),
 }));
 
