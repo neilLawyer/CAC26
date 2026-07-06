@@ -16,7 +16,12 @@ export function ResultCard({ result }: { result: EligibilityResult }) {
           <h3 className="font-semibold">{program.name}</h3>
           <p className="text-sm text-muted">{program.agencyName}</p>
         </div>
-        <Badge color={color} className="label-mono shrink-0 px-3 py-1 text-[10px]">
+        {/* keyed on confidence so the badge pops whenever a match changes tier */}
+        <Badge
+          key={confidence}
+          color={color}
+          className="badge-pop label-mono shrink-0 px-3 py-1 text-[10px]"
+        >
           {CONFIDENCE_LABEL[confidence]}
         </Badge>
       </div>

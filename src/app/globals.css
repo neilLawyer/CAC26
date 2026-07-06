@@ -100,3 +100,178 @@ button:disabled {
 .dot-live {
   animation: pulse-dot 2s infinite;
 }
+
+/* ---------------------------------------------------------------------------
+   Motion tokens. Every animation below reads these — change the feel of the
+   whole app here. All motion is gated behind prefers-reduced-motion.
+--------------------------------------------------------------------------- */
+:root {
+  --dur-quick: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 460ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* soft deceleration */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* slight overshoot */
+}
+
+/* ---------------------------------------------------------------------------
+   Scope accent. Each /intake/[scope] page sets --scope-accent from its data
+   record; everything below it derives from that one variable. Pages that don't
+   set it (general intake, results hub) fall through to the brand accent.
+   Text-ish usages mix toward the foreground so the same data hex stays
+   readable in BOTH themes (darkens on light, lightens on dark).
+--------------------------------------------------------------------------- */
+.scope-ink {
+  color: color-mix(in srgb, var(--scope-accent, var(--accent)) 62%, var(--foreground));
+}
+
+/* Idle Choice buttons hint the scope color on hover. */
+.choice-idle:hover {
+  border-color: color-mix(in srgb, var(--scope-accent, var(--accent)) 55%, var(--card-border));
+}
+
+/* Selected state for Choice buttons — scope-aware, replaces the fixed teal. */
+.choice-active {
+  border-color: var(--scope-accent, var(--accent)) !important;
+  color: color-mix(in srgb, var(--scope-accent, var(--accent)) 62%, var(--foreground));
+  background: color-mix(in srgb, var(--scope-accent, var(--accent)) 12%, transparent);
+}
+
+/* Press weight: buttons compress under the pointer, then release. */
+.press-weight {
+  transition:
+    transform var(--dur-quick) var(--ease-out),
+    border-color var(--dur-quick) ease,
+    background-color var(--dur-quick) ease,
+    box-shadow var(--dur-quick) ease;
+}
+.press-weight:hover {
+  transform: translateY(-1px);
+}
+.press-weight:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Question shells light up in the scope color when you're working in them. */
+.q-shell {
+  transition: border-color var(--dur-base) ease, box-shadow var(--dur-base) ease;
+}
+.q-shell:hover,
+.q-shell:focus-within {
+  border-color: color-mix(in srgb, var(--scope-accent, var(--accent)) 45%, var(--card-border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--scope-accent, var(--accent)) 18%, transparent);
+}
+
+/* The optional block: a softly dashed spine in the scope color — visually
+   set apart from required questions without shouting. */
+.optional-block {
+  border-left: 2px dashed color-mix(in srgb, var(--scope-accent, var(--accent)) 45%, transparent);
+  padding-left: 0.875rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Staged reveals. Set `--stagger: <n>` inline to cascade a list.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .rise-in {
+    animation: rise-in var(--dur-slow) var(--ease-out) both;
+    animation-delay: calc(var(--stagger, 0) * 55ms);
+  }
+
+  @keyframes badge-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    70% {
+      transform: scale(1.08);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .badge-pop {
+    animation: badge-pop var(--dur-base) var(--ease-spring) both;
+    animation-delay: calc(var(--stagger, 0) * 55ms);
+  }
+
+  /* A sheen that sweeps the progress bar whenever it's on screen — the bar
+     reads as live, not painted. */
+  @keyframes meter-sheen {
+    0%,
+    35% {
+      transform: translateX(-110%);
+    }
+    65%,
+    100% {
+      transform: translateX(320%);
+    }
+  }
+  .meter-sheen {
+    animation: meter-sheen 2.6s var(--ease-out) infinite;
+  }
+
+  .meter-fill {
+    transition: width 600ms var(--ease-spring);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scope textures: one per family, all drawn from --scope-accent so the same
+   four classes produce thirteen different atmospheres. Whisper-quiet on
+   purpose — identity, not decoration.
+--------------------------------------------------------------------------- */
+.texture-dots {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--scope-accent, var(--accent)) 9%, transparent) 1px,
+    transparent 1.5px
+  );
+  background-size: 22px 22px;
+}
+.texture-grid {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--scope-accent, var(--accent)) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--scope-accent, var(--accent)) 6%, transparent) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+.texture-diag {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--scope-accent, var(--accent)) 5%, transparent) 0 1px,
+    transparent 1px 16px
+  );
+}
+.texture-rings {
+  background-image: radial-gradient(
+    circle at 88% -10%,
+    color-mix(in srgb, var(--scope-accent, var(--accent)) 12%, transparent),
+    transparent 62%
+  );
+}
+
+/* Tier rules: section headers on results get a colored hairline that fades
+   out — the palette's greens/ambers/reds doing structural work. */
+.tier-rule {
+  position: relative;
+  padding-bottom: 0.4rem;
+}
+.tier-rule::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--tier-color, var(--accent)) 0%, transparent 70%);
+  border-radius: 2px;
+}

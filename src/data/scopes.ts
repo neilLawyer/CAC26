@@ -7,11 +7,37 @@ import type { EligibilityResult, Program, QuestionScope } from "@/lib/types";
 // template and the same form generator. Adding a category or persona is a data
 // edit (categories.ts / populations.ts) — this file just merges them.
 
+/**
+ * Visual identity per scope: which background texture each page wears. Four
+ * texture classes (globals.css) × thirteen scope accents = thirteen distinct
+ * atmospheres from one variable. Chosen deliberately: dots read as market/
+ * gathering (food, families), diag as energy/motion (energy, veterans,
+ * housing-in-progress), grid as ledger/structure (cash, tax, education),
+ * rings as radiating care (health, seniors, immigrants).
+ */
+const SCOPE_TEXTURE: Record<string, "dots" | "grid" | "diag" | "rings"> = {
+  food: "dots",
+  health: "rings",
+  energy: "diag",
+  cash: "grid",
+  education: "grid",
+  housing: "diag",
+  tax: "grid",
+  "phone-internet": "dots",
+  seniors: "rings",
+  families: "dots",
+  veterans: "diag",
+  students: "grid",
+  immigrants: "rings",
+};
+
 export interface ScopeMeta {
   id: QuestionScope;
   kind: "category" | "persona";
   label: string;
   color: string;
+  iconKey: string;
+  texture: "dots" | "grid" | "diag" | "rings";
   intro: string;
   /** Honest interim pointer to the official LOCAL finder (see CategoryMeta.localPointer). */
   localPointer?: { finderName: string; finderUrl: string; note: string };
@@ -24,6 +50,8 @@ const CATEGORY_SCOPES: ScopeMeta[] = CATEGORIES.map((c) => ({
   kind: "category" as const,
   label: c.label,
   color: c.color,
+  iconKey: c.iconKey,
+  texture: SCOPE_TEXTURE[c.id] ?? "dots",
   intro: c.intro,
   localPointer: c.localPointer,
   filterResults: (results) => results.filter((r) => r.program.category === c.id),
@@ -36,6 +64,8 @@ const PERSONA_SCOPES: ScopeMeta[] = POPULATIONS.map((p) => {
     kind: "persona" as const,
     label: p.label,
     color: p.color,
+    iconKey: p.iconKey,
+    texture: SCOPE_TEXTURE[p.id] ?? "rings",
     intro: p.landing.body,
     filterResults: (results: EligibilityResult[]) =>
       results.filter((r) => ids.has(r.program.id)),

@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties, ReactNode } from "react";
 import { ASSET_BUCKETS, FLAG_QUESTION_MAP, INCOME_BUCKETS } from "@/data/questions";
 import { useHousehold } from "@/lib/household-store";
 import { Choice } from "@/components/ui/Choice";
@@ -12,10 +13,12 @@ import type { CategoricalFlag, Household, QuestionInput, ScreeningQuestion } fro
 
 function QuestionShell({
   question,
+  stagger,
   children,
 }: {
   question: ScreeningQuestion;
-  children: React.ReactNode;
+  stagger: number;
+  children: ReactNode;
 }) {
   const registryEntry =
     question.input.kind === "flag" ? FLAG_QUESTION_MAP[question.input.flag] : undefined;
@@ -23,12 +26,20 @@ function QuestionShell({
   const help = question.help ?? registryEntry?.help;
 
   return (
-    <div className="rounded-xl border border-card-border bg-card px-4 py-4 space-y-3">
+    <div
+      className="q-shell rise-in rounded-xl border border-card-border bg-card px-4 py-4 space-y-3"
+      style={{ "--stagger": stagger } as CSSProperties}
+    >
       <div className="space-y-1">
         <div className="flex items-start justify-between gap-3">
           <p className="text-sm font-medium">{prompt}</p>
           {question.optional && (
-            <span className="label-mono shrink-0 text-[9px] text-accent border border-accent/30 rounded-full px-2 py-0.5">
+            <span
+              className="scope-ink label-mono shrink-0 text-[9px] rounded-full px-2 py-0.5"
+              style={{
+                border: "1px solid color-mix(in srgb, var(--scope-accent, var(--accent)) 35%, transparent)",
+              }}
+            >
               optional
             </span>
           )}
@@ -232,20 +243,20 @@ export function DeepForm({ questions }: { questions: ScreeningQuestion[] }) {
     <div className="space-y-6">
       {required.length > 0 && (
         <div className="space-y-3">
-          {required.map((q) => (
-            <QuestionShell key={q.id} question={q}>
+          {required.map((q, i) => (
+            <QuestionShell key={q.id} question={q} stagger={i}>
               <QuestionField input={q.input} />
             </QuestionShell>
           ))}
         </div>
       )}
       {optional.length > 0 && (
-        <div className="space-y-3">
-          <p className="label-mono text-[10px] text-accent">
+        <div className="optional-block space-y-3">
+          <p className="label-mono text-[10px] scope-ink">
             optional — answering can only unlock more options
           </p>
-          {optional.map((q) => (
-            <QuestionShell key={q.id} question={q}>
+          {optional.map((q, i) => (
+            <QuestionShell key={q.id} question={q} stagger={required.length + i}>
               <QuestionField input={q.input} />
             </QuestionShell>
           ))}

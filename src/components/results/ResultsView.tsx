@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, type CSSProperties } from "react";
 import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { cascadeSuggestions, estimatedAnnualValue, evaluateAll } from "@/lib/engine";
@@ -38,7 +38,7 @@ export function ResultsView() {
 
   return (
     <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-8">
-      <div className="space-y-2">
+      <div className="rise-in space-y-2" style={{ "--stagger": 0 } as CSSProperties}>
         <p className="label-mono text-[10px] text-accent">your results</p>
         <h1 className="text-3xl font-bold">Here&apos;s what we found</h1>
         <p className="text-sm text-muted">
@@ -48,22 +48,42 @@ export function ResultsView() {
         </p>
       </div>
 
-      <ValueEstimate min={value.min} max={value.max} />
+      <div className="rise-in" style={{ "--stagger": 1 } as CSSProperties}>
+        <ValueEstimate min={value.min} max={value.max} />
+      </div>
 
-      <CategoryTabs results={results} />
+      <div className="rise-in" style={{ "--stagger": 2 } as CSSProperties}>
+        <CategoryTabs results={results} />
+      </div>
 
-      <PopulationSpotlight flags={household.flags} results={results} />
+      <div className="rise-in" style={{ "--stagger": 3 } as CSSProperties}>
+        <PopulationSpotlight flags={household.flags} results={results} />
+      </div>
 
       <CascadePanel cascades={cascades} />
 
-      {grouped.map((g) => (
-        <section key={g.confidence} className="space-y-3">
-          <h2 className="text-lg font-semibold" style={{ color: CONFIDENCE_COLOR[g.confidence] }}>
+      {grouped.map((g, gi) => (
+        <section
+          key={g.confidence}
+          className="rise-in space-y-4"
+          style={{ "--stagger": 4 + gi } as CSSProperties}
+        >
+          <h2
+            className="tier-rule text-lg font-semibold"
+            style={
+              {
+                color: CONFIDENCE_COLOR[g.confidence],
+                "--tier-color": CONFIDENCE_COLOR[g.confidence],
+              } as CSSProperties
+            }
+          >
             {CONFIDENCE_LABEL[g.confidence]}
           </h2>
           <div className="grid gap-4">
-            {g.items.map((r) => (
-              <ResultCard key={r.program.id} result={r} />
+            {g.items.map((r, i) => (
+              <div key={r.program.id} className="rise-in" style={{ "--stagger": i } as CSSProperties}>
+                <ResultCard result={r} />
+              </div>
             ))}
           </div>
         </section>

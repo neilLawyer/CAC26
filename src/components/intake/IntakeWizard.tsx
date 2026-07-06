@@ -97,6 +97,8 @@ export function IntakeWizard() {
 
           <EligibilityMeter possible={possible} total={programs.length} />
 
+          {/* keyed on the step id: each step rises in as its own scene */}
+          <div key={currentStep} className="rise-in">
           {currentStep === "state" && (
             <section className="space-y-4">
               <h2 className="text-2xl font-semibold">Which state are you in?</h2>
@@ -109,9 +111,9 @@ export function IntakeWizard() {
                       setState(s.code);
                       next();
                     }}
-                    className={`rounded-xl border px-4 py-3 text-left transition-colors ${
+                    className={`rounded-xl border px-4 py-3 text-left ${
                       s.available
-                        ? "border-card-border bg-card hover:border-accent/60 hover:bg-accent/5"
+                        ? "press-weight choice-idle border-card-border bg-card"
                         : "border-card-border/50 text-muted cursor-not-allowed"
                     }`}
                   >
@@ -194,7 +196,7 @@ export function IntakeWizard() {
               <p className="text-muted">
                 {possible} of {programs.length} programs still look possible based on your answers.
               </p>
-              <Button onClick={() => router.push("/results")} className="px-8 py-3">
+              <Button onClick={() => router.push("/results")} className="press-weight px-8 py-3">
                 See my results
               </Button>
               <div>
@@ -202,6 +204,7 @@ export function IntakeWizard() {
               </div>
             </section>
           )}
+          </div>
         </div>
 
         <IntakeSidebar
