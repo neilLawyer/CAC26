@@ -118,6 +118,18 @@ export const FLAG_QUESTIONS: FlagQuestion[] = [
     label: "someone in the household is enrolled in Medicare",
     question: "Is anyone in your household enrolled in Medicare?",
   },
+  {
+    flag: "hasOtherHealthCoverage",
+    label: "the household already has coverage through a job, Medicaid, or Medicare",
+    question: "Does anyone applying already have health coverage through a job, Medicaid, or Medicare?",
+    help: "Marketplace subsidies are for people who don't already have another affordable coverage option — this doesn't affect Medicaid or PAAD.",
+  },
+  {
+    flag: "chronicCondition",
+    label: "someone has an ongoing health condition with high medical costs",
+    question: "Does anyone in the household have an ongoing health condition with significant medical costs?",
+    help: "Some states run 'medically needy' Medicaid for people in this situation, even above the usual income line — we can't calculate that one precisely yet, but we'll point you to where to ask.",
+  },
   // --- work history & military service ---------------------------------------
   {
     flag: "workedFiveOfLastTenYears",
@@ -134,6 +146,12 @@ export const FLAG_QUESTIONS: FlagQuestion[] = [
     flag: "serviceConnectedCondition",
     label: "you have a condition connected to your military service",
     question: "Do you have an illness or injury that started — or got worse — during your military service?",
+  },
+  {
+    flag: "otherThanDishonorableDischarge",
+    label: "your discharge was anything other than dishonorable",
+    question: "Was your discharge from the military anything other than dishonorable?",
+    help: "This is how the VA determines basic eligibility for most benefits — if you're not sure, they can look up your record for you.",
   },
   // --- education ---------------------------------------------------------------
   {

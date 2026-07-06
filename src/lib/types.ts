@@ -28,10 +28,13 @@ export type CategoricalFlag =
   | "disasterAffected"
   // health
   | "medicareEnrolled"
+  | "hasOtherHealthCoverage"
+  | "chronicCondition"
   // work history & service
   | "workedFiveOfLastTenYears"
   | "servedActiveDuty"
   | "serviceConnectedCondition"
+  | "otherThanDishonorableDischarge"
   // education
   | "planningCollege";
 

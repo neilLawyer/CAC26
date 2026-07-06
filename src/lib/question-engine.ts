@@ -27,15 +27,13 @@ type FactKey =
 function neededFacts(program: Program): FactKey[] {
   const r = program.rules;
   const facts: FactKey[] = [];
-  const hasIncomeTest =
-    r.maxIncomePctFPL !== undefined ||
-    r.minIncomePctFPL !== undefined ||
-    r.maxIncomeFlatDollar !== undefined ||
-    r.maxIncomeSizeTable !== undefined ||
-    r.kidCountIncomeTiers !== undefined;
-  if (hasIncomeTest) {
-    facts.push({ kind: "income" }, { kind: "field", field: "householdSize" });
-  }
+  // testIncome (engine.ts) unconditionally requires householdSize + an income
+  // answer before it returns anything but "unknown" — even for programs with
+  // no maxIncome* field set at all (it just falls through to "pass"). So these
+  // two are needed by EVERY program, not only ones that declare a limit;
+  // gating on "does this program have an income test" left VA/Pell/job-training
+  // programs stuck at needsInfo forever, since nothing ever asked for them.
+  facts.push({ kind: "income" }, { kind: "field", field: "householdSize" });
   if (r.assetLimitDollar !== undefined) facts.push({ kind: "assets" });
   for (const req of r.categoricalRequirements) facts.push({ kind: "flag", flag: req.type });
   for (const f of r.incomeWaivedByFlags ?? []) facts.push({ kind: "flag", flag: f });

@@ -32,6 +32,11 @@ export const CATEGORIES: CategoryMeta[] = [
     iconKey: "food",
     intro:
       "Help buying groceries — from monthly SNAP benefits to WIC for young families, free school meals, and food banks that can help this week.",
+    localPointer: {
+      finderName: "Feeding America's food bank locator",
+      finderUrl: "https://www.feedingamerica.org/find-your-local-foodbank",
+      note: "Need food this week, not next month? Food banks don't require an application or income proof — just show up. Enter your ZIP to find the nearest one.",
+    },
   },
   {
     id: "health",
@@ -64,6 +69,11 @@ export const CATEGORIES: CategoryMeta[] = [
     iconKey: "education",
     intro:
       "Free school meals, Pell Grants and FAFSA for college or training, scholarship finders, and free job-training help.",
+    localPointer: {
+      finderName: "studentaid.gov's state-by-state FAFSA deadlines",
+      finderUrl: "https://studentaid.gov/apply-for-aid/fafsa/filling-out/state-deadlines",
+      note: "The federal FAFSA deadline is generous, but many state grants have much earlier cutoffs — worth checking your state's date before you wait.",
+    },
   },
   {
     id: "housing",
@@ -86,6 +96,11 @@ export const CATEGORIES: CategoryMeta[] = [
     iconKey: "tax",
     intro:
       "Tax credits are the single biggest pile of unclaimed money — the EITC alone goes unclaimed by about 1 in 5 eligible workers. Filing is how you collect.",
+    localPointer: {
+      finderName: "IRS free tax prep locator (VITA/TCE) & GetYourRefund",
+      finderUrl: "https://irs.treasury.gov/freetaxprep/",
+      note: "Since these credits are claimed by filing, free IRS-certified help can prepare your return for you at no cost — even if you've never filed before.",
+    },
   },
   {
     id: "phone-internet",

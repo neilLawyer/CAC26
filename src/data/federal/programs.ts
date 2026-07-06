@@ -240,6 +240,7 @@ export const FEDERAL_PROGRAMS: Program[] = [
         { type: "veteran" },
         { type: "servedActiveDuty" },
         { type: "serviceConnectedCondition" },
+        { type: "otherThanDishonorableDischarge" },
       ],
       requireAllCategorical: true,
     },
@@ -263,7 +264,11 @@ export const FEDERAL_PROGRAMS: Program[] = [
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
-      categoricalRequirements: [{ type: "veteran" }, { type: "servedActiveDuty" }],
+      categoricalRequirements: [
+        { type: "veteran" },
+        { type: "servedActiveDuty" },
+        { type: "otherThanDishonorableDischarge" },
+      ],
       requireAllCategorical: true,
     },
     estimatedTimeToBenefitWeeksMin: 8,
@@ -286,7 +291,11 @@ export const FEDERAL_PROGRAMS: Program[] = [
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
-      categoricalRequirements: [{ type: "veteran" }, { type: "servedActiveDuty" }],
+      categoricalRequirements: [
+        { type: "veteran" },
+        { type: "servedActiveDuty" },
+        { type: "otherThanDishonorableDischarge" },
+      ],
       requireAllCategorical: true,
     },
     estimatedTimeToBenefitWeeksMin: 4,
@@ -309,7 +318,11 @@ export const FEDERAL_PROGRAMS: Program[] = [
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
-      categoricalRequirements: [{ type: "veteran" }, { type: "servedActiveDuty" }],
+      categoricalRequirements: [
+        { type: "veteran" },
+        { type: "servedActiveDuty" },
+        { type: "otherThanDishonorableDischarge" },
+      ],
       requireAllCategorical: true,
     },
     estimatedTimeToBenefitWeeksMin: 4,

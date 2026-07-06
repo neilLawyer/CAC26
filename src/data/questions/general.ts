@@ -60,7 +60,8 @@ export const GENERAL_QUESTIONS: ScreeningQuestion[] = [
     id: "general.tenure",
     scope: "general",
     order: 60,
-    prompt: "Do you own or rent your home?",
+    prompt: "Do you own your home, rent, or something else?",
+    help: "This changes which housing programs make sense to show you.",
     input: {
       kind: "select",
       field: "housingTenure",
@@ -81,7 +82,7 @@ export const GENERAL_QUESTIONS: ScreeningQuestion[] = [
     id: "general.filing-status",
     scope: "general",
     order: 80,
-    prompt: "How do you file?",
+    prompt: "How do you file your taxes?",
     showIf: [{ flag: "filesTaxes", equals: true }],
     input: {
       kind: "select",

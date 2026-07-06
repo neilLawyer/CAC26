@@ -236,6 +236,12 @@ export const CA_PROGRAMS: Program[] = [
       // CAPI is designed to mirror SSI/SSP payment standards exactly.
       maxIncomeFlatDollar: 1234,
       assetLimitDollar: 2000,
+      // Real CAPI eligibility is (65+ or disabled) AND excluded from SSI on
+      // immigration-status grounds — the any-of/all-of schema here can't
+      // express that nested AND/OR, and the "immigrants" scope's coverage of
+      // this question doesn't depend on CAPI anyway (see scope-explicit
+      // immigrants.status question in data/questions/scopes.ts, which works
+      // for every state — CAPI only exists in the CA pack).
       categoricalRequirements: [{ type: "age65Plus" }, { type: "disabled" }],
       requireAllCategorical: false,
     },
@@ -383,6 +389,10 @@ export const CA_PROGRAMS: Program[] = [
       maxIncomePctFPL: 400,
       categoricalRequirements: [],
       requireAllCategorical: false,
+      // Marketplace subsidies are for people without another affordable
+      // coverage option — the real ACA "firewall" rule. Doesn't touch
+      // Medi-Cal, which has no such exclusion.
+      disqualifyingFlags: ["hasOtherHealthCoverage"],
     },
     estimatedAnnualValueMin: 1000,
     estimatedAnnualValueMax: 6000,

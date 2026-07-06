@@ -372,6 +372,10 @@ export const NJ_PROGRAMS: Program[] = [
       maxIncomePctFPL: 600,
       categoricalRequirements: [],
       requireAllCategorical: false,
+      // Marketplace subsidies are for people without another affordable
+      // coverage option — the real ACA "firewall" rule. Doesn't touch
+      // FamilyCare/PAAD, which have no such exclusion.
+      disqualifyingFlags: ["hasOtherHealthCoverage"],
     },
     estimatedAnnualValueMin: 1000,
     estimatedAnnualValueMax: 6000,

@@ -22,6 +22,22 @@ export const SCOPE_QUESTIONS: ScreeningQuestion[] = [
     help: "Medicare enrollees with lower income can get help with premiums (Medicare Savings Programs) and drug costs (Extra Help).",
     input: { kind: "flag", flag: "medicareEnrolled" },
   },
+  {
+    id: "health.other-coverage",
+    scope: "health",
+    order: 20,
+    input: { kind: "flag", flag: "hasOtherHealthCoverage" },
+  },
+  {
+    id: "health.chronic-condition",
+    scope: "health",
+    order: 90,
+    optional: {
+      whyWeAsk:
+        "This can point you toward pathways some states offer for high medical costs — it never counts against you.",
+    },
+    input: { kind: "flag", flag: "chronicCondition" },
+  },
   // --- housing -----------------------------------------------------------------
   {
     id: "housing.zip",
@@ -69,9 +85,22 @@ export const SCOPE_QUESTIONS: ScreeningQuestion[] = [
     id: "education.planning-college",
     scope: "education",
     order: 10,
+    prompt: "Is anyone planning to start college or career training — not enrolled yet?",
+    help: "This is separate from already being a student — answer yes here if you're still planning ahead.",
     input: { kind: "flag", flag: "planningCollege" },
   },
   // --- personas ----------------------------------------------------------------------------
+  {
+    id: "immigrants.status",
+    scope: "immigrants",
+    order: 10,
+    prompt: "Is anyone in your household an immigrant or non-citizen?",
+    optional: {
+      whyWeAsk:
+        "Several programs on this page — WIC, school meals, food banks — are open no matter what you answer here. A few, like California's CAPI, exist specifically for people this question describes. We never ask for documents and never share your answer.",
+    },
+    input: { kind: "flag", flag: "immigrant" },
+  },
   {
     id: "veterans.served",
     scope: "veterans",
@@ -80,6 +109,12 @@ export const SCOPE_QUESTIONS: ScreeningQuestion[] = [
       whyWeAsk: "Active-duty service is what unlocks VA healthcare, disability, education, and home-loan benefits.",
     },
     input: { kind: "flag", flag: "servedActiveDuty" },
+  },
+  {
+    id: "veterans.discharge",
+    scope: "veterans",
+    order: 15,
+    input: { kind: "flag", flag: "otherThanDishonorableDischarge" },
   },
   {
     id: "veterans.service-connected",
