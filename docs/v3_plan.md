@@ -152,4 +152,10 @@ zero-fabrication confirmation, and open judgment calls.
   identity, and a map full of real places is the strongest image on the page. All motion reads
   the shared tokens and sits inside prefers-reduced-motion guards. Gate 31/31. Also fixed two
   pre-existing lint errors from W2 (unescaped apostrophes) caught this pass.
-- [ ] W6
+- [x] W6 — DONE. Three persona walkthroughs in a real browser, all green (34/34 total suite):
+  high-schooler → education → Pell (honestly capped); parent → WIC adjunctive firing live →
+  LIVE Newark address lookup → real HRSA centers on the map; homeowner → tax → deterministic
+  "$4,400/year for your 2 children" from the record's own per-child figure, EITC honestly
+  "Not likely" at that income. Full account in docs/v3_report.md, including the delegation
+  ledger and the items needing a human call (HUD_TOKEN + ANTHROPIC_API_KEY registration,
+  net-basis "possible" breadth, VA burial benefits).
