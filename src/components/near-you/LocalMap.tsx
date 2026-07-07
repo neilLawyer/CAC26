@@ -48,6 +48,11 @@ export function LocalMap({
             center={[p.lat, p.lon]}
             radius={8}
             pathOptions={{ color: accent, weight: 1.5, fillColor: accent, fillOpacity: 0.55 }}
+            eventHandlers={{
+              // Markers answer the pointer: swell + solidify on hover.
+              mouseover: (e) => e.target.setStyle({ fillOpacity: 0.9, weight: 2.5 }),
+              mouseout: (e) => e.target.setStyle({ fillOpacity: 0.55, weight: 1.5 }),
+            }}
           >
             <Popup>
               <strong>{p.title}</strong>

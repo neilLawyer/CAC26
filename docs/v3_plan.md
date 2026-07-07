@@ -142,5 +142,14 @@ zero-fabrication confirmation, and open judgment calls.
   limit — the explain route survived complete (kept as-is), the federal-pack agent only
   landed a header comment; I wrote the 7 programs, supersedes lines, ExplainButton, and all
   wiring myself.
-- [ ] W5
+- [x] W5 — DONE (no delegation). The room system now reaches every new surface: Leaflet popups
+  re-dressed as app cards (token borders/radius/shadow, both themes), markers answer the pointer
+  (swell + solidify on hover, CSS-transitioned), the "you are here" ring vs. filled result dots
+  read differently at a glance; near-you result blocks arrive as a staged story (found → rents →
+  income limits → map → places); the address button pulses "Locating…" while it works; offer-card
+  arrows lean toward their door on hover; advisory strips rise in with their card. Deliberate
+  restraint: NO stock imagery added to the new surfaces — texture + watermark + key color IS the
+  identity, and a map full of real places is the strongest image on the page. All motion reads
+  the shared tokens and sits inside prefers-reduced-motion guards. Gate 31/31. Also fixed two
+  pre-existing lint errors from W2 (unescaped apostrophes) caught this pass.
 - [ ] W6

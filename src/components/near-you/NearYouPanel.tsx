@@ -114,10 +114,12 @@ export function NearYouPanel({ scopeId }: { scopeId: string }) {
           <button
             type="submit"
             disabled={state === "loading" || address.trim().length < 4}
-            className="press-weight rounded-full bg-accent text-[#04201c] text-sm font-semibold px-5 py-2.5 disabled:opacity-50"
+            className={`press-weight rounded-full bg-accent text-[#04201c] text-sm font-semibold px-5 py-2.5 disabled:opacity-50 ${
+              state === "loading" ? "locating" : ""
+            }`}
             style={{ backgroundColor: "var(--scope-accent, var(--accent))" }}
           >
-            {state === "loading" ? "Looking…" : "Look up my area"}
+            {state === "loading" ? "Locating…" : "Look up my area"}
           </button>
         </div>
         <p className="text-xs text-muted italic">{config.consent}</p>
@@ -132,7 +134,7 @@ export function NearYouPanel({ scopeId }: { scopeId: string }) {
       {state === "done" && result && (
         <div className="space-y-4">
           {legOk(geocode) ? (
-            <p className="text-sm">
+            <p className="rise-in text-sm" style={{ "--stagger": 0 } as CSSProperties}>
               <span className="scope-ink font-medium">Found:</span> {geocode.data.matchedAddress}{" "}
               <span className="text-muted">· {geocode.data.countyName}</span>
             </p>
@@ -143,7 +145,7 @@ export function NearYouPanel({ scopeId }: { scopeId: string }) {
           {/* Housing: county rent benchmarks + income limits */}
           {result.fmr &&
             (legOk(result.fmr) ? (
-              <div className="rounded-xl border border-card-border bg-card p-4 space-y-2">
+              <div className="rise-in rounded-xl border border-card-border bg-card p-4 space-y-2" style={{ "--stagger": 1 } as CSSProperties}>
                 <p className="label-mono text-[10px] scope-ink">
                   what rent actually costs here · HUD fair market rent {result.fmr.data.year}
                 </p>
@@ -174,7 +176,7 @@ export function NearYouPanel({ scopeId }: { scopeId: string }) {
 
           {result.incomeLimits &&
             (legOk(result.incomeLimits) ? (
-              <div className="rounded-xl border border-card-border bg-card p-4 space-y-2">
+              <div className="rise-in rounded-xl border border-card-border bg-card p-4 space-y-2" style={{ "--stagger": 2 } as CSSProperties}>
                 <p className="label-mono text-[10px] scope-ink">
                   HUD income limits for your county · {result.incomeLimits.data.year}
                   {household.householdSize ? ` · household of ${household.householdSize}` : ""}
@@ -212,11 +214,13 @@ export function NearYouPanel({ scopeId }: { scopeId: string }) {
 
           {/* Map + list of real places */}
           {mapCenter && mapPoints.length > 0 && (
+            <div className="rise-in" style={{ "--stagger": 3 } as CSSProperties}>
             <LocalMap
               center={mapCenter}
               points={mapPoints}
               accent="var(--scope-accent, var(--accent))"
             />
+            </div>
           )}
 
           {result.lihtc &&
@@ -249,7 +253,7 @@ export function NearYouPanel({ scopeId }: { scopeId: string }) {
                 </div>
               ) : (
                 <p className="text-sm text-muted">
-                  HUD's database lists no LIHTC properties in this county — the housing authority
+                  HUD&apos;s database lists no LIHTC properties in this county — the housing authority
                   linked above is still the right next call.
                 </p>
               )
@@ -282,7 +286,7 @@ export function NearYouPanel({ scopeId }: { scopeId: string }) {
                 </div>
               ) : (
                 <p className="text-sm text-muted">
-                  No HRSA health centers within about five miles of that address — HRSA's own
+                  No HRSA health centers within about five miles of that address — HRSA&apos;s own
                   locator at findahealthcenter.hrsa.gov covers wider searches.
                 </p>
               )

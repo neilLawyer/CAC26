@@ -59,7 +59,7 @@ export function Advisory({ result }: { result: EligibilityResult }) {
   const worth = worthLine(result, household);
 
   return (
-    <div className="rounded-lg bg-background/50 border border-card-border px-4 py-3 space-y-1.5">
+    <div className="rise-in rounded-lg bg-background/50 border border-card-border px-4 py-3 space-y-1.5">
       <p className="text-sm">
         <span className="label-mono text-[9px] text-muted mr-2">next step</span>
         {nextStepLine(result)}
