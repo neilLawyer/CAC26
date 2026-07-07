@@ -7,7 +7,9 @@ import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { evaluateAll } from "@/lib/engine";
 import { questionsForScope } from "@/lib/question-engine";
 import { getScope } from "@/data/scopes";
+import { NEAR_YOU } from "@/data/near-you";
 import { DeepForm } from "@/components/intake/DeepForm";
+import { NearYouPanel } from "@/components/near-you/NearYouPanel";
 import { Icon } from "@/components/ui/Icon";
 import { ICON_PATHS } from "@/components/ui/icons";
 import { ResultCard } from "@/components/results/ResultCard";
@@ -134,6 +136,14 @@ export function ScopeScreen({ scopeId }: { scopeId: string }) {
             >
               {scope.localPointer.finderName} →
             </a>
+          </div>
+        )}
+
+        {/* Address-driven local results — data-driven: only scopes with a
+            NEAR_YOU config render the panel (housing, health). */}
+        {NEAR_YOU[scope.id] && (
+          <div className="rise-in" style={{ "--stagger": 2 } as CSSProperties}>
+            <NearYouPanel scopeId={scope.id} />
           </div>
         )}
 

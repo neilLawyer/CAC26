@@ -51,6 +51,28 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Local results (address → county → real data)
+
+`src/app/api/near-you/route.ts` turns an address into local benchmarks and
+nearby resources: Census geocoder (address → county/tract) → HUD Fair Market
+Rent & income limits → HUD LIHTC affordable-housing properties → HRSA health
+centers (health flow only). Each step reports honestly if a source is down —
+never a blank or invented result.
+
+The address is sent to the Census Bureau's public geocoder server-side only —
+never stored or logged by this app.
+
+FMR/income limits need a free HUD API token: register at
+[huduser.gov's FMR API page](https://www.huduser.gov/portal/dataset/fmr-api.html)
+and add it to your own `.env.local` (see `.env.example`; never commit it):
+
+```
+HUD_TOKEN=your-token-here
+```
+
+Without a token, geocoding, LIHTC properties, and health centers still work —
+only rent/income-limit benchmarks are unavailable.
+
 ## Collaborating
 
 This repo is shared between contributors as collaborators — clone it, create a

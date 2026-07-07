@@ -107,7 +107,17 @@ zero-fabrication confirmation, and open judgment calls.
   dots, /results tabs/spotlight/footer actions (seeded household), full wizard flow, scope-page
   links, external-link integrity, 404 route, cliff-simulator slider — in both reduced-motion and
   animation-enabled modes. Suite lives at tests/e2e/controls.spec.ts (npm run test:e2e).
-- [ ] W2
+- [x] W2 — DONE. All tokenless legs verified LIVE before any code was written (geocoder shape,
+  LIHTC LVL2KX filter, HRSA spatial query). Live e2e through our own route: Newark NJ → Essex
+  County → 40 real LIHTC properties (all rooftop-mapped), 25 real health centers w/ phones;
+  bad address → honest reason; no HUD token → honest "see the README" note (FMR/IL is the one
+  leg I could not live-test — token requires registration; structural implementation follows
+  HUD's documented API). Found + fixed a live data quirk: CNTY2KX stores county codes UNPADDED
+  ('13' not '013') — query covers both. Food deliberately has no panel (no API exists; the
+  Feeding America pointer card is the honest answer). Delegated: all 4 server clients + route
+  handler + env/README docs (Sonnet, from my verified-shape spec). Mine: pipeline design, API
+  verification, near-you data config, NearYouPanel/LocalMap UX, ScopeScreen wiring, the
+  CNTY2KX fix.
 - [ ] W3
 - [ ] W4
 - [ ] W5
