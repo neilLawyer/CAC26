@@ -102,23 +102,25 @@ export function IntakeWizard() {
           {currentStep === "state" && (
             <section className="space-y-4">
               <h2 className="text-2xl font-semibold">Which state are you in?</h2>
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-sm text-muted">
+                Every state works: federal programs and address-based local data are national.
+                States marked <span className="text-accent">full coverage</span> also carry a
+                hand-verified pack of their own state programs.
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {STATES.map((s) => (
                   <button
                     key={s.code}
-                    disabled={!s.available}
                     onClick={() => {
                       setState(s.code);
                       next();
                     }}
-                    className={`rounded-xl border px-4 py-3 text-left ${
-                      s.available
-                        ? "press-weight choice-idle border-card-border bg-card"
-                        : "border-card-border/50 text-muted cursor-not-allowed"
-                    }`}
+                    className="press-weight choice-idle rounded-xl border border-card-border bg-card px-3 py-2 text-left text-sm"
                   >
                     {s.name}
-                    {!s.available && <span className="block text-xs">Coming soon</span>}
+                    {s.tier === "deep" && (
+                      <span className="block text-[10px] text-accent label-mono">full coverage</span>
+                    )}
                   </button>
                 ))}
               </div>

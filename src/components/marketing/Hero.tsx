@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { BrowserFrame } from "@/components/ui/BrowserFrame";
 import { ButtonLink } from "@/components/ui/Button";
+import { deepStates, totalProgramCount } from "@/data/states";
 
 const TRUST_PILLS = ["No login, ever", "Not a government site", "Free forever", "Open data only"];
 
@@ -21,8 +22,12 @@ export function Hero() {
 
       <div className="relative max-w-6xl mx-auto px-6 pt-20 pb-24 grid lg:grid-cols-2 gap-14 items-center">
         <div>
+          {/* Derived from the state registry — no hardcoded state claims. */}
           <Badge className="label-mono text-[11px] text-accent border border-accent/30 px-3 py-1">
-            Now open in New Jersey
+            {totalProgramCount()} programs · every state · full coverage in{" "}
+            {deepStates()
+              .map((s) => s.code)
+              .join(" & ")}
           </Badge>
           <h1 className="mt-6 text-5xl sm:text-6xl font-bold leading-[1.05] tracking-tight">
             Open every door<br />

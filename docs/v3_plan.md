@@ -128,6 +128,19 @@ zero-fabrication confirmation, and open judgment calls.
   flake under 12 parallel workers — passes serially; a real dead control still fails
   deterministically). Delegated: offers.ts rule data (Sonnet). Mine: condition/ranking design,
   offers engine, NextSteps, wiring, flake diagnosis.
-- [ ] W4
+- [x] W4 — DONE. 51 jurisdictions (50 states + DC) honestly tiered: deep (NJ/CA, verified
+  official aggregators NJHelps/BenefitsCal) vs federal (Benefits.gov pointer — no invented
+  state URLs); 7 federal baselines (us-snap/medicaid/chip/wic/liheap/nslp/va-healthcare,
+  statutory %-FPL only, confidenceCap where state-varying) + supersedes composition so NJ/CA
+  households never see doubles. Program count now DERIVED (51 distinct) — hero pill reads
+  "51 programs · every state · full coverage in CA & NJ" from the registry. Advisory strip
+  (next step + worth) on every card from record fields only, incl. deterministic per-child
+  arithmetic for kid-gated credits; /api/explain locked-prompt AI layer (haiku, record looked
+  up server-side, {disabled} without key — verified live) + opt-in ExplainButton with privacy
+  disclosure. CoverageNote on /results for federal-tier states notes the address features are
+  national. Gate 31/31. Delegation note: both Sonnet agents were killed mid-task by a session
+  limit — the explain route survived complete (kept as-is), the federal-pack agent only
+  landed a header comment; I wrote the 7 programs, supersedes lines, ExplainButton, and all
+  wiring myself.
 - [ ] W5
 - [ ] W6

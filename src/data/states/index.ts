@@ -1,37 +1,43 @@
 import { FEDERAL_PROGRAMS } from "@/data/federal/programs";
-import { assertAddOnlyInvariant } from "@/lib/data-invariants";
+import { FEDERAL_TIER_STATES } from "@/data/states/federal-tier";
 import { NJ_META } from "@/data/states/NJ/meta";
 import { NJ_PROGRAMS } from "@/data/states/NJ/programs";
 import { CA_META } from "@/data/states/CA/meta";
 import { CA_PROGRAMS } from "@/data/states/CA/programs";
+import { assertAddOnlyInvariant } from "@/lib/data-invariants";
 import type { Program, StateMeta } from "@/lib/types";
 
-// State registry: composes each entry from its own meta + program pack.
-// Adding a fully-built state = drop in `<CODE>/meta.ts` + `<CODE>/programs.ts`
-// and register it here; the engine and UI never hardcode state rules.
+// State registry, v3: ALL states are selectable, honestly tiered.
+//   deep    = hand-verified state pack + federal baseline (NJ, CA)
+//   federal = federal baseline + a real aggregator pointer for the state
+//             programs we don't screen yet
+// The federal baseline (and the address-based local features — Census
+// geocoder, HUD income limits, LIHTC properties, HRSA health centers — which
+// are national datasets) works in every state on day one.
+//
+// Composition rule: a state program that `supersedes` federal ids replaces
+// those federal entries in that state — NJ SNAP stands in for us-snap, so a
+// NJ household never sees both. Adding a deep state = a data pack + a meta
+// entry; the engine and every template are untouched.
 export interface StateEntry extends StateMeta {
   programs: Program[];
 }
 
 export const DEFAULT_STATE = "NJ";
 
-// States we surface as "coming soon" — metadata only, no data pack yet.
-const UPCOMING: StateMeta[] = [
-  { code: "TX", name: "Texas", available: false },
-  { code: "NY", name: "New York", available: false },
-  { code: "FL", name: "Florida", available: false },
-  { code: "PA", name: "Pennsylvania", available: false },
-];
+function composeState(meta: StateMeta, statePack: Program[]): StateEntry {
+  const superseded = new Set(statePack.flatMap((p) => p.supersedes ?? []));
+  return {
+    ...meta,
+    programs: [...statePack, ...FEDERAL_PROGRAMS.filter((f) => !superseded.has(f.id))],
+  };
+}
 
-// Every available state's list = its own pack + the federal pack (nationwide
-// rules — EITC, CTC, Lifeline, VA benefits, Pell, Section 8, …). State packs
-// keep their state-administered SNAP/Medicaid/LIHEAP/WIC versions; the federal
-// pack holds only programs no state pack duplicates.
 export const STATES: StateEntry[] = [
-  { ...NJ_META, programs: [...NJ_PROGRAMS, ...FEDERAL_PROGRAMS] },
-  { ...CA_META, programs: [...CA_PROGRAMS, ...FEDERAL_PROGRAMS] },
-  ...UPCOMING.map((m) => ({ ...m, programs: [] as Program[] })),
-];
+  composeState(NJ_META, NJ_PROGRAMS),
+  composeState(CA_META, CA_PROGRAMS),
+  ...FEDERAL_TIER_STATES.map((m) => composeState(m, [])),
+].sort((a, b) => a.name.localeCompare(b.name));
 
 // Fail the build loudly if any pack violates the add-only guarantee for
 // optional/sensitive questions (see lib/data-invariants.ts).
@@ -48,6 +54,18 @@ export function getProgramById(id: string): Program | undefined {
     if (found) return found;
   }
   return undefined;
+}
+
+/** The states with hand-verified deep packs — used for honest coverage copy. */
+export function deepStates(): StateEntry[] {
+  return STATES.filter((s) => s.tier === "deep");
+}
+
+/** Count of distinct programs across the whole library (site copy derives from this). */
+export function totalProgramCount(): number {
+  const ids = new Set<string>();
+  for (const s of STATES) for (const p of s.programs) ids.add(p.id);
+  return ids.size;
 }
 
 /** Stable reference so callers doing `getState(x)?.programs ?? EMPTY_PROGRAMS` don't

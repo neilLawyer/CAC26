@@ -1,9 +1,13 @@
 import type { Program } from "@/lib/types";
 
 // Rules-as-data: the federal pack. These programs have nationwide rules and are
-// composed into EVERY state's program list (src/data/states/index.ts). State
-// packs keep their state-administered versions of SNAP/Medicaid/LIHEAP/WIC —
-// nothing here duplicates them.
+// composed into EVERY state's program list (src/data/states/index.ts). The
+// SNAP/Medicaid/CHIP/WIC/LIHEAP/school-meals baseline entries below exist so
+// the 48 non-deep "federal tier" states aren't empty — NJ and CA instead show
+// their own hand-verified state-administered versions, which declare
+// `supersedes` on the matching us-* id so the federal entry is dropped for
+// that state (see states/index.ts's composeState). Nothing here duplicates a
+// deep-state entry for a household that sees both.
 //
 // Sourcing discipline (docs/sources.md + the project ground rules):
 // - Every entry's sourceUrl comes from docs/sources.md. No program without a source.
@@ -512,5 +516,204 @@ export const FEDERAL_PROGRAMS: Program[] = [
     estimatedTimeToBenefitWeeksMin: 0,
     estimatedTimeToBenefitWeeksMax: 1,
     cascadeHints: [],
+  },
+  // --- federal baselines (superseded by NJ/CA's own versions) -----------------
+  {
+    id: "us-snap",
+    name: "SNAP (Food Stamps)",
+    shortName: "SNAP",
+    state: "US",
+    category: "food",
+    summary:
+      "Monthly money on an EBT card to help buy groceries, in every state. The federal income line is 130% of poverty, but many states allow higher income — your state agency makes the call.",
+    agencyName: "USDA / your state SNAP agency",
+    applyUrl: "https://www.fns.usda.gov/snap/state-directory",
+    sourceUrl: "https://www.fns.usda.gov/snap/recipient/eligibility",
+    lastVerified: "2026-07-06",
+    // Many states raise the gross limit via broad-based categorical
+    // eligibility (NJ/CA use 185/200%) — never show better than "possible".
+    confidenceCap: "possible",
+    rules: {
+      incomeBasis: "gross",
+      incomePeriod: "monthly",
+      // Federal statutory gross-income standard, per the FNS eligibility page.
+      maxIncomePctFPL: 130,
+      categoricalRequirements: [],
+      requireAllCategorical: false,
+      // Categorical eligibility: TANF/SSI households qualify without the test.
+      incomeWaivedByFlags: ["receivesTanf", "receivesSsi"],
+    },
+    estimatedAnnualValueMin: 1200,
+    estimatedAnnualValueMax: 3600,
+    estimatedTimeToBenefitWeeksMin: 1,
+    estimatedTimeToBenefitWeeksMax: 4,
+    cascadeHints: ["us-wic", "us-nslp", "us-lifeline"],
+  },
+  {
+    id: "us-medicaid",
+    name: "Medicaid",
+    shortName: "Medicaid",
+    state: "US",
+    category: "health",
+    summary:
+      "Free or low-cost health coverage for lower incomes — in states that expanded Medicaid, most adults under about 138% of the poverty line qualify. About a dozen states haven't expanded, where adult rules are stricter; kids and pregnancy coverage reach higher incomes everywhere. Your state agency makes the call.",
+    agencyName: "Your state Medicaid agency",
+    applyUrl: "https://www.medicaid.gov/about-us/beneficiary-resources/index.html",
+    sourceUrl: "https://www.medicaid.gov",
+    lastVerified: "2026-07-06",
+    // Non-expansion states have no 138% adult pathway at all — cap it.
+    confidenceCap: "possible",
+    rules: {
+      incomeBasis: "gross",
+      incomePeriod: "monthly",
+      maxIncomePctFPL: 138,
+      // Children/pregnancy minimums exceed adult limits in every state; the
+      // exact ceilings vary, so 200% is a conservative floor, not a promise.
+      raisedIncomeLimitFlags: ["pregnantOrChildUnder5", "schoolAgeChild"],
+      raisedMaxIncomePctFPL: 200,
+      categoricalRequirements: [],
+      requireAllCategorical: false,
+    },
+    estimatedAnnualValueMin: 3000,
+    estimatedAnnualValueMax: 8000,
+    estimatedTimeToBenefitWeeksMin: 2,
+    estimatedTimeToBenefitWeeksMax: 6,
+    cascadeHints: ["us-snap", "us-wic", "us-lifeline"],
+  },
+  {
+    id: "us-chip",
+    name: "CHIP (Children's Health Insurance)",
+    shortName: "CHIP",
+    state: "US",
+    category: "health",
+    summary:
+      "Health coverage for kids in families that earn too much for Medicaid but not enough for private insurance. Every state runs one; income ceilings vary a lot by state, so if you have kids and no coverage for them, it's always worth the application.",
+    agencyName: "Your state CHIP/Medicaid agency",
+    applyUrl: "https://www.medicaid.gov/chip",
+    sourceUrl: "https://www.medicaid.gov/chip",
+    lastVerified: "2026-07-06",
+    // Thresholds run roughly 170–400% FPL depending on the state — no single
+    // ceiling would be honest, so none is encoded and confidence stays capped.
+    confidenceCap: "possible",
+    rules: {
+      incomeBasis: "gross",
+      incomePeriod: "monthly",
+      categoricalRequirements: [{ type: "schoolAgeChild" }, { type: "pregnantOrChildUnder5" }],
+      requireAllCategorical: false,
+    },
+    estimatedTimeToBenefitWeeksMin: 2,
+    estimatedTimeToBenefitWeeksMax: 6,
+    cascadeHints: ["us-medicaid", "us-nslp"],
+  },
+  {
+    id: "us-wic",
+    name: "WIC (Women, Infants & Children)",
+    shortName: "WIC",
+    state: "US",
+    category: "food",
+    summary:
+      "Food benefits, nutrition support, and breastfeeding help for pregnant people, new parents, and kids under 5 — in every state, and open regardless of immigration status.",
+    agencyName: "USDA / your state WIC agency",
+    applyUrl: "https://www.fns.usda.gov/wic",
+    sourceUrl: "https://www.fns.usda.gov/wic",
+    lastVerified: "2026-07-06",
+    rules: {
+      incomeBasis: "gross",
+      incomePeriod: "monthly",
+      maxIncomePctFPL: 185,
+      categoricalRequirements: [{ type: "pregnantOrChildUnder5" }],
+      requireAllCategorical: true,
+      // Adjunctive eligibility: SNAP/Medicaid/TANF households auto-qualify on income.
+      incomeWaivedByFlags: ["receivesSnap", "receivesMedicaid", "receivesTanf"],
+    },
+    estimatedAnnualValueMin: 600,
+    estimatedAnnualValueMax: 1600,
+    estimatedTimeToBenefitWeeksMin: 1,
+    estimatedTimeToBenefitWeeksMax: 3,
+    cascadeHints: ["us-snap", "us-medicaid"],
+  },
+  {
+    id: "us-liheap",
+    name: "LIHEAP Energy Assistance",
+    shortName: "LIHEAP",
+    state: "US",
+    category: "energy",
+    summary:
+      "Help paying heating and cooling bills, run through every state. Federal law lets states go up to the greater of 150% of poverty or 60% of state median income — many set the higher line, and funds run out each season, so apply early.",
+    agencyName: "HHS / your state energy assistance office",
+    applyUrl: "https://www.acf.hhs.gov/ocs/programs/liheap",
+    sourceUrl: "https://www.acf.hhs.gov/ocs/programs/liheap",
+    lastVerified: "2026-07-06",
+    // States often set HIGHER limits than the 150% FPL statutory floor
+    // encoded here, and funding is capped — never above "possible".
+    confidenceCap: "possible",
+    rules: {
+      incomeBasis: "gross",
+      incomePeriod: "monthly",
+      maxIncomePctFPL: 150,
+      categoricalRequirements: [{ type: "paysHomeEnergy" }],
+      requireAllCategorical: true,
+    },
+    estimatedAnnualValueMin: 200,
+    estimatedAnnualValueMax: 1000,
+    estimatedTimeToBenefitWeeksMin: 2,
+    estimatedTimeToBenefitWeeksMax: 8,
+    cascadeHints: ["us-snap", "us-lifeline"],
+  },
+  {
+    id: "us-nslp",
+    name: "Free & Reduced-Price School Meals",
+    shortName: "School Meals",
+    state: "US",
+    category: "food",
+    summary:
+      "School breakfast and lunch: free under 130% of the poverty line, reduced-price up to 185%. Families on SNAP or TANF qualify automatically — and some states now serve every student free.",
+    agencyName: "USDA / your school district",
+    applyUrl: "https://www.fns.usda.gov/nslp",
+    sourceUrl: "https://www.fns.usda.gov/nslp",
+    lastVerified: "2026-07-06",
+    rules: {
+      incomeBasis: "gross",
+      incomePeriod: "monthly",
+      // 185% is the reduced-price line; free is 130% (both from the NSLP source).
+      maxIncomePctFPL: 185,
+      categoricalRequirements: [{ type: "schoolAgeChild" }],
+      requireAllCategorical: true,
+      // Categorical eligibility: SNAP/TANF households qualify automatically.
+      incomeWaivedByFlags: ["receivesSnap", "receivesTanf"],
+    },
+    estimatedAnnualValueMin: 800,
+    estimatedAnnualValueMax: 1600,
+    estimatedTimeToBenefitWeeksMin: 0,
+    estimatedTimeToBenefitWeeksMax: 1,
+    cascadeHints: ["us-snap", "us-wic"],
+  },
+  {
+    id: "us-va-healthcare",
+    name: "VA Health Care",
+    shortName: "VA Health Care",
+    state: "US",
+    category: "health",
+    summary:
+      "Full health care through the VA for veterans — enrollment priority depends on service history, disability rating, and income, but applying is free and the VA sorts out your priority group for you.",
+    agencyName: "U.S. Department of Veterans Affairs",
+    applyUrl: "https://www.va.gov/health-care",
+    sourceUrl: "https://www.va.gov/benefits",
+    lastVerified: "2026-07-06",
+    // Priority groups use income and rating in ways we don't model — capped.
+    confidenceCap: "possible",
+    rules: {
+      incomeBasis: "gross",
+      incomePeriod: "monthly",
+      categoricalRequirements: [
+        { type: "veteran" },
+        { type: "servedActiveDuty" },
+        { type: "otherThanDishonorableDischarge" },
+      ],
+      requireAllCategorical: true,
+    },
+    estimatedTimeToBenefitWeeksMin: 2,
+    estimatedTimeToBenefitWeeksMax: 8,
+    cascadeHints: ["us-va-disability"],
   },
 ];

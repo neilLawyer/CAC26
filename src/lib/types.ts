@@ -158,7 +158,16 @@ export interface KidCountIncomeTier {
 export interface StateMeta {
   code: string; // e.g. "NJ"
   name: string; // e.g. "New Jersey"
-  available: boolean; // true = has a data pack; false = "coming soon"
+  available: boolean; // every state is selectable in v3; kept for compatibility
+  /**
+   * Honest coverage tier: "deep" = a hand-verified state program pack on top
+   * of the federal baseline (NJ, CA); "federal" = the federal baseline (which
+   * includes the NATIONAL address/income-limit features) plus an aggregator
+   * pointer for the state programs we don't screen yet.
+   */
+  tier: "deep" | "federal";
+  /** Where to check the state programs we don't cover — always a real, official finder. */
+  aggregator: { name: string; url: string };
 }
 
 export interface Program {
@@ -181,6 +190,12 @@ export interface Program {
   sourceUrl: string;
   lastVerified: string; // ISO date the rule data was last checked against the source
   rules: ProgramRules;
+  /**
+   * Federal-baseline replacement: a state-administered program lists the
+   * federal ids it stands in for (e.g. NJ SNAP supersedes "us-snap"), and the
+   * registry drops those federal entries in that state — no double-counting.
+   */
+  supersedes?: string[];
   /**
    * Ceiling on the confidence we'll ever show. For programs where qualifying is decided
    * by a formula, rating, or lottery we can't model (Pell's SAI, VA disability ratings,

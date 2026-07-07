@@ -19,6 +19,8 @@ export const CA_PROGRAMS: Program[] = [
     applyUrl: "https://www.getcalfresh.org/",
     sourceUrl: "https://www.cdss.ca.gov/calfresh",
     lastVerified: "2026-07-04",
+    // Replaces the federal baseline entry in this state — see states/index.ts.
+    supersedes: ["us-snap"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -43,6 +45,7 @@ export const CA_PROGRAMS: Program[] = [
     applyUrl: "https://www.coveredca.com/",
     sourceUrl: "https://www.dhcs.ca.gov/",
     lastVerified: "2026-07-04",
+    supersedes: ["us-medicaid","us-chip"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -72,6 +75,7 @@ export const CA_PROGRAMS: Program[] = [
     applyUrl: "https://www.csd.ca.gov/pages/liheap",
     sourceUrl: "https://www.csd.ca.gov/pages/liheap",
     lastVerified: "2026-07-04",
+    supersedes: ["us-liheap"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -111,6 +115,7 @@ export const CA_PROGRAMS: Program[] = [
     applyUrl: "https://www.myfamily.wic.ca.gov/",
     sourceUrl: "https://www.myfamily.wic.ca.gov/",
     lastVerified: "2026-07-04",
+    supersedes: ["us-wic"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -178,6 +183,7 @@ export const CA_PROGRAMS: Program[] = [
     applyUrl: "https://www.cde.ca.gov/ls/nu/sn/universalmealsfaq.asp",
     sourceUrl: "https://www.cde.ca.gov/ls/nu/sn/universalmealsfaq.asp",
     lastVerified: "2026-07-04",
+    supersedes: ["us-nslp"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",

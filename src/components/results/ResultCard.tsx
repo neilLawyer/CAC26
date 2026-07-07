@@ -1,6 +1,8 @@
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Advisory } from "@/components/results/Advisory";
+import { ExplainButton } from "@/components/results/ExplainButton";
 import { CONFIDENCE_COLOR, CONFIDENCE_LABEL } from "@/components/results/confidence";
 import type { EligibilityResult } from "@/lib/types";
 
@@ -32,6 +34,8 @@ export function ResultCard({ result }: { result: EligibilityResult }) {
         ))}
       </ul>
       {counterfactual && <p className="text-sm italic text-foreground/70">{counterfactual}</p>}
+      <Advisory result={result} />
+      <ExplainButton program={program} />
       <div className="flex items-center justify-between pt-2 text-xs text-muted">
         <span>Checked against source: {program.lastVerified}</span>
         <a

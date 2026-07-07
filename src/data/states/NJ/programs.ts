@@ -17,6 +17,8 @@ export const NJ_PROGRAMS: Program[] = [
     applyUrl: "https://njhelps.org/",
     sourceUrl: "https://www.nj.gov/humanservices/dfd/programs/njsnap/",
     lastVerified: "2026-07-04",
+    // Replaces the federal baseline entry in this state — see states/index.ts.
+    supersedes: ["us-snap"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -41,6 +43,7 @@ export const NJ_PROGRAMS: Program[] = [
     applyUrl: "https://www.njfamilycare.org/",
     sourceUrl: "https://www.njfamilycare.org/",
     lastVerified: "2026-07-04",
+    supersedes: ["us-medicaid","us-chip"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -70,6 +73,7 @@ export const NJ_PROGRAMS: Program[] = [
     applyUrl: "https://www.nj.gov/dca/dhcr/programs/liheap/",
     sourceUrl: "https://www.nj.gov/dca/dhcr/programs/liheap/",
     lastVerified: "2026-07-04",
+    supersedes: ["us-liheap"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -108,6 +112,7 @@ export const NJ_PROGRAMS: Program[] = [
     applyUrl: "https://www.nj.gov/health/fhs/wic/",
     sourceUrl: "https://www.nj.gov/health/fhs/wic/",
     lastVerified: "2026-07-04",
+    supersedes: ["us-wic"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
@@ -174,6 +179,7 @@ export const NJ_PROGRAMS: Program[] = [
     applyUrl: "https://www.nj.gov/agriculture/divisions/fn/childadult/njschoolmeals.html",
     sourceUrl: "https://www.nj.gov/agriculture/divisions/fn/childadult/njschoolmeals.html",
     lastVerified: "2025-02-01",
+    supersedes: ["us-nslp"],
     rules: {
       incomeBasis: "gross",
       incomePeriod: "monthly",
