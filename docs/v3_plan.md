@@ -118,7 +118,16 @@ zero-fabrication confirmation, and open judgment calls.
   handler + env/README docs (Sonnet, from my verified-shape spec). Mine: pipeline design, API
   verification, near-you data config, NearYouPanel/LocalMap UX, ScopeScreen wiring, the
   CNTY2KX fix.
-- [ ] W3
+- [x] W3 — DONE. OfferRule data (14 rules incl. all six required situations + medicare/tax-filer/
+  homeowner-senior/planning-college/renter-crisis extras), conditions reuse QuestionCondition
+  (gained a field-equals variant that showIf inherits), ranking = weight + 2×open-results +
+  unanswered (a door with nothing behind it is skipped; one offer per destination). NextSteps
+  cards on /results wear the destination room's color + sigil; every scope page ends in a
+  "Keep going" cross-offer, so no results surface dead-ends. Gate grew 2 branching tests →
+  31/31 twice consecutively (capped workers at 4 + 1 retry after diagnosing hydration-race
+  flake under 12 parallel workers — passes serially; a real dead control still fails
+  deterministically). Delegated: offers.ts rule data (Sonnet). Mine: condition/ranking design,
+  offers engine, NextSteps, wiring, flake diagnosis.
 - [ ] W4
 - [ ] W5
 - [ ] W6

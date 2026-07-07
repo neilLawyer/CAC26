@@ -253,6 +253,36 @@ test.describe("scope page links", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Adaptive branching: offers render for the household's situation and open
+// their destination forms (results must never dead-end).
+// ---------------------------------------------------------------------------
+
+test.describe("adaptive branching offers", () => {
+  test("veteran household gets a veterans offer that opens the veterans form", async ({ page }) => {
+    await seedHousehold(page); // seeded flags include veteran: true
+    await page.goto("/results");
+    const offer = page
+      .locator('section:has(h2:text("Made for your situation")) a[href="/intake/veterans"]')
+      .first();
+    await expect(offer).toBeVisible();
+    await offer.click();
+    await expect(page).toHaveURL(/\/intake\/veterans$/);
+  });
+
+  test("scope pages carry a cross-offer so nothing dead-ends", async ({ page }) => {
+    await seedHousehold(page);
+    await page.goto("/intake/veterans");
+    const keepGoing = page.locator('section:has(h2:text("Keep going")) a').first();
+    await expect(keepGoing).toBeVisible();
+    const href = await keepGoing.getAttribute("href");
+    expect(href).toMatch(/^\/intake\//);
+    expect(href).not.toBe("/intake/veterans");
+    await keepGoing.click();
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Cliff simulator
 // ---------------------------------------------------------------------------
 

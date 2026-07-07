@@ -6,10 +6,12 @@ import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { evaluateAll } from "@/lib/engine";
 import { questionsForScope } from "@/lib/question-engine";
+import { rankOffers } from "@/lib/offers";
 import { getScope } from "@/data/scopes";
 import { NEAR_YOU } from "@/data/near-you";
 import { DeepForm } from "@/components/intake/DeepForm";
 import { NearYouPanel } from "@/components/near-you/NearYouPanel";
+import { NextSteps } from "@/components/results/NextSteps";
 import { Icon } from "@/components/ui/Icon";
 import { ICON_PATHS } from "@/components/ui/icons";
 import { ResultCard } from "@/components/results/ResultCard";
@@ -40,6 +42,13 @@ export function ScopeScreen({ scopeId }: { scopeId: string }) {
   const questions = useMemo(
     () => (scope ? questionsForScope(scope.id, scopeResults, household) : []),
     [scope, scopeResults, household]
+  );
+  // Adaptive branching, continued: the next-best doors from HERE — never the
+  // room the user is already standing in. No results surface dead-ends.
+  const crossOffers = useMemo(
+    () =>
+      scope ? rankOffers(household, allResults).filter((o) => o.scope.id !== scope.id) : [],
+    [scope, household, allResults]
   );
 
   if (!scope) return null; // the route 404s before this can happen
@@ -179,6 +188,12 @@ export function ScopeScreen({ scopeId }: { scopeId: string }) {
             We don&apos;t have {scope.label.toLowerCase()} programs for{" "}
             {stateEntry?.name ?? "your state"} yet.
           </p>
+        )}
+
+        {crossOffers.length > 0 && (
+          <div className="pt-2">
+            <NextSteps offers={crossOffers} heading="Keep going — also made for you" limit={2} />
+          </div>
         )}
 
         <div className="flex flex-wrap gap-4 pt-4 border-t border-card-border">

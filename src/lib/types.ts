@@ -244,7 +244,27 @@ export type QuestionInput =
 
 export type QuestionCondition =
   | { flag: CategoricalFlag; equals: boolean }
-  | { field: FieldRequirement["field"] | "kidsUnder17Count"; answered: true };
+  | { field: FieldRequirement["field"] | "kidsUnder17Count"; answered: true }
+  | { field: FieldRequirement["field"]; equals: string };
+
+/**
+ * Adaptive branching: after the general intake, rules whose conditions hold
+ * OFFER the household a deeper form. Pure data — a new life situation is a
+ * new rule here, never a new component. Ranked at runtime by weight plus how
+ * much the destination scope can still change (open results + unanswered
+ * questions), so the menu is computed, not fixed.
+ */
+export interface OfferRule {
+  id: string;
+  /** Destination deep-dive page: /intake/[scope]. */
+  scope: QuestionScope;
+  /** ALL conditions must hold for the offer to appear. */
+  when: QuestionCondition[];
+  /** Warm, specific copy: why THIS household is being offered THIS form. */
+  reason: string;
+  /** Base priority; runtime signals are added on top. */
+  weight: number;
+}
 
 export interface ScreeningQuestion {
   id: string; // stable, e.g. "general.employment", "housing.behind-on-rent"

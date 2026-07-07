@@ -89,15 +89,22 @@ export function isAnswered(q: ScreeningQuestion, household: Household): boolean 
   }
 }
 
-function showIfHolds(q: ScreeningQuestion, household: Household): boolean {
-  for (const cond of q.showIf ?? []) {
-    if ("flag" in cond) {
-      if (household.flags[cond.flag] !== cond.equals) return false;
-    } else if (household[cond.field] === undefined) {
-      return false;
-    }
+/** Does one condition hold for this household? Shared by showIf and offer rules. */
+export function conditionHolds(
+  cond: NonNullable<ScreeningQuestion["showIf"]>[number],
+  household: Household
+): boolean {
+  if ("flag" in cond) {
+    return household.flags[cond.flag] === cond.equals;
   }
-  return true;
+  if ("answered" in cond) {
+    return household[cond.field] !== undefined;
+  }
+  return household[cond.field] === cond.equals;
+}
+
+function showIfHolds(q: ScreeningQuestion, household: Household): boolean {
+  return (q.showIf ?? []).every((cond) => conditionHolds(cond, household));
 }
 
 /**

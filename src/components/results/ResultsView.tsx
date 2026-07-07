@@ -5,8 +5,10 @@ import { useMemo, type CSSProperties } from "react";
 import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { cascadeSuggestions, estimatedAnnualValue, evaluateAll } from "@/lib/engine";
+import { rankOffers } from "@/lib/offers";
 import { CONFIDENCE_COLOR, CONFIDENCE_LABEL, CONFIDENCE_ORDER } from "@/components/results/confidence";
 import { CategoryTabs } from "@/components/results/CategoryTabs";
+import { NextSteps } from "@/components/results/NextSteps";
 import { ResultCard } from "@/components/results/ResultCard";
 import { ValueEstimate } from "@/components/results/ValueEstimate";
 import { CascadePanel } from "@/components/results/CascadePanel";
@@ -19,6 +21,7 @@ export function ResultsView() {
   const results = useMemo(() => evaluateAll(programs, household), [programs, household]);
   const value = useMemo(() => estimatedAnnualValue(results), [results]);
   const cascades = useMemo(() => cascadeSuggestions(results), [results]);
+  const offers = useMemo(() => rankOffers(household, results), [household, results]);
 
   const grouped = CONFIDENCE_ORDER.map((c) => ({
     confidence: c,
@@ -53,6 +56,10 @@ export function ResultsView() {
       </div>
 
       <div className="rise-in" style={{ "--stagger": 2 } as CSSProperties}>
+        <NextSteps offers={offers} />
+      </div>
+
+      <div className="rise-in" style={{ "--stagger": 3 } as CSSProperties}>
         <CategoryTabs results={results} />
       </div>
 

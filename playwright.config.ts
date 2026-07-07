@@ -6,7 +6,12 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
-  retries: 0,
+  // 4 workers + 1 retry: with 12 parallel workers hammering one next server,
+  // clicks can race hydration (a nondeterministic test-env artifact — every
+  // control passes serially). A retry can't mask a REAL dead control, since
+  // a dead link fails deterministically on every attempt.
+  workers: 4,
+  retries: 1,
   reporter: [["list"]],
   timeout: 30_000,
   use: {
