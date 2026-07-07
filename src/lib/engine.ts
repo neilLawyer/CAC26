@@ -132,6 +132,18 @@ function testIncome(
   }
 
   if (upper === "fail") {
+    // Net-basis programs (WFNJ, SSI, CAPI, County GA) test income AFTER
+    // deductions, but we only collect gross. Net ≤ gross always, so gross
+    // over the limit can honestly only ever be "borderline" — a hard fail
+    // here wrongly turned away households whose net income still qualifies.
+    if (rules.incomeBasis === "net") {
+      return {
+        status: "borderline",
+        reason: `This program counts income after deductions (things like work expenses and child care), and your before-tax income is above its ${money(
+          maxMonthly!
+        )}/month line — you may still qualify once deductions are counted, so it's worth checking with the agency.`,
+      };
+    }
     return {
       status: "fail",
       reason: `Your household income looks like it's above the limit for this program (about ${money(

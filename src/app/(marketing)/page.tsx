@@ -9,6 +9,7 @@ import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
   return (
+    <>
     <main className="flex-1">
       <Hero />
 
@@ -36,7 +37,10 @@ export default function Home() {
         </div>
       </section>
 
-      <Footer />
     </main>
+    {/* Outside <main> so the footer keeps its contentinfo landmark role —
+        matches the other marketing pages. */}
+    <Footer />
+    </>
   );
 }

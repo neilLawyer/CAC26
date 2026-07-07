@@ -1,8 +1,13 @@
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { ICON_PATHS } from "@/components/ui/icons";
 import { CATEGORIES } from "@/data/categories";
 
+// "One engine, every kind of help" — one tile per category, each a REAL link
+// to that category's /intake/[scope] deep-dive page. These tiles were the
+// last surviving looks-clickable-does-nothing controls (the reported
+// "clicking Health goes nowhere" bug) — hover-lift now signals a real door.
 export function CategoryGrid() {
   return (
     <section className="border-y border-card-border bg-card/40">
@@ -14,17 +19,19 @@ export function CategoryGrid() {
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10">
           {CATEGORIES.map((c) => (
-            <Card key={c.label} className="hover-lift p-4 flex flex-col gap-3">
-              <span
-                className="w-9 h-9 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: `${c.color}1f` }}
-              >
-                <Icon size={18} stroke={c.color}>
-                  {ICON_PATHS[c.iconKey]}
-                </Icon>
-              </span>
-              <span className="text-sm font-medium">{c.label}</span>
-            </Card>
+            <Link key={c.id} href={`/intake/${c.id}`} className="block">
+              <Card className="hover-lift press-weight p-4 flex flex-col gap-3 h-full">
+                <span
+                  className="w-9 h-9 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: `${c.color}1f` }}
+                >
+                  <Icon size={18} stroke={c.color}>
+                    {ICON_PATHS[c.iconKey]}
+                  </Icon>
+                </span>
+                <span className="text-sm font-medium">{c.label}</span>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>
