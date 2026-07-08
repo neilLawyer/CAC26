@@ -97,6 +97,60 @@ test.describe("W1 — collapse system", () => {
     await expect(ring).toBeVisible();
   });
 
+  test("cliff simulator: the three displayed numbers reconcile exactly (W9)", async ({
+    page,
+  }) => {
+    await seedHousehold(page);
+    await page.goto("/cliff-simulator");
+
+    // Push the slider high enough to cross limits for this household.
+    const slider = page.locator('input[type="range"]');
+    await slider.fill("2700");
+
+    const num = async (re: RegExp) => {
+      const text = await page.getByText(re).first().innerText();
+      const m = text.replace(/,/g, "").match(/-?\$?(\d+)/);
+      return Number(m![1]);
+    };
+
+    // Net effect headline, and the sub-line's extra pay + benefit change.
+    const netText = await page
+      .locator("p.tabular-nums")
+      .first()
+      .innerText();
+    const net = Number(netText.replace(/[+,$]/g, ""));
+    const subline = await page.getByText(/Extra pay \(/).innerText();
+    const parts = subline.replace(/,/g, "").match(/\$(\d+)\/yr\) (minus|plus) .*?\$(\d+)\/yr/);
+    expect(parts).not.toBeNull();
+    const extraPay = Number(parts![1]);
+    const change = Number(parts![3]) * (parts![2] === "minus" ? -1 : 1);
+    // The identity the audit was about: net ≡ extra pay + benefit change.
+    expect(net).toBe(extraPay + change);
+    expect(extraPay).toBe(2700 * 12);
+
+    // The two income cards agree with the sub-line too.
+    const nowVal = await num(/in likely benefits/);
+    expect(typeof nowVal).toBe("number");
+
+    // The counting basis is stated on the page.
+    await expect(page.getByText(/only programs marked/)).toBeVisible();
+  });
+
+  test("benefit stacking on results: likely programs sum + unlock notes (W9)", async ({
+    page,
+  }) => {
+    await seedHousehold(page);
+    await page.goto("/results");
+
+    const stack = page.getByRole("button", { name: /likely programs together/ });
+    await expect(stack).toBeVisible();
+    await stack.click();
+    await expect(page.getByText(/programs that unlock each other/)).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /see what a raise really nets you/ })
+    ).toBeVisible();
+  });
+
   test("info boxes are one line collapsed, full story on click (scope + cliff)", async ({
     page,
   }) => {

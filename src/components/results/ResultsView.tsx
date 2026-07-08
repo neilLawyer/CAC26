@@ -12,6 +12,7 @@ import { CategoryTabs } from "@/components/results/CategoryTabs";
 import { ResultsControls } from "@/components/results/ResultsControls";
 import { CoverageNote } from "@/components/results/CoverageNote";
 import { NextSteps } from "@/components/results/NextSteps";
+import { BenefitStacking } from "@/components/results/BenefitStacking";
 import { ResultCard } from "@/components/results/ResultCard";
 import { ResultsDashboard } from "@/components/results/ResultsDashboard";
 import { CascadePanel } from "@/components/results/CascadePanel";
@@ -55,6 +56,10 @@ export function ResultsView() {
 
       <div className="rise-in" style={{ "--stagger": 1 } as CSSProperties}>
         <ResultsDashboard results={results} />
+      </div>
+
+      <div className="rise-in" style={{ "--stagger": 2 } as CSSProperties}>
+        <BenefitStacking results={results} flags={household.flags} />
       </div>
 
       {stateEntry && (

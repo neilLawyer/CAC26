@@ -4,18 +4,18 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState } from "@/data/states";
-import { evaluateAll, estimatedAnnualValueMidpoint } from "@/lib/engine";
+import { compareCliff, safeRaiseMonthly } from "@/lib/cliff";
 import { money } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
 import { InfoBox } from "@/components/ui/InfoBox";
-import type { Household } from "@/lib/types";
 
 const STEP = 100;
 const MAX_INCREASE = 5000;
 
-function withIncome(household: Household, monthlyIncome: number): Household {
-  return { ...household, monthlyIncomeMin: monthlyIncome, monthlyIncomeMax: monthlyIncome };
-}
+// The benefits-cliff simulator, on the audited arithmetic in lib/cliff.ts
+// (unit-tested — see tests/unit/cliff.test.ts). Basis stated on-page: LIKELY
+// programs only, with every program that appears/disappears named and priced
+// from its own record.
 
 export default function CliffSimulatorPage() {
   const { household } = useHousehold();
@@ -29,39 +29,17 @@ export default function CliffSimulatorPage() {
 
   const [increase, setIncrease] = useState(500);
 
-  const baselineValue = useMemo(() => {
-    if (baselineIncome === undefined) return 0;
-    return estimatedAnnualValueMidpoint(evaluateAll(programs, withIncome(household, baselineIncome)));
-  }, [programs, household, baselineIncome]);
+  const comparison = useMemo(() => {
+    if (baselineIncome === undefined) return undefined;
+    return compareCliff(programs, household, baselineIncome, increase);
+  }, [programs, household, baselineIncome, increase]);
 
-  const hypotheticalIncome = (baselineIncome ?? 0) + increase;
-  const hypotheticalValue = useMemo(() => {
-    if (baselineIncome === undefined) return 0;
-    return estimatedAnnualValueMidpoint(
-      evaluateAll(programs, withIncome(household, hypotheticalIncome))
-    );
-  }, [programs, household, hypotheticalIncome, baselineIncome]);
-
-  const extraPay = increase * 12;
-  const benefitChange = hypotheticalValue - baselineValue;
-  const netEffect = extraPay + benefitChange;
-
-  // Coarse "safe raise" scan: largest increase (in $100 steps) before net effect goes negative.
   const safeRaise = useMemo(() => {
     if (baselineIncome === undefined) return undefined;
-    let lastSafe = 0;
-    for (let inc = STEP; inc <= MAX_INCREASE; inc += STEP) {
-      const val = estimatedAnnualValueMidpoint(
-        evaluateAll(programs, withIncome(household, baselineIncome + inc))
-      );
-      const net = inc * 12 + (val - baselineValue);
-      if (net < 0) break;
-      lastSafe = inc;
-    }
-    return lastSafe;
-  }, [programs, household, baselineIncome, baselineValue]);
+    return safeRaiseMonthly(programs, household, baselineIncome, STEP, MAX_INCREASE);
+  }, [programs, household, baselineIncome]);
 
-  if (baselineIncome === undefined) {
+  if (baselineIncome === undefined || comparison === undefined) {
     return (
       <main className="flex-1 flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
         <p className="text-muted">We need your current income first.</p>
@@ -71,6 +49,17 @@ export default function CliffSimulatorPage() {
       </main>
     );
   }
+
+  const {
+    extraPayAnnual,
+    baselineLikelyValue,
+    hypotheticalLikelyValue,
+    benefitChangeAnnual,
+    netEffectAnnual,
+    lost,
+    gained,
+    uncountedPossible,
+  } = comparison;
 
   return (
     <main className="flex-1">
@@ -118,45 +107,134 @@ export default function CliffSimulatorPage() {
           <Card className="p-4">
             <p className="label-mono text-[10px] text-muted">now</p>
             <p className="font-semibold mt-1">{money(baselineIncome)}/mo income</p>
-            <p className="text-sm text-muted">~{money(baselineValue)}/yr est. benefits</p>
+            <p className="text-sm text-muted">
+              ~{money(baselineLikelyValue)}/yr in likely benefits
+            </p>
           </Card>
           <Card className="p-4">
             <p className="label-mono text-[10px] text-muted">if income rises</p>
-            <p className="font-semibold mt-1">{money(hypotheticalIncome)}/mo income</p>
-            <p className="text-sm text-muted">~{money(hypotheticalValue)}/yr est. benefits</p>
+            <p className="font-semibold mt-1">{money(baselineIncome + increase)}/mo income</p>
+            <p className="text-sm text-muted">
+              ~{money(hypotheticalLikelyValue)}/yr in likely benefits
+            </p>
           </Card>
         </div>
 
         <div
           className="rounded-xl p-5 border"
           style={{
-            borderColor: netEffect >= 0 ? "rgba(45,212,191,0.35)" : "rgba(248,113,113,0.35)",
-            backgroundColor: netEffect >= 0 ? "rgba(45,212,191,0.08)" : "rgba(248,113,113,0.08)",
+            borderColor: netEffectAnnual >= 0 ? "rgba(45,212,191,0.35)" : "rgba(248,113,113,0.35)",
+            backgroundColor:
+              netEffectAnnual >= 0 ? "rgba(45,212,191,0.08)" : "rgba(248,113,113,0.08)",
           }}
         >
           <p className="label-mono text-[10px] text-muted">estimated net effect per year</p>
           <p
-            className="text-3xl font-bold mt-1"
-            style={{ color: netEffect >= 0 ? "#2dd4bf" : "#f87171" }}
+            className="text-3xl font-bold mt-1 tabular-nums"
+            style={{ color: netEffectAnnual >= 0 ? "#2dd4bf" : "#f87171" }}
           >
-            {netEffect >= 0 ? "+" : ""}
-            {money(netEffect)}
+            {netEffectAnnual >= 0 ? "+" : ""}
+            {money(netEffectAnnual)}
           </p>
           <p className="text-xs text-muted mt-1">
-            Extra pay ({money(extraPay)}/yr) {benefitChange <= 0 ? "minus" : "plus"} the
-            change in estimated benefits ({money(Math.abs(benefitChange))}/yr{" "}
-            {benefitChange <= 0 ? "lost" : "gained"}).
+            Extra pay ({money(extraPayAnnual)}/yr){" "}
+            {benefitChangeAnnual <= 0 ? "minus" : "plus"} the change in estimated likely benefits
+            ({money(Math.abs(benefitChangeAnnual))}/yr{" "}
+            {benefitChangeAnnual <= 0 ? "lost" : "gained"}).
           </p>
         </div>
 
+        {(lost.length > 0 || gained.length > 0) && (
+          <div className="space-y-3">
+            <h2 className="text-lg font-semibold">
+              What changes at +{money(increase)}/mo
+            </h2>
+            <div className="space-y-2">
+              {lost.map((d) => (
+                <div
+                  key={d.program.id}
+                  className="rounded-lg border px-4 py-3 text-sm flex items-baseline justify-between gap-3"
+                  style={{
+                    borderColor:
+                      d.to === "possible" ? "rgba(249,211,76,0.4)" : "rgba(248,113,113,0.4)",
+                    backgroundColor:
+                      d.to === "possible" ? "rgba(249,211,76,0.07)" : "rgba(248,113,113,0.07)",
+                  }}
+                >
+                  <span className="min-w-0">
+                    <span className="font-medium">{d.program.shortName}</span>
+                    <span className="text-muted">
+                      {" "}
+                      {d.to === "possible"
+                        ? "— counted as lost here, but this program tests income after deductions, so you may still qualify; check with the agency"
+                        : "— your new income would be over this program's limit"}
+                    </span>
+                  </span>
+                  <span className="tabular-nums shrink-0" style={{ color: "#f87171" }}>
+                    −{d.midpoint > 0 ? `${money(d.midpoint)}/yr` : "value varies"}
+                  </span>
+                </div>
+              ))}
+              {gained.map((d) => (
+                <div
+                  key={d.program.id}
+                  className="rounded-lg border border-accent/40 bg-accent/5 px-4 py-3 text-sm flex items-baseline justify-between gap-3"
+                >
+                  <span className="min-w-0">
+                    <span className="font-medium">{d.program.shortName}</span>
+                    <span className="text-muted">
+                      {" "}
+                      — your new income would newly qualify for this one
+                    </span>
+                  </span>
+                  <span className="tabular-nums shrink-0 text-accent">
+                    +{d.midpoint > 0 ? `${money(d.midpoint)}/yr` : "value varies"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <p className="text-xs text-muted">
+          How this is counted: only programs marked <strong>likely</strong> — where the published
+          rules decide — are in these totals, valued at the midpoint of each record&apos;s
+          verified range.
+          {uncountedPossible > 0 && (
+            <>
+              {" "}
+              {uncountedPossible} &ldquo;possibly eligible&rdquo; program
+              {uncountedPossible === 1 ? "" : "s"} (waitlists, agency formulas, after-deduction
+              income tests) {uncountedPossible === 1 ? "is" : "are"} left out of both columns
+              rather than guessed at.
+            </>
+          )}
+        </p>
+
         {safeRaise !== undefined && (
           <div className="rounded-xl border border-accent/30 bg-accent/10 p-5">
-            <p className="label-mono text-[10px] text-accent">roughly how much more you could earn safely</p>
-            <p className="text-xl font-bold mt-1">up to about {money(safeRaise)}/mo more</p>
-            <p className="text-xs text-muted mt-1">
-              Before the estimated loss in benefits outweighs the extra pay, based on the programs
-              in your results.
+            <p className="label-mono text-[10px] text-accent">
+              roughly how much more you could earn safely
             </p>
+            {safeRaise >= MAX_INCREASE ? (
+              <>
+                <p className="text-xl font-bold mt-1">
+                  no cliff within +{money(MAX_INCREASE)}/mo
+                </p>
+                <p className="text-xs text-muted mt-1">
+                  Across every raise this tool checks, the extra pay outweighs the estimated
+                  benefit changes for your household.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-xl font-bold mt-1">up to about {money(safeRaise)}/mo more</p>
+                <p className="text-xs text-muted mt-1">
+                  Before the estimated loss in benefits outweighs the extra pay, based on the
+                  programs in your results.
+                </p>
+              </>
+            )}
           </div>
         )}
 

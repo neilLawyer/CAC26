@@ -63,7 +63,11 @@ function monthlyIncomeLimits(rules: ProgramRules, household: Household) {
     : rules.maxIncomeFlatDollar;
 
   if (effectivePctFPL !== undefined) {
-    maxMonthly = monthlyFPL(householdSize) * (effectivePctFPL / 100);
+    // Combine with any ceiling already derived (kid-count tiers above): the
+    // binding limit is the LOWEST one. Assigning here used to silently clobber
+    // a lower tier ceiling — caught by the v4 cliff audit, locked by a test.
+    const pctMonthly = monthlyFPL(householdSize) * (effectivePctFPL / 100);
+    maxMonthly = maxMonthly === undefined ? pctMonthly : Math.min(maxMonthly, pctMonthly);
   }
   if (rules.minIncomePctFPL !== undefined) {
     minMonthly = monthlyFPL(householdSize) * (rules.minIncomePctFPL / 100);
