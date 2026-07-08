@@ -1,10 +1,11 @@
 import { deepStates, type StateEntry } from "@/data/states";
+import { InfoBox } from "@/components/ui/InfoBox";
 
 // The honest coverage indicator for federal-tier states: what we DO cover
 // (the full federal baseline + the national address-based local features),
 // what we don't yet (that state's own programs), and the real official place
 // to check those. Derived entirely from the state registry — no state names
-// in code.
+// in code. Collapsed to one line by default (the collapse system).
 
 export function CoverageNote({ stateEntry }: { stateEntry: StateEntry }) {
   if (stateEntry.tier === "deep") return null;
@@ -14,8 +15,10 @@ export function CoverageNote({ stateEntry }: { stateEntry: StateEntry }) {
     .join(" & ");
 
   return (
-    <div className="rounded-xl border border-card-border bg-card/60 p-4 space-y-1.5">
-      <p className="label-mono text-[10px] text-muted">coverage in {stateEntry.name}</p>
+    <InfoBox
+      label={`coverage in ${stateEntry.name}`}
+      title={`All federal programs — plus where to check ${stateEntry.name}'s own`}
+    >
       <p className="text-sm">
         You&apos;re seeing every federal program — and the address-based local results (rent
         benchmarks, income limits, affordable properties, health centers) are national data, so
@@ -30,6 +33,6 @@ export function CoverageNote({ stateEntry }: { stateEntry: StateEntry }) {
       >
         Check {stateEntry.name}&apos;s programs on {stateEntry.aggregator.name} →
       </a>
-    </div>
+    </InfoBox>
   );
 }

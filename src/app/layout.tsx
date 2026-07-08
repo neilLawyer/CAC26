@@ -35,9 +35,9 @@ export default function RootLayout({
     >
       <head>
         <script
-          // Runs before paint so there's no flash of the wrong theme.
+          // Runs before paint so there's no flash of the wrong theme or density.
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('opendoor-theme');document.documentElement.classList.toggle('dark', t !== 'light');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('opendoor-theme');document.documentElement.classList.toggle('dark', t !== 'light');if(localStorage.getItem('opendoor-density')==='compact')document.documentElement.setAttribute('data-density','compact');}catch(e){}})();`,
           }}
         />
       </head>

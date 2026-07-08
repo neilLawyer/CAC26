@@ -7,7 +7,9 @@ import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { cascadeSuggestions, estimatedAnnualValue, evaluateAll } from "@/lib/engine";
 import { rankOffers } from "@/lib/offers";
 import { CONFIDENCE_COLOR, CONFIDENCE_LABEL, CONFIDENCE_ORDER } from "@/components/results/confidence";
+import { DisclosureGroup } from "@/components/ui/Disclosure";
 import { CategoryTabs } from "@/components/results/CategoryTabs";
+import { ResultsControls } from "@/components/results/ResultsControls";
 import { CoverageNote } from "@/components/results/CoverageNote";
 import { NextSteps } from "@/components/results/NextSteps";
 import { ResultCard } from "@/components/results/ResultCard";
@@ -76,32 +78,38 @@ export function ResultsView() {
 
       <CascadePanel cascades={cascades} />
 
-      {grouped.map((g, gi) => (
-        <section
-          key={g.confidence}
-          className="rise-in space-y-4"
-          style={{ "--stagger": 4 + gi } as CSSProperties}
-        >
-          <h2
-            className="tier-rule text-lg font-semibold"
-            style={
-              {
-                color: CONFIDENCE_COLOR[g.confidence],
-                "--tier-color": CONFIDENCE_COLOR[g.confidence],
-              } as CSSProperties
-            }
+      <DisclosureGroup>
+        <div className="rise-in" style={{ "--stagger": 4 } as CSSProperties}>
+          <ResultsControls />
+        </div>
+
+        {grouped.map((g, gi) => (
+          <section
+            key={g.confidence}
+            className="rise-in space-y-3 mt-8"
+            style={{ "--stagger": 4 + gi } as CSSProperties}
           >
-            {CONFIDENCE_LABEL[g.confidence]}
-          </h2>
-          <div className="grid gap-4">
-            {g.items.map((r, i) => (
-              <div key={r.program.id} className="rise-in" style={{ "--stagger": i } as CSSProperties}>
-                <ResultCard result={r} />
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+            <h2
+              className="tier-rule text-lg font-semibold"
+              style={
+                {
+                  color: CONFIDENCE_COLOR[g.confidence],
+                  "--tier-color": CONFIDENCE_COLOR[g.confidence],
+                } as CSSProperties
+              }
+            >
+              {CONFIDENCE_LABEL[g.confidence]}
+            </h2>
+            <div className="card-stack">
+              {g.items.map((r, i) => (
+                <div key={r.program.id} className="rise-in" style={{ "--stagger": i } as CSSProperties}>
+                  <ResultCard result={r} />
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </DisclosureGroup>
 
       <div className="flex flex-wrap gap-4 pt-4 border-t border-card-border">
         <Link href="/intake" className="text-sm text-accent hover:underline">

@@ -70,8 +70,13 @@ test.describe("persona walkthroughs", () => {
     // the adjunctive income waiver in the reason trace.
     await page.locator('a[href="/intake/food"]').first().click();
     await expect(page).toHaveURL(/\/intake\/food$/);
-    await expect(page.getByRole("heading", { name: "Women, Infants & Children" })).toBeVisible();
+    // Cards collapse to one line now (v4) — the heading is still there…
+    await expect(
+      page.getByRole("heading", { name: /Women, Infants & Children/ })
+    ).toBeVisible();
     await page.getByRole("button", { name: "Medicaid", exact: true }).click();
+    // …and the reason trace lives in the expanded state: open WIC's card.
+    await page.getByRole("button", { name: /Women, Infants & Children/ }).click();
     await expect(
       page.getByText(/income test is automatically met/).first()
     ).toBeVisible();
@@ -117,7 +122,9 @@ test.describe("persona walkthroughs", () => {
 
     // CTC: likely at this income, and the WORTH line is the record's own
     // per-child figure × 2 kids = $4,400 — deterministic arithmetic, no AI.
-    await expect(page.getByRole("heading", { name: "Child Tax Credit" })).toBeVisible();
+    // v4: the worth line lives in the card's expanded state — expand it first.
+    await expect(page.getByRole("heading", { name: /Child Tax Credit/ })).toBeVisible();
+    await page.getByRole("button", { name: /Child Tax Credit/ }).click();
     await expect(page.getByText(/Around \$4,400\/year for your 2 children/)).toBeVisible();
     // EITC at $5–7k/mo: correctly NOT in the likely group (income above the
     // tiered ceiling) — the engine's honesty cuts both ways.

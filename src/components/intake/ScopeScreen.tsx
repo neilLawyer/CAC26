@@ -10,6 +10,9 @@ import { rankOffers } from "@/lib/offers";
 import { getScope } from "@/data/scopes";
 import { NEAR_YOU } from "@/data/near-you";
 import { DeepForm } from "@/components/intake/DeepForm";
+import { DisclosureGroup } from "@/components/ui/Disclosure";
+import { InfoBox } from "@/components/ui/InfoBox";
+import { ResultsControls } from "@/components/results/ResultsControls";
 import { NearYouPanel } from "@/components/near-you/NearYouPanel";
 import { NextSteps } from "@/components/results/NextSteps";
 import { Icon } from "@/components/ui/Icon";
@@ -115,36 +118,30 @@ export function ScopeScreen({ scopeId }: { scopeId: string }) {
         )}
 
         {scope.localPointer && (
-          <div
-            className="rise-in rounded-xl p-5 space-y-2"
-            style={
-              {
-                "--stagger": 2,
-                border: `1px solid color-mix(in srgb, ${scope.color} 30%, transparent)`,
-                backgroundColor: `color-mix(in srgb, ${scope.color} 8%, transparent)`,
-              } as CSSProperties
-            }
-          >
-            <p className="label-mono text-[10px]" style={{ color: scope.color }}>
-              your local office
-            </p>
-            <p className="text-sm">
-              {scope.localPointer.note}
-              {household.zip && (
-                <span className="text-muted">
-                  {" "}
-                  (You told us ZIP {household.zip} — search for it there.)
-                </span>
-              )}
-            </p>
-            <a
-              href={scope.localPointer.finderUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="scope-ink inline-block text-sm underline hover:no-underline"
+          <div className="rise-in" style={{ "--stagger": 2 } as CSSProperties}>
+            <InfoBox
+              label="your local office"
+              title={scope.localPointer.finderName}
+              tint={scope.color}
             >
-              {scope.localPointer.finderName} →
-            </a>
+              <p className="text-sm">
+                {scope.localPointer.note}
+                {household.zip && (
+                  <span className="text-muted">
+                    {" "}
+                    (You told us ZIP {household.zip} — search for it there.)
+                  </span>
+                )}
+              </p>
+              <a
+                href={scope.localPointer.finderUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="scope-ink inline-block text-sm underline hover:no-underline"
+              >
+                {scope.localPointer.finderName} →
+              </a>
+            </InfoBox>
           </div>
         )}
 
@@ -156,32 +153,40 @@ export function ScopeScreen({ scopeId }: { scopeId: string }) {
           </div>
         )}
 
-        {grouped.map((g, gi) => (
-          <section
-            key={g.confidence}
-            className="rise-in space-y-4"
-            style={{ "--stagger": 3 + gi } as CSSProperties}
-          >
-            <h2
-              className="tier-rule text-lg font-semibold"
-              style={
-                {
-                  color: CONFIDENCE_COLOR[g.confidence],
-                  "--tier-color": CONFIDENCE_COLOR[g.confidence],
-                } as CSSProperties
-              }
-            >
-              {CONFIDENCE_LABEL[g.confidence]}
-            </h2>
-            <div className="grid gap-4">
-              {g.items.map((r, i) => (
-                <div key={r.program.id} className="rise-in" style={{ "--stagger": i } as CSSProperties}>
-                  <ResultCard result={r} />
-                </div>
-              ))}
+        <DisclosureGroup>
+          {grouped.length > 0 && (
+            <div className="rise-in" style={{ "--stagger": 3 } as CSSProperties}>
+              <ResultsControls />
             </div>
-          </section>
-        ))}
+          )}
+
+          {grouped.map((g, gi) => (
+            <section
+              key={g.confidence}
+              className="rise-in space-y-3 mt-8"
+              style={{ "--stagger": 3 + gi } as CSSProperties}
+            >
+              <h2
+                className="tier-rule text-lg font-semibold"
+                style={
+                  {
+                    color: CONFIDENCE_COLOR[g.confidence],
+                    "--tier-color": CONFIDENCE_COLOR[g.confidence],
+                  } as CSSProperties
+                }
+              >
+                {CONFIDENCE_LABEL[g.confidence]}
+              </h2>
+              <div className="card-stack">
+                {g.items.map((r, i) => (
+                  <div key={r.program.id} className="rise-in" style={{ "--stagger": i } as CSSProperties}>
+                    <ResultCard result={r} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </DisclosureGroup>
 
         {scopeResults.length === 0 && (
           <p className="text-sm text-muted">

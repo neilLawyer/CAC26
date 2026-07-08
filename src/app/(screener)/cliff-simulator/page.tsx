@@ -7,6 +7,7 @@ import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { evaluateAll, estimatedAnnualValueMidpoint } from "@/lib/engine";
 import { money } from "@/lib/format";
 import { Card } from "@/components/ui/Card";
+import { InfoBox } from "@/components/ui/InfoBox";
 import type { Household } from "@/lib/types";
 
 const STEP = 100;
@@ -83,16 +84,15 @@ export default function CliffSimulatorPage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-card-border bg-card/60 p-5">
-          <h2 className="font-semibold text-sm">What&apos;s a &ldquo;benefits cliff&rdquo;?</h2>
-          <p className="text-sm text-muted mt-2 leading-relaxed">
+        <InfoBox label="explainer" title="What's a &ldquo;benefits cliff&rdquo;?">
+          <p className="text-sm text-muted leading-relaxed">
             Most assistance programs cut off once your income crosses a limit — sometimes all at
             once, not gradually. That means a modest raise or extra shift can push your income just
             over the line and cost you more in lost benefits than you gained in pay. This tool
             walks through that math using the programs from your results, so you can see the
             trade-off before it happens, not after.
           </p>
-        </div>
+        </InfoBox>
 
         <Card className="p-5 space-y-3">
           <label className="block text-sm font-medium">

@@ -309,6 +309,89 @@ a:hover .offer-arrow {
   transform: translateX(3px);
 }
 
+/* ---------------------------------------------------------------------------
+   The collapse system. One primitive (ui/Disclosure) drives result cards and
+   info boxes everywhere: height animates via grid-template-rows 0fr↔1fr (no
+   JS measuring), content fades/rises a touch behind it. Reduced motion snaps.
+--------------------------------------------------------------------------- */
+.disclosure {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+.disclosure[data-open] {
+  grid-template-rows: 1fr;
+}
+.disclosure-inner {
+  min-height: 0;
+  overflow: hidden;
+  /* Truly hidden when closed (a11y tree, tab order, hit testing) — not just
+     clipped to zero height. */
+  visibility: hidden;
+}
+.disclosure[data-open] .disclosure-inner {
+  visibility: visible;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .disclosure {
+    transition: grid-template-rows var(--dur-base) var(--ease-out);
+  }
+  /* Stay visible while the closing animation plays, then hide. Opening is
+     immediate (delay 0) so content is there as the height grows. */
+  .disclosure-inner {
+    transition: visibility 0s linear var(--dur-base);
+  }
+  .disclosure[data-open] .disclosure-inner {
+    transition-delay: 0s;
+  }
+  .disclosure-inner > * {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+  .disclosure[data-open] .disclosure-inner > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .rc-chevron {
+    transition: transform var(--dur-quick) var(--ease-out);
+  }
+}
+.rc-chevron-open {
+  transform: rotate(180deg);
+}
+
+/* Density: CSS variables the collapsed rows read. "compact" is set as a
+   data attribute on <html> (see lib/ui-prefs-store.ts + the layout script). */
+:root {
+  --rc-pad-y: 0.875rem;
+  --rc-pad-x: 1.125rem;
+  --stack-gap: 1rem;
+}
+:root[data-density="compact"] {
+  --rc-pad-y: 0.4375rem;
+  --rc-pad-x: 0.875rem;
+  --stack-gap: 0.4375rem;
+}
+.rc-head {
+  padding: var(--rc-pad-y) var(--rc-pad-x);
+}
+.rc-body {
+  padding: 0.25rem var(--rc-pad-x) var(--rc-pad-x);
+}
+.ib-head {
+  padding: calc(var(--rc-pad-y) + 0.05rem) var(--rc-pad-x);
+}
+.ib-body {
+  padding: 0.125rem var(--rc-pad-x) var(--rc-pad-x);
+}
+/* Card lists tighten with density. */
+.card-stack {
+  display: grid;
+  gap: var(--stack-gap);
+}
+
 /* Tier rules: section headers on results get a colored hairline that fades
    out — the palette's greens/ambers/reds doing structural work. */
 .tier-rule {
