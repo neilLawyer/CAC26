@@ -157,4 +157,45 @@ W7 calendar → W8 snapshot → W10 packet → W11 i18n → W12 motion pass → 
   tests, judgment calls.
 
 ## Status log
-(updated as workstreams land)
+- [x] W1 (`e74fc23`) — collapse system: Disclosure primitive (grid-rows + delayed visibility +
+  inert), one-line ResultCards (ARIA accordion), merged verify+source row, expand/collapse-all
+  broadcasts, persisted density, InfoBox for the big boxes. Gate caught clipped-but-"visible"
+  collapsed content — fixed in CSS, not the test.
+- [x] W2 (`aae5b65`) — dashboard: count-up hero (rAF/easeOutExpo, glides between values,
+  reduced-motion instant — e2e asserts the headline IS the midpoint of its own printed range),
+  self-drawing progress ring, stat column. ValueEstimate retired.
+- [x] W9 (`cb28c4b`, built early — correctness first) — AUDIT: the screenshot's arithmetic was
+  internally consistent (32,400−5,500=26,900); the real defects were possible-confidence programs
+  counted at full value (net-basis ones can never drop out on gross income → cliffs muted) and
+  waitlist-capped programs in the totals. Fix: likely-only basis, lost/gained programs NAMED and
+  priced from their records, net-basis exits labeled "may survive deductions", basis stated
+  on-page; latent engine min-combination bug fixed. vitest infra + 36 unit tests. Stacking view
+  with rule-derived unlock notes.
+- [x] W3 (`0f80b8d`) — orbit: two counter-rotating rings, labels always upright (4 transforms
+  cancel), hover/focus pauses, click flies in, reduced-motion static, mobile tile fallback, real
+  links. Gate caught zero-width link boxes — real fix, not a workaround.
+- [x] W4 (`f736f89`) — search: ctrl-K palette + header button, hand-rolled scorer, index from
+  state programs + scopes + pages + 92 delegated synonym tags (unit test pins every id; "solar"
+  honestly maps to the energy room — no clean-energy program exists in the catalog to point at).
+- [x] W5 (`6ec535e`) — scholarships: 13 verified merit/non-income awards (QuestBridge/Gates/
+  Cooke excluded as income-gated, WITH the reason on-page), collapsed bullet list in education/
+  students rooms + /scholarships; two URLs independently re-verified.
+- [x] W6 (`8442850`) — tax guide: data-driven walkthrough (Free File $89k cap re-verified,
+  Direct File honestly reported dead for 2026, FTC/Intuit with the vacatur nuance), printable
+  IRS-mirrored checklist, shared print system in globals.css.
+- [x] W7 (`7ed1f04`) — deadlines: verified windows only (GetCoveredNJ/CoveredCA Nov 1–Jan 31,
+  HealthCare.gov Nov 1–Jan 15, FAFSA Oct 1/Jun 30, NJ LIHEAP Oct 1–Jun 30; varies-by-state
+  entries get NO invented date — unit-enforced), supersedes composition, on-device .ics.
+- [x] W8 (`100bc8f`) — snapshot: on-device save/diff announcing ONLY likely-line crossings;
+  state changes invalidate honestly; delete really deletes.
+- [x] W10 (`53e7863`) — packet: print-clean program list + ONE deduped documents checklist
+  (generic-but-true, hedge printed on the sheet).
+- [x] W11 (`451a967`) — español: dictionary i18n (~75 keys), pre-paint lang attr, EN/ES toggle,
+  core-flow chrome translated, honesty note that program content stays English this round.
+  Delegation attempt killed by session limit before touching a file — done by hand.
+- [x] W12 (`ef2659d`) — semi-vibrant pass (owner-directed): accent-2 cyan→violet so gradients
+  travel, indigo-tinted backgrounds, 13 doors in 13 distinct hues (pure data edit), Badge/tier
+  text mixed toward foreground (light-mode legibility fix), cliff adopts the count-up voice,
+  orbit core breathes. Reduced-motion audit clean.
+- [x] W13 — walkthrough spec (12 stations, animations ENABLED, permanent) + docs/v4_report.md.
+  Final: 51 e2e + 58 unit, production build.
