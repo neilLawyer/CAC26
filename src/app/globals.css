@@ -589,6 +589,36 @@ a:hover .offer-arrow {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Print: checklists and the benefits packet print clean — chrome hidden,
+   light ink-friendly palette forced, borders simplified. Pages opt content
+   OUT with .no-print; a .print-area block is what the paper is for.
+--------------------------------------------------------------------------- */
+@media print {
+  :root,
+  .dark {
+    --background: #ffffff;
+    --foreground: #111111;
+    --card: #ffffff;
+    --card-border: #999999;
+    --muted: #444444;
+    --accent: #0f766e;
+    --accent-2: #0e7490;
+  }
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  .print-area {
+    border-color: #bbbbbb !important;
+    box-shadow: none !important;
+  }
+  body {
+    background: #ffffff;
+  }
+}
+
 /* Tier rules: section headers on results get a colored hairline that fades
    out — the palette's greens/ambers/reds doing structural work. */
 .tier-rule {

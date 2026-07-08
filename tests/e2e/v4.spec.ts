@@ -192,6 +192,40 @@ test.describe("W1 — collapse system", () => {
     await expect(page.getByText(/requires a nominating teacher/)).toBeVisible();
   });
 
+  test("tax guide: free routes, upsell warnings, printable checklist (W6)", async ({
+    page,
+  }) => {
+    // The tax room points at the guide.
+    await page.goto("/intake/tax");
+    await page.getByRole("link", { name: /Claim your tax credits/ }).click();
+    await expect(page).toHaveURL(/\/tax-guide$/);
+
+    // The real free routes, all linking out.
+    await expect(page.getByRole("link", { name: /IRS Free File/ })).toHaveAttribute(
+      "href",
+      /irs\.gov/
+    );
+    await expect(page.getByRole("link", { name: /VITA\/TCE site locator/ })).toHaveAttribute(
+      "href",
+      /irs\.treasury\.gov/
+    );
+    await expect(page.getByRole("link", { name: /GetYourRefund/ })).toHaveAttribute(
+      "href",
+      /getyourrefund\.org/
+    );
+    // The watch-out section names the FTC action.
+    await expect(page.getByText(/Federal Trade Commission/)).toBeVisible();
+    // The printable checklist exists with its print affordance.
+    await expect(page.getByRole("heading", { name: /What to bring to free tax prep/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Print this checklist/ })).toBeVisible();
+    await expect(page.getByText(/Social Security cards or ITIN letters/)).toBeVisible();
+    // And printing hides everything BUT the checklist.
+    await page.emulateMedia({ media: "print" });
+    await expect(page.getByRole("heading", { name: "Claim your tax credits" })).toBeHidden();
+    await expect(page.getByText(/Social Security cards or ITIN letters/)).toBeVisible();
+    await page.emulateMedia({ media: "screen" });
+  });
+
   test("cliff simulator: the three displayed numbers reconcile exactly (W9)", async ({
     page,
   }) => {

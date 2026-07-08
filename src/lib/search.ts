@@ -40,6 +40,22 @@ export const SEARCH_PAGES: Omit<SearchEntry, "kind" | "key">[] = [
     keywords: ["raise", "cliff", "promotion", "extra hours", "overtime", "net effect"],
   },
   {
+    title: "Claim your tax credits (free-filing guide)",
+    subtitle: "What filing is, the REAL free options, and a printable what-to-bring list",
+    href: "/tax-guide",
+    keywords: [
+      "taxes",
+      "tax refund",
+      "file taxes",
+      "free file",
+      "vita",
+      "turbotax",
+      "eitc",
+      "child tax credit",
+      "getyourrefund",
+    ],
+  },
+  {
     title: "Merit scholarships & contests",
     subtitle: "Real awards with NO income test — verified official links",
     href: "/scholarships",

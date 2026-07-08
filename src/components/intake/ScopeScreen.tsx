@@ -30,6 +30,16 @@ import {
 // NEAR_YOU — no scope-specific branching in the template itself).
 const SCHOLARSHIP_SCOPES = new Set<string>(["education", "students"]);
 
+// Rooms with a companion guide page — a one-line pointer card, keyed by scope.
+const ROOM_GUIDES: Record<string, { href: string; label: string; blurb: string }> = {
+  tax: {
+    href: "/tax-guide",
+    label: "Claim your tax credits — the free-filing walkthrough",
+    blurb:
+      "What filing actually is, the real free options (Free File, VITA, GetYourRefund), what paid services upsell, and a printable what-to-bring checklist.",
+  },
+};
+
 // The one deep-dive template: intro + generated form + scope-filtered results.
 // Works for every category AND every persona purely by reading scope data —
 // zero scope-specific branching. The page's whole visual identity flows from
@@ -148,6 +158,28 @@ export function ScopeScreen({ scopeId }: { scopeId: string }) {
                 {scope.localPointer.finderName} →
               </a>
             </InfoBox>
+          </div>
+        )}
+
+        {/* Companion guide pointer (data-keyed). */}
+        {ROOM_GUIDES[scope.id] && (
+          <div className="rise-in" style={{ "--stagger": 2 } as CSSProperties}>
+            <Link
+              href={ROOM_GUIDES[scope.id].href}
+              className="press-weight block rounded-xl p-4"
+              style={{
+                border: `1px solid color-mix(in srgb, ${scope.color} 30%, transparent)`,
+                backgroundColor: `color-mix(in srgb, ${scope.color} 7%, transparent)`,
+              }}
+            >
+              <p className="label-mono text-[9px]" style={{ color: scope.color }}>
+                step-by-step guide
+              </p>
+              <p className="text-sm font-medium mt-1">
+                {ROOM_GUIDES[scope.id].label} <span className="offer-arrow">→</span>
+              </p>
+              <p className="text-xs text-muted mt-1">{ROOM_GUIDES[scope.id].blurb}</p>
+            </Link>
           </div>
         )}
 
