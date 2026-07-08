@@ -40,6 +40,12 @@ export const SEARCH_PAGES: Omit<SearchEntry, "kind" | "key">[] = [
     keywords: ["raise", "cliff", "promotion", "extra hours", "overtime", "net effect"],
   },
   {
+    title: "My benefits packet (printable)",
+    subtitle: "Everything you qualified for + one documents checklist, print-ready",
+    href: "/packet",
+    keywords: ["print", "packet", "pdf", "caseworker", "documents", "checklist", "bring"],
+  },
+  {
     title: "My deadline timeline",
     subtitle: "Enrollment windows + seasonal deadlines from your matches, as .ics downloads",
     href: "/deadlines",

@@ -617,6 +617,17 @@ a:hover .offer-arrow {
   body {
     background: #ffffff;
   }
+  /* A program row never splits across a page break. */
+  .packet-row {
+    break-inside: avoid;
+  }
+  .print-only {
+    display: inline !important;
+  }
+}
+/* Screen: print-only content stays hidden. */
+.print-only {
+  display: none;
 }
 
 /* Tier rules: section headers on results get a colored hairline that fades

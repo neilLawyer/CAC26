@@ -296,6 +296,28 @@ test.describe("W1 — collapse system", () => {
     expect(stored).toBeNull();
   });
 
+  test("benefits packet: print-ready programs + ONE deduped checklist (W10)", async ({
+    page,
+  }) => {
+    await seedHousehold(page);
+    await page.goto("/packet");
+
+    await expect(
+      page.getByRole("heading", { name: /What this household may qualify for/ })
+    ).toBeVisible();
+    // Programs render with agency + apply domain + verification stamp.
+    await expect(page.getByText(/rules checked/).first()).toBeVisible();
+    // The checklist is deduplicated: "Photo ID" spans many categories but
+    // appears exactly once.
+    await expect(page.getByText(/Photo ID for the person applying/)).toHaveCount(1);
+    await expect(page.getByText(/agency confirms the exact list/)).toBeVisible();
+    // Print emulation: the packet remains, the app chrome goes.
+    await page.emulateMedia({ media: "print" });
+    await expect(page.getByRole("heading", { name: /What this household may qualify for/ })).toBeVisible();
+    await expect(page.getByRole("navigation").first()).toBeHidden();
+    await page.emulateMedia({ media: "screen" });
+  });
+
   test("cliff simulator: the three displayed numbers reconcile exactly (W9)", async ({
     page,
   }) => {
