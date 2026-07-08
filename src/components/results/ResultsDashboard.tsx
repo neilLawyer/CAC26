@@ -4,6 +4,7 @@ import { useId } from "react";
 import { useCountUp } from "@/lib/use-count-up";
 import { money, moneyRange } from "@/lib/format";
 import { estimatedAnnualValue, stillPossibleCount } from "@/lib/engine";
+import { formatT, useT } from "@/lib/i18n";
 import type { EligibilityResult } from "@/lib/types";
 
 // The dashboard above the result cards: a large count-up of the estimated
@@ -13,15 +14,24 @@ import type { EligibilityResult } from "@/lib/types";
 // from the same engine outputs the cards render — nothing is estimated here
 // that isn't already on a record.
 
-function ProgressRing({ open, total }: { open: number; total: number }) {
+function ProgressRing({
+  open,
+  total,
+  ariaLabel,
+  ofLabel,
+}: {
+  open: number;
+  total: number;
+  ariaLabel: string;
+  ofLabel: string;
+}) {
   const gradId = useId();
   const r = 34;
   const c = 2 * Math.PI * r;
   const frac = total > 0 ? open / total : 0;
 
   return (
-    <div className="relative w-[92px] h-[92px] shrink-0" role="img"
-      aria-label={`${open} of ${total} screened programs still open to you`}>
+    <div className="relative w-[92px] h-[92px] shrink-0" role="img" aria-label={ariaLabel}>
       <svg width="92" height="92" viewBox="0 0 92 92" className="-rotate-90">
         <defs>
           <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -45,13 +55,16 @@ function ProgressRing({ open, total }: { open: number; total: number }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-xl font-bold leading-none tabular-nums">{open}</span>
-        <span className="label-mono text-[8px] text-muted mt-0.5">of {total}</span>
+        <span className="label-mono text-[8px] text-muted mt-0.5">
+          {ofLabel} {total}
+        </span>
       </div>
     </div>
   );
 }
 
 export function ResultsDashboard({ results }: { results: EligibilityResult[] }) {
+  const t = useT();
   // Same engine arithmetic the rest of the app uses — likely + possible.
   const value = estimatedAnnualValue(results);
   const relevant = results.filter(
@@ -66,48 +79,50 @@ export function ResultsDashboard({ results }: { results: EligibilityResult[] }) 
   return (
     <section
       className="dash-panel relative overflow-hidden rounded-2xl border border-accent/25 p-6"
-      aria-label="Your results at a glance"
+      aria-label={t("dash.panelAria")}
     >
       <div className="grid-bg" aria-hidden />
       <div className="relative flex flex-wrap items-center gap-x-8 gap-y-5">
         {hasMoney ? (
           <div className="min-w-0 flex-1">
-            <p className="label-mono text-[10px] text-accent">
-              est. money you may be leaving unclaimed
-            </p>
+            <p className="label-mono text-[10px] text-accent">{t("dash.eyebrow")}</p>
             <p className="dash-number mt-1 text-5xl font-bold tracking-tight tabular-nums">
               {money(shown)}
-              <span className="ml-1 text-lg font-semibold text-muted">/yr</span>
+              <span className="ml-1 text-lg font-semibold text-muted">{t("dash.perYear")}</span>
             </p>
             <p className="text-xs text-muted mt-2">
-              Midpoint of {moneyRange(value.min, value.max)} across {relevant.length} program
-              {relevant.length === 1 ? "" : "s"} you may qualify for — an estimate, not a
-              guarantee. Every card below links to the agency that decides.
+              {formatT(t("dash.midpoint"), {
+                range: moneyRange(value.min, value.max),
+                count: relevant.length,
+                plural: relevant.length === 1 ? "" : "s",
+              })}
             </p>
           </div>
         ) : (
           <div className="min-w-0 flex-1">
-            <p className="label-mono text-[10px] text-accent">your screening so far</p>
-            <p className="text-sm text-muted mt-2 max-w-md">
-              Nothing here carries a dollar estimate yet — the counts on the right show
-              what&apos;s still open, and answering more questions can unlock more.
-            </p>
+            <p className="label-mono text-[10px] text-accent">{t("dash.noMoneyEyebrow")}</p>
+            <p className="text-sm text-muted mt-2 max-w-md">{t("dash.noMoneyBody")}</p>
           </div>
         )}
 
         <div className="flex items-center gap-5">
-          <ProgressRing open={open} total={results.length} />
+          <ProgressRing
+            open={open}
+            total={results.length}
+            ariaLabel={formatT(t("dash.ringAria"), { open, total: results.length })}
+            ofLabel={t("dash.of")}
+          />
           <dl className="space-y-1.5 text-sm">
             <div className="flex items-baseline gap-2">
-              <dt className="label-mono text-[9px] text-muted w-20">likely</dt>
+              <dt className="label-mono text-[9px] text-muted w-20">{t("dash.likely")}</dt>
               <dd className="font-semibold tabular-nums">{likely}</dd>
             </div>
             <div className="flex items-baseline gap-2">
-              <dt className="label-mono text-[9px] text-muted w-20">still open</dt>
+              <dt className="label-mono text-[9px] text-muted w-20">{t("dash.stillOpen")}</dt>
               <dd className="font-semibold tabular-nums">{open}</dd>
             </div>
             <div className="flex items-baseline gap-2">
-              <dt className="label-mono text-[9px] text-muted w-20">screened</dt>
+              <dt className="label-mono text-[9px] text-muted w-20">{t("dash.screened")}</dt>
               <dd className="font-semibold tabular-nums">{results.length}</dd>
             </div>
           </dl>

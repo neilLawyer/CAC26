@@ -1,6 +1,6 @@
 import { UseCaseSlideshow } from "@/components/marketing/UseCaseSlideshow";
 import { Hero } from "@/components/marketing/Hero";
-import { OrbitMenu } from "@/components/marketing/OrbitMenu";
+import { OrbitMenu, OrbitSectionIntro } from "@/components/marketing/OrbitMenu";
 import { PopulationTiles } from "@/components/marketing/PopulationGrid";
 import { CategoryGrid } from "@/components/marketing/CategoryGrid";
 import { AccessibilityGrid } from "@/components/marketing/AccessibilityGrid";
@@ -23,13 +23,7 @@ export default function Home() {
       {/* The orbit: personas + categories circling the door. Small screens get
           the compact tiles — the orbit needs room to breathe. */}
       <section className="py-20 overflow-hidden">
-        <h2 className="text-3xl font-bold text-center px-6">
-          Built for the moments life throws at you
-        </h2>
-        <p className="text-center text-muted mt-2 max-w-xl mx-auto px-6">
-          Whoever you are, there&apos;s a door with your name on it.
-          <span className="hidden md:inline"> Hover to pause the sky; click to walk in.</span>
-        </p>
+        <OrbitSectionIntro />
         <div className="hidden md:flex justify-center mt-2">
           <OrbitMenu />
         </div>

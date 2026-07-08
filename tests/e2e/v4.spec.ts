@@ -318,6 +318,42 @@ test.describe("W1 — collapse system", () => {
     await page.emulateMedia({ media: "screen" });
   });
 
+  test("Spanish toggle: chrome flips, persists, and stays honest about English content (W11)", async ({
+    page,
+  }) => {
+    await seedHousehold(page);
+    await page.goto("/");
+
+    // Toggle to Spanish from the header.
+    await page.getByRole("button", { name: "Cambiar a español" }).click();
+    await expect(page.locator("html")).toHaveAttribute("lang", "es");
+    await expect(page.getByRole("heading", { name: "Abre cada puerta que ya te" })).toBeVisible();
+    await expect(
+      page.getByRole("navigation").getByRole("link", { name: "Ver si califico" })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Hecho para los momentos/ })
+    ).toBeVisible();
+
+    // Persists across navigation (blocking script applies pre-paint).
+    await page.goto("/results");
+    await expect(page.locator("html")).toHaveAttribute("lang", "es");
+    await expect(page.getByRole("heading", { name: "Esto es lo que encontramos" })).toBeVisible();
+    await expect(page.getByText(/dinero estimado que podrías estar dejando/)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Abrir todo" })).toBeVisible();
+    // Honesty note: program content is still English.
+    await expect(page.getByText(/se muestran en inglés por ahora/)).toBeVisible();
+
+    // Intake chrome is Spanish; longer strings don't break the wizard.
+    await page.goto("/intake");
+    await expect(page.getByRole("heading", { name: "¿En qué estado vives?" })).toBeVisible();
+
+    // And back to English.
+    await page.getByRole("button", { name: "Switch to English" }).click();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByRole("heading", { name: "Which state are you in?" })).toBeVisible();
+  });
+
   test("cliff simulator: the three displayed numbers reconcile exactly (W9)", async ({
     page,
   }) => {

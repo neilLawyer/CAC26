@@ -37,7 +37,7 @@ export default function RootLayout({
         <script
           // Runs before paint so there's no flash of the wrong theme or density.
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('opendoor-theme');document.documentElement.classList.toggle('dark', t !== 'light');if(localStorage.getItem('opendoor-density')==='compact')document.documentElement.setAttribute('data-density','compact');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('opendoor-theme');document.documentElement.classList.toggle('dark', t !== 'light');if(localStorage.getItem('opendoor-density')==='compact')document.documentElement.setAttribute('data-density','compact');if(localStorage.getItem('opendoor-locale')==='es')document.documentElement.lang='es';}catch(e){}})();`,
           }}
         />
       </head>

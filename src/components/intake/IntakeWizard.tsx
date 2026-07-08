@@ -10,8 +10,9 @@ import {
   FLAG_QUESTIONS,
   GENERAL_INTAKE_FLAGS,
   INCOME_BUCKETS,
-  STEP_LABELS,
 } from "@/data/questions";
+import { formatT, useLocale, useT } from "@/lib/i18n";
+import type { TranslationKey } from "@/data/i18n/en";
 import { activePopulations, POPULATION_TRIGGER_FLAGS } from "@/data/populations";
 import { EligibilityMeter } from "@/components/intake/EligibilityMeter";
 import { IntakeSidebar } from "@/components/intake/IntakeSidebar";
@@ -26,6 +27,8 @@ export function IntakeWizard() {
   const { household, setState, setHouseholdSize, setIncomeRange, setAssetsRange, setFlag } =
     useHousehold();
   const [step, setStep] = useState(0);
+  const t = useT();
+  const locale = useLocale();
 
   const stateEntry = getState(household.state);
   const programs = stateEntry?.programs ?? EMPTY_PROGRAMS;
@@ -91,9 +94,14 @@ export function IntakeWizard() {
         <div className="space-y-8">
           <div className="flex items-center gap-3">
             <span className="label-mono text-[10px] text-muted">
-              step {safeStep + 1} of {steps.length} · {STEP_LABELS[currentStep]}
+              {formatT(t("intake.step"), { n: safeStep + 1, total: steps.length })} ·{" "}
+              {t(`intake.stepLabel.${currentStep}` as TranslationKey)}
             </span>
           </div>
+
+          {locale === "es" && (
+            <p className="text-xs text-muted italic">{t("intake.esNote")}</p>
+          )}
 
           <EligibilityMeter possible={possible} total={programs.length} />
 
@@ -101,11 +109,11 @@ export function IntakeWizard() {
           <div key={currentStep} className="rise-in">
           {currentStep === "state" && (
             <section className="space-y-4">
-              <h2 className="text-2xl font-semibold">Which state are you in?</h2>
+              <h2 className="text-2xl font-semibold">{t("intake.stateTitle")}</h2>
               <p className="text-sm text-muted">
-                Every state works: federal programs and address-based local data are national.
-                States marked <span className="text-accent">full coverage</span> also carry a
-                hand-verified pack of their own state programs.
+                {t("intake.stateSub")}{" "}
+                <span className="text-accent">{t("intake.fullCoverage")}</span>{" "}
+                {t("intake.stateSubEnd")}
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {STATES.map((s) => (
@@ -119,7 +127,9 @@ export function IntakeWizard() {
                   >
                     {s.name}
                     {s.tier === "deep" && (
-                      <span className="block text-[10px] text-accent label-mono">full coverage</span>
+                      <span className="block text-[10px] text-accent label-mono">
+                        {t("intake.fullCoverage")}
+                      </span>
                     )}
                   </button>
                 ))}
@@ -129,7 +139,7 @@ export function IntakeWizard() {
 
           {currentStep === "size" && (
             <QuestionStep
-              title="How many people are in your household?"
+              title={t("intake.sizeTitle")}
               gridClassName="grid grid-cols-4 gap-3"
               onBack={back}
               options={[1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({
@@ -146,8 +156,8 @@ export function IntakeWizard() {
 
           {currentStep === "income" && (
             <QuestionStep
-              title="About how much does your household bring in before taxes, per month?"
-              subtitle="A range is fine — exact numbers aren't needed."
+              title={t("intake.incomeTitle")}
+              subtitle={t("intake.incomeSub")}
               gridClassName="grid gap-2"
               onBack={back}
               options={INCOME_BUCKETS.map((b) => ({
@@ -175,8 +185,8 @@ export function IntakeWizard() {
 
           {currentStep === "assets" && (
             <QuestionStep
-              title="About how much does your household have in savings and other resources?"
-              subtitle="Think checking, savings, and cash — a home and usually one car don't count."
+              title={t("intake.assetsTitle")}
+              subtitle={t("intake.assetsSub")}
               gridClassName="grid gap-2"
               onBack={back}
               options={ASSET_BUCKETS.map((b) => ({
@@ -194,12 +204,12 @@ export function IntakeWizard() {
 
           {currentStep === "review" && (
             <section className="space-y-4 text-center">
-              <h2 className="text-2xl font-semibold">Ready to see your results</h2>
+              <h2 className="text-2xl font-semibold">{t("intake.reviewTitle")}</h2>
               <p className="text-muted">
-                {possible} of {programs.length} programs still look possible based on your answers.
+                {formatT(t("intake.reviewSub"), { possible, total: programs.length })}
               </p>
               <Button onClick={() => router.push("/results")} className="press-weight px-8 py-3">
-                See my results
+                {t("intake.seeResults")}
               </Button>
               <div>
                 <BackLink onClick={back} />

@@ -7,6 +7,21 @@ import { CATEGORIES } from "@/data/categories";
 import { POPULATIONS } from "@/data/populations";
 import { Icon } from "@/components/ui/Icon";
 import { ICON_PATHS } from "@/components/ui/icons";
+import { useT } from "@/lib/i18n";
+
+/** The orbit section's heading — client so it follows the language toggle. */
+export function OrbitSectionIntro() {
+  const t = useT();
+  return (
+    <>
+      <h2 className="text-3xl font-bold text-center px-6">{t("home.momentsTitle")}</h2>
+      <p className="text-center text-muted mt-2 max-w-xl mx-auto px-6">
+        {t("home.momentsSub")}
+        <span className="hidden md:inline"> {t("home.momentsHint")}</span>
+      </p>
+    </>
+  );
+}
 
 // The homepage showpiece: OpenDoor at the center, five personas on the inner
 // ring, eight categories on the outer — slowly orbiting. Hover (or keyboard

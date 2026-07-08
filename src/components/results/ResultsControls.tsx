@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { useDisclosureGroup } from "@/components/ui/Disclosure";
+import { useT } from "@/lib/i18n";
 import {
   getDensitySnapshot,
   getDensityServerSnapshot,
@@ -29,23 +30,24 @@ function chipClass(active = false): string {
 export function ResultsControls() {
   const group = useDisclosureGroup();
   const density = useDensity();
+  const t = useT();
 
   return (
     <div className="flex flex-wrap items-center gap-2">
       {group && (
         <>
           <button type="button" onClick={group.expandAll} className={chipClass()}>
-            Expand all
+            {t("controls.expandAll")}
           </button>
           <button type="button" onClick={group.collapseAll} className={chipClass()}>
-            Collapse all
+            {t("controls.collapseAll")}
           </button>
         </>
       )}
       <div
         className="ml-auto flex items-center gap-1.5"
         role="group"
-        aria-label="Display density"
+        aria-label={t("controls.densityAria")}
       >
         <button
           type="button"
@@ -53,7 +55,7 @@ export function ResultsControls() {
           aria-pressed={density === "comfortable"}
           className={chipClass(density === "comfortable")}
         >
-          Comfortable
+          {t("controls.comfortable")}
         </button>
         <button
           type="button"
@@ -61,7 +63,7 @@ export function ResultsControls() {
           aria-pressed={density === "compact"}
           className={chipClass(density === "compact")}
         >
-          Compact
+          {t("controls.compact")}
         </button>
       </div>
     </div>

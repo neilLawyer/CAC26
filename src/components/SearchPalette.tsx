@@ -7,22 +7,18 @@ import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { buildSearchIndex, searchIndex, type SearchEntry } from "@/lib/search";
 import { Icon } from "@/components/ui/Icon";
 import { ICON_PATHS } from "@/components/ui/icons";
+import { useT } from "@/lib/i18n";
 
 // The command palette: ⌘/Ctrl-K anywhere (or the header button), type a life
 // phrase, land in the right room. Fuzzy over the data-driven index in
 // lib/search.ts — programs for YOUR state, the scope rooms, and app pages.
-
-const KIND_LABEL: Record<SearchEntry["kind"], string> = {
-  program: "program",
-  scope: "room",
-  page: "page",
-};
 
 const SUGGESTIONS = ["pregnant", "food stamps", "rent help", "laid off", "tax refund"];
 
 export function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const router = useRouter();
   const { household } = useHousehold();
+  const t = useT();
   const [query, setQuery] = useState("");
   const [cursor, setCursor] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -79,7 +75,7 @@ export function SearchPalette({ open, onClose }: { open: boolean; onClose: () =>
       className="fixed inset-0 z-[70] flex items-start justify-center px-4 pt-[12vh]"
       role="dialog"
       aria-modal="true"
-      aria-label="Search programs and pages"
+      aria-label={t("nav.searchAria")}
     >
       <button
         aria-label="Close search"
@@ -100,8 +96,8 @@ export function SearchPalette({ open, onClose }: { open: boolean; onClose: () =>
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Try a life phrase — &ldquo;pregnant&rdquo;, &ldquo;food stamps&rdquo;, &ldquo;can't pay rent&rdquo;…"
-            aria-label="Search programs, rooms, and pages"
+            placeholder={t("search.placeholder")}
+            aria-label={t("search.aria")}
             className="w-full bg-transparent py-3.5 text-sm outline-none placeholder:text-muted/70"
           />
           <kbd className="label-mono hidden sm:block text-[9px] text-muted border border-card-border rounded px-1.5 py-0.5">
@@ -111,7 +107,7 @@ export function SearchPalette({ open, onClose }: { open: boolean; onClose: () =>
 
         {query.trim() === "" ? (
           <div className="px-4 py-4">
-            <p className="label-mono text-[9px] text-muted">try one of these</p>
+            <p className="label-mono text-[9px] text-muted">{t("search.tryThese")}</p>
             <div className="flex flex-wrap gap-1.5 mt-2">
               {SUGGESTIONS.map((s) => (
                 <button
@@ -126,12 +122,12 @@ export function SearchPalette({ open, onClose }: { open: boolean; onClose: () =>
           </div>
         ) : results.length === 0 ? (
           <p className="px-4 py-5 text-sm text-muted">
-            Nothing matched that — but the full questionnaire checks everything we screen.{" "}
+            {t("search.noMatch")}{" "}
             <button
               onClick={() => pick({ href: "/intake" } as SearchEntry)}
               className="text-accent underline hover:no-underline"
             >
-              Start there →
+              {t("search.startThere")}
             </button>
           </p>
         ) : (
@@ -162,7 +158,7 @@ export function SearchPalette({ open, onClose }: { open: boolean; onClose: () =>
                     <span className="block text-xs text-muted truncate">{r.subtitle}</span>
                   </span>
                   <span className="label-mono text-[8px] text-muted shrink-0 border border-card-border rounded-full px-2 py-0.5">
-                    {KIND_LABEL[r.kind]}
+                    {t(`search.kind.${r.kind}`)}
                   </span>
                 </button>
               </li>
@@ -171,7 +167,7 @@ export function SearchPalette({ open, onClose }: { open: boolean; onClose: () =>
         )}
 
         <p className="px-4 py-2 border-t border-card-border text-[10px] text-muted label-mono">
-          ↑↓ choose · enter to open · searches only this device
+          {t("search.footer")}
         </p>
       </div>
     </div>

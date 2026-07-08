@@ -6,11 +6,13 @@ import { useHousehold } from "@/lib/household-store";
 import { getState } from "@/data/states";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SearchPalette, useSearchPalette } from "@/components/SearchPalette";
+import { LanguageToggle, useT } from "@/lib/i18n";
+import type { TranslationKey } from "@/data/i18n/en";
 
-const LINKS = [
-  { href: "/intake", label: "Check eligibility" },
-  { href: "/results", label: "My results" },
-  { href: "/cliff-simulator", label: "Cliff simulator" },
+const LINKS: { href: string; labelKey: TranslationKey }[] = [
+  { href: "/intake", labelKey: "nav.checkEligibility" },
+  { href: "/results", labelKey: "nav.myResults" },
+  { href: "/cliff-simulator", labelKey: "nav.cliffSimulator" },
 ];
 
 export function NavHeader() {
@@ -18,6 +20,7 @@ export function NavHeader() {
   const { household } = useHousehold();
   const stateEntry = getState(household.state);
   const { open, setOpen } = useSearchPalette();
+  const t = useT();
 
   return (
     <header className="sticky top-0 z-50 border-b border-card-border/70 bg-background/85 backdrop-blur">
@@ -44,7 +47,7 @@ export function NavHeader() {
                   : "text-muted hover:text-foreground"
               }`}
             >
-              {l.label}
+              {t(l.labelKey)}
             </Link>
           ))}
         </nav>
@@ -53,13 +56,13 @@ export function NavHeader() {
           type="button"
           onClick={() => setOpen(true)}
           className="press-weight ml-auto flex items-center gap-2 rounded-full border border-card-border px-3 py-1.5 text-xs text-muted hover:text-foreground"
-          aria-label="Search programs and pages"
+          aria-label={t("nav.searchAria")}
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
             <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
             <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
-          <span className="hidden sm:inline">Search</span>
+          <span className="hidden sm:inline">{t("nav.search")}</span>
           <kbd className="label-mono hidden md:inline text-[9px] border border-card-border rounded px-1 py-px">
             ctrl K
           </kbd>
@@ -73,8 +76,9 @@ export function NavHeader() {
           )}
           <span className="hidden sm:flex items-center gap-1.5">
             <span className="dot-live w-1.5 h-1.5 rounded-full bg-accent" />
-            local &amp; private
+            {t("nav.localPrivate")}
           </span>
+          <LanguageToggle />
           <ThemeToggle />
         </div>
       </div>

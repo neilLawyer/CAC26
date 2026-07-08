@@ -18,9 +18,12 @@ import { ResultsDashboard } from "@/components/results/ResultsDashboard";
 import { CascadePanel } from "@/components/results/CascadePanel";
 import { PopulationSpotlight } from "@/components/results/PopulationSpotlight";
 import { SnapshotPanel } from "@/components/results/SnapshotPanel";
+import { formatT, useLocale, useT } from "@/lib/i18n";
 
 export function ResultsView() {
   const { household, reset } = useHousehold();
+  const t = useT();
+  const locale = useLocale();
   const stateEntry = getState(household.state);
   const programs = stateEntry?.programs ?? EMPTY_PROGRAMS;
   const results = useMemo(() => evaluateAll(programs, household), [programs, household]);
@@ -46,13 +49,15 @@ export function ResultsView() {
   return (
     <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 space-y-8">
       <div className="rise-in space-y-2" style={{ "--stagger": 0 } as CSSProperties}>
-        <p className="label-mono text-[10px] text-accent">your results</p>
-        <h1 className="text-3xl font-bold">Here&apos;s what we found</h1>
+        <p className="label-mono text-[10px] text-accent">{t("results.eyebrow")}</p>
+        <h1 className="text-3xl font-bold">{t("results.title")}</h1>
         <p className="text-sm text-muted">
-          Based on what you told us for a household of {household.householdSize} in{" "}
-          {stateEntry?.name}. This is general information, not an official decision — every
-          program links to the real agency so they can confirm.
+          {formatT(t("results.intro"), {
+            size: household.householdSize,
+            state: stateEntry?.name ?? household.state,
+          })}
         </p>
+        {locale === "es" && <p className="text-xs text-muted italic">{t("results.esNote")}</p>}
       </div>
 
       <div className="rise-in" style={{ "--stagger": 1 } as CSSProperties}>
@@ -122,16 +127,19 @@ export function ResultsView() {
 
       <div className="flex flex-wrap gap-4 pt-4 border-t border-card-border">
         <Link href="/intake" className="text-sm text-accent hover:underline">
-          ← Edit my answers
+          {t("results.editAnswers")}
         </Link>
         <Link href="/cliff-simulator" className="text-sm text-accent hover:underline">
-          Try the benefits-cliff simulator →
+          {t("results.tryCliff")}
         </Link>
         <Link href="/deadlines" className="text-sm text-accent hover:underline">
-          My deadline timeline →
+          {t("results.deadlines")}
+        </Link>
+        <Link href="/packet" className="text-sm text-accent hover:underline">
+          {t("results.packet")}
         </Link>
         <button onClick={reset} className="text-sm text-muted hover:underline ml-auto">
-          Clear my answers
+          {t("results.clear")}
         </button>
       </div>
     </main>
