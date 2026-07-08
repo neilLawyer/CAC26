@@ -43,7 +43,8 @@ export function Hero() {
           <h1 className="mt-6 text-5xl sm:text-6xl font-bold leading-[1.05] tracking-tight">
             {t("hero.headline1")}
             <br />
-            {t("hero.headline2")} <span className="text-accent">{t("hero.headlineAccent")}</span>
+            {t("hero.headline2")}{" "}
+            <span className="ink-gradient">{t("hero.headlineAccent")}</span>
           </h1>
           <p className="mt-6 text-lg text-muted max-w-md">{t("hero.sub")}</p>
 

@@ -6,6 +6,7 @@ import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState } from "@/data/states";
 import { compareCliff, safeRaiseMonthly } from "@/lib/cliff";
 import { money } from "@/lib/format";
+import { useCountUp } from "@/lib/use-count-up";
 import { Card } from "@/components/ui/Card";
 import { InfoBox } from "@/components/ui/InfoBox";
 
@@ -38,6 +39,10 @@ export default function CliffSimulatorPage() {
     if (baselineIncome === undefined) return undefined;
     return safeRaiseMonthly(programs, household, baselineIncome, STEP, MAX_INCREASE);
   }, [programs, household, baselineIncome]);
+
+  // The net-effect headline glides between values as the slider moves — the
+  // same count-up voice as the results dashboard (reduced motion: instant).
+  const shownNet = useCountUp(comparison?.netEffectAnnual ?? 0, 600);
 
   if (baselineIncome === undefined || comparison === undefined) {
     return (
@@ -131,10 +136,14 @@ export default function CliffSimulatorPage() {
           <p className="label-mono text-[10px] text-muted">estimated net effect per year</p>
           <p
             className="text-3xl font-bold mt-1 tabular-nums"
-            style={{ color: netEffectAnnual >= 0 ? "#2dd4bf" : "#f87171" }}
+            style={{
+              color: `color-mix(in srgb, ${
+                netEffectAnnual >= 0 ? "#2dd4bf" : "#f87171"
+              } 78%, var(--foreground))`,
+            }}
           >
-            {netEffectAnnual >= 0 ? "+" : ""}
-            {money(netEffectAnnual)}
+            {shownNet >= 0 ? "+" : "−"}
+            {money(Math.abs(shownNet))}
           </p>
           <p className="text-xs text-muted mt-1">
             Extra pay ({money(extraPayAnnual)}/yr){" "}
@@ -170,7 +179,10 @@ export default function CliffSimulatorPage() {
                         : "— your new income would be over this program's limit"}
                     </span>
                   </span>
-                  <span className="tabular-nums shrink-0" style={{ color: "#f87171" }}>
+                  <span
+                    className="tabular-nums shrink-0"
+                    style={{ color: "color-mix(in srgb, #f87171 78%, var(--foreground))" }}
+                  >
                     −{d.midpoint > 0 ? `${money(d.midpoint)}/yr` : "value varies"}
                   </span>
                 </div>

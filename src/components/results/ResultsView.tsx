@@ -107,7 +107,7 @@ export function ResultsView() {
               className="tier-rule text-lg font-semibold"
               style={
                 {
-                  color: CONFIDENCE_COLOR[g.confidence],
+                  color: `color-mix(in srgb, ${CONFIDENCE_COLOR[g.confidence]} 70%, var(--foreground))`,
                   "--tier-color": CONFIDENCE_COLOR[g.confidence],
                 } as CSSProperties
               }

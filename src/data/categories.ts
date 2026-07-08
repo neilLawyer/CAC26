@@ -28,7 +28,7 @@ export const CATEGORIES: CategoryMeta[] = [
   {
     id: "food",
     label: "Food",
-    color: "#2dd4bf",
+    color: "#34d399",
     iconKey: "food",
     intro:
       "Help buying groceries — from monthly SNAP benefits to WIC for young families, free school meals, and food banks that can help this week.",
@@ -54,7 +54,7 @@ export const CATEGORIES: CategoryMeta[] = [
   {
     id: "energy",
     label: "Energy",
-    color: "#f97316",
+    color: "#fbbf24",
     iconKey: "energy",
     intro:
       "Help with heating, cooling, and electric bills. Seasonal funding means applying early matters.",
@@ -70,7 +70,7 @@ export const CATEGORIES: CategoryMeta[] = [
   {
     id: "education",
     label: "Education",
-    color: "#2dd4bf",
+    color: "#60a5fa",
     iconKey: "education",
     intro:
       "Free school meals, Pell Grants and FAFSA for college or training, scholarship finders, and free job-training help.",
@@ -83,7 +83,7 @@ export const CATEGORIES: CategoryMeta[] = [
   {
     id: "housing",
     label: "Housing",
-    color: "#22d3ee",
+    color: "#fb923c",
     iconKey: "housing",
     intro:
       "Rent help and housing programs — honestly framed: vouchers are real but waitlisted, while rental assistance and property-tax relief can move faster.",
@@ -97,7 +97,7 @@ export const CATEGORIES: CategoryMeta[] = [
   {
     id: "tax",
     label: "Tax",
-    color: "#f97316",
+    color: "#e879f9",
     iconKey: "tax",
     intro:
       "Tax credits are the single biggest pile of unclaimed money — the EITC alone goes unclaimed by about 1 in 5 eligible workers. Filing is how you collect.",
@@ -110,7 +110,7 @@ export const CATEGORIES: CategoryMeta[] = [
   {
     id: "phone-internet",
     label: "Phone & internet",
-    color: "#a78bfa",
+    color: "#38bdf8",
     iconKey: "phoneInternet",
     intro:
       "A monthly discount on phone or internet service — automatic if you're already on SNAP, Medicaid, or SSI.",

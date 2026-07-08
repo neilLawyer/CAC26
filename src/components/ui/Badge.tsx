@@ -12,8 +12,14 @@ type BadgeProps = {
 };
 
 export function Badge({ color, bgAlpha = "1f", className = "", style, children }: BadgeProps) {
+  // Text mixes toward the foreground so the same data hex reads in BOTH
+  // themes (the raw yellow of "possibly eligible" was illegible on light).
   const tint: CSSProperties = color
-    ? { color, backgroundColor: `${color}${bgAlpha}`, ...style }
+    ? {
+        color: `color-mix(in srgb, ${color} 72%, var(--foreground))`,
+        backgroundColor: `${color}${bgAlpha}`,
+        ...style,
+      }
     : style ?? {};
   return (
     <span className={`rounded-full ${className}`} style={tint}>

@@ -1,24 +1,29 @@
 @import "tailwindcss";
 
+/* v4 palette: semi-vibrant. The brand stays teal, but its partner shifts from
+   near-identical cyan to violet — every accent→accent-2 gradient (hero ink,
+   dashboard number, progress ring) now actually travels somewhere. Backgrounds
+   pick up a whisper of indigo so the room colors have something to glow
+   against. */
 :root {
-  --background: #f5f8f8;
-  --foreground: #0b1420;
+  --background: #f5f6fb;
+  --foreground: #0d1226;
   --card: #ffffff;
-  --card-border: #dbe4e4;
-  --muted: #556277;
+  --card-border: #dfe3f0;
+  --muted: #575f7d;
   --accent: #0d9488;
-  --accent-2: #0e7490;
+  --accent-2: #7c3aed;
   color-scheme: light;
 }
 
 .dark {
-  --background: #0b1420;
-  --foreground: #e7edf5;
-  --card: #121e30;
-  --card-border: #223349;
-  --muted: #7d90a3;
+  --background: #0c1124;
+  --foreground: #e8ecf8;
+  --card: #151b33;
+  --card-border: #2a3554;
+  --muted: #8e99bd;
   --accent: #2dd4bf;
-  --accent-2: #22d3ee;
+  --accent-2: #a78bfa;
   color-scheme: dark;
 }
 
@@ -70,7 +75,7 @@ button:disabled {
   background: radial-gradient(circle, rgba(45, 212, 191, 0.09) 0%, transparent 70%);
 }
 .corner-glow.cyan {
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.07) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.09) 0%, transparent 70%);
 }
 
 /* Shared hover lift for cards/tiles — subtle, not a full redesign per element. */
@@ -403,11 +408,14 @@ a:hover .offer-arrow {
     var(--card) 58%
   );
 }
+/* Gradient ink — the signature accent→violet sweep, shared by the hero
+   headline and the dashboard count-up. */
+.ink-gradient,
 .dash-number {
   background: linear-gradient(
     100deg,
-    var(--foreground) 20%,
-    color-mix(in srgb, var(--accent) 72%, var(--foreground))
+    var(--accent) 10%,
+    color-mix(in srgb, var(--accent-2) 85%, var(--accent))
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -520,6 +528,31 @@ a:hover .offer-arrow {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* The core breathes — a compositor-cheap opacity pulse on a glow layer. */
+  .orbit-core::after {
+    content: "";
+    position: absolute;
+    inset: -18px;
+    border-radius: 9999px;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 70%
+    );
+    z-index: -1;
+    animation: core-breathe 5.5s ease-in-out infinite;
+  }
+  @keyframes core-breathe {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
   @keyframes orbit-spin {
     to {
       transform: rotate(360deg);
