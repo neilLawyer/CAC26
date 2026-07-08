@@ -572,6 +572,23 @@ a:hover .offer-arrow {
   opacity: 0.12;
 }
 
+/* Search palette entrance — quick settle, reduced motion instant. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes palette-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .palette-panel {
+    animation: palette-in var(--dur-base) var(--ease-out) both;
+  }
+}
+
 /* Tier rules: section headers on results get a colored hairline that fades
    out — the palette's greens/ambers/reds doing structural work. */
 .tier-rule {

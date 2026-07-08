@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useHousehold } from "@/lib/household-store";
 import { getState } from "@/data/states";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SearchPalette, useSearchPalette } from "@/components/SearchPalette";
 
 const LINKS = [
   { href: "/intake", label: "Check eligibility" },
@@ -16,6 +17,7 @@ export function NavHeader() {
   const pathname = usePathname();
   const { household } = useHousehold();
   const stateEntry = getState(household.state);
+  const { open, setOpen } = useSearchPalette();
 
   return (
     <header className="sticky top-0 z-50 border-b border-card-border/70 bg-background/85 backdrop-blur">
@@ -47,7 +49,23 @@ export function NavHeader() {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3 label-mono text-[10px] text-muted">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="press-weight ml-auto flex items-center gap-2 rounded-full border border-card-border px-3 py-1.5 text-xs text-muted hover:text-foreground"
+          aria-label="Search programs and pages"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+            <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <span className="hidden sm:inline">Search</span>
+          <kbd className="label-mono hidden md:inline text-[9px] border border-card-border rounded px-1 py-px">
+            ctrl K
+          </kbd>
+        </button>
+
+        <div className="flex items-center gap-3 label-mono text-[10px] text-muted">
           {stateEntry && (
             <span className="hidden md:inline rounded-full border border-card-border px-2.5 py-1">
               {stateEntry.name}
@@ -60,6 +78,7 @@ export function NavHeader() {
           <ThemeToggle />
         </div>
       </div>
+      <SearchPalette open={open} onClose={() => setOpen(false)} />
     </header>
   );
 }

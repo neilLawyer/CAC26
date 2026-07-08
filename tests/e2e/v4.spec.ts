@@ -130,6 +130,39 @@ test.describe("W1 — collapse system", () => {
     await expect(page).toHaveURL(/\/intake\/families$/);
   });
 
+  test("universal search: ctrl-K, life phrase, keyboard to the right room (W4)", async ({
+    page,
+  }) => {
+    await seedHousehold(page);
+    await page.goto("/results");
+
+    // Keyboard shortcut opens it anywhere.
+    await page.keyboard.press("Control+k");
+    const dialog = page.getByRole("dialog", { name: "Search programs and pages" });
+    await expect(dialog).toBeVisible();
+
+    // A life phrase → the WIC pathway, chosen entirely by keyboard.
+    await page.keyboard.type("pregnant");
+    const options = dialog.getByRole("option");
+    await expect(options.first()).toBeVisible();
+    const texts = await options.allInnerTexts();
+    expect(texts.join(" ").toLowerCase()).toMatch(/wic|women/);
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/intake\/(food|families|health)$/);
+
+    // The visible header button works too, and colloquial names resolve.
+    await page.getByRole("button", { name: "Search programs and pages" }).click();
+    await page.keyboard.type("food stamps");
+    await expect(dialog.getByRole("option").first()).toContainText(/SNAP/i);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+
+    // Garbage gets honesty, not fabricated matches.
+    await page.keyboard.press("Control+k");
+    await page.keyboard.type("xyzzyplugh");
+    await expect(dialog.getByText(/Nothing matched/)).toBeVisible();
+  });
+
   test("cliff simulator: the three displayed numbers reconcile exactly (W9)", async ({
     page,
   }) => {
