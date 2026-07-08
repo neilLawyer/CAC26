@@ -17,6 +17,7 @@ import { ResultCard } from "@/components/results/ResultCard";
 import { ResultsDashboard } from "@/components/results/ResultsDashboard";
 import { CascadePanel } from "@/components/results/CascadePanel";
 import { PopulationSpotlight } from "@/components/results/PopulationSpotlight";
+import { SnapshotPanel } from "@/components/results/SnapshotPanel";
 
 export function ResultsView() {
   const { household, reset } = useHousehold();
@@ -56,6 +57,10 @@ export function ResultsView() {
 
       <div className="rise-in" style={{ "--stagger": 1 } as CSSProperties}>
         <ResultsDashboard results={results} />
+      </div>
+
+      <div className="rise-in" style={{ "--stagger": 2 } as CSSProperties}>
+        <SnapshotPanel results={results} state={household.state} />
       </div>
 
       <div className="rise-in" style={{ "--stagger": 2 } as CSSProperties}>

@@ -254,6 +254,48 @@ test.describe("W1 — collapse system", () => {
     await expect(page.getByRole("heading", { name: /Voice of Democracy/ })).toBeVisible();
   });
 
+  test("snapshot re-check: save, change life, see only the delta (W8)", async ({ page }) => {
+    // Seed-if-absent: addInitScript re-runs on every reload, and this test
+    // MODIFIES the stored household mid-flight — an unconditional seed would
+    // silently wipe the modification on reload.
+    await page.addInitScript((household) => {
+      if (!window.localStorage.getItem("opendoor-household")) {
+        window.localStorage.setItem("opendoor-household", JSON.stringify(household));
+      }
+    }, SEEDED_HOUSEHOLD);
+    await page.goto("/results");
+
+    // Save today's picture.
+    await page.getByRole("button", { name: "Save snapshot" }).click();
+    await expect(page.getByText(/Snapshot saved on this device/)).toBeVisible();
+
+    // Life changes: the household starts receiving Medicaid (adjunctive
+    // eligibility flips WIC-style income tests to met).
+    await page.evaluate(() => {
+      const h = JSON.parse(window.localStorage.getItem("opendoor-household")!);
+      h.flags.receivesMedicaid = true;
+      h.flags.pregnantOrChildUnder5 = true;
+      window.localStorage.setItem("opendoor-household", JSON.stringify(h));
+    });
+    await page.reload();
+
+    // Only the delta is announced.
+    const panel = page.getByText(/since your snapshot/i);
+    await expect(panel).toBeVisible();
+    await expect(page.getByText(/Now likely:/)).toBeVisible();
+
+    // Updating the snapshot settles it back to steady.
+    await page.getByRole("button", { name: "Update snapshot to today" }).click();
+    await page.reload();
+    await expect(page.getByText(/Nothing crossed the .likely. line/)).toBeVisible();
+
+    // Delete is real.
+    await page.getByRole("button", { name: "Delete snapshot" }).click();
+    await expect(page.getByRole("button", { name: "Save snapshot" })).toBeVisible();
+    const stored = await page.evaluate(() => window.localStorage.getItem("opendoor-snapshot"));
+    expect(stored).toBeNull();
+  });
+
   test("cliff simulator: the three displayed numbers reconcile exactly (W9)", async ({
     page,
   }) => {
