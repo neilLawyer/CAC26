@@ -392,6 +392,40 @@ a:hover .offer-arrow {
   gap: var(--stack-gap);
 }
 
+/* ---------------------------------------------------------------------------
+   Results dashboard: the count-up hero. Gradient-inked headline number, a
+   softly tinted panel, and a progress ring that draws itself in.
+--------------------------------------------------------------------------- */
+.dash-panel {
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--accent) 10%, var(--card)),
+    var(--card) 58%
+  );
+}
+.dash-number {
+  background: linear-gradient(
+    100deg,
+    var(--foreground) 20%,
+    color-mix(in srgb, var(--accent) 72%, var(--foreground))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* 213.63 = the ring's full circumference (2π × r34) — draws from empty. */
+  @keyframes ring-in {
+    from {
+      stroke-dashoffset: 213.63;
+    }
+  }
+  .ring-fill {
+    animation: ring-in 1.2s var(--ease-out);
+    transition: stroke-dashoffset 900ms var(--ease-out);
+  }
+}
+
 /* Tier rules: section headers on results get a colored hairline that fades
    out — the palette's greens/ambers/reds doing structural work. */
 .tier-rule {

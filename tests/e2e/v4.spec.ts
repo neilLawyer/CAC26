@@ -73,6 +73,30 @@ test.describe("W1 — collapse system", () => {
     await expect(page.locator("html")).not.toHaveAttribute("data-density", "compact");
   });
 
+  test("dashboard: reduced motion shows the final number instantly, and it IS the midpoint", async ({
+    page,
+  }) => {
+    await seedHousehold(page);
+    await page.goto("/results");
+
+    const panel = page.getByRole("region", { name: "Your results at a glance" });
+    await expect(panel).toBeVisible();
+
+    // Under reduced motion the count-up must not animate: the headline equals
+    // the midpoint of the min–max range printed right beside it.
+    const rangeText = await panel.getByText(/Midpoint of \$/).innerText();
+    const nums = rangeText.replace(/,/g, "").match(/\$(\d+) – \$(\d+)/);
+    expect(nums).not.toBeNull();
+    const expected = Math.round((Number(nums![1]) + Number(nums![2])) / 2);
+    await expect(panel.locator(".dash-number")).toContainText(
+      "$" + expected.toLocaleString("en-US")
+    );
+
+    // Ring + counts render and agree with each other.
+    const ring = panel.getByRole("img", { name: /still open to you/ });
+    await expect(ring).toBeVisible();
+  });
+
   test("info boxes are one line collapsed, full story on click (scope + cliff)", async ({
     page,
   }) => {

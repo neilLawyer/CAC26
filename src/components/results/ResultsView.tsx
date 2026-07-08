@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, type CSSProperties } from "react";
 import { useHousehold } from "@/lib/household-store";
 import { EMPTY_PROGRAMS, getState } from "@/data/states";
-import { cascadeSuggestions, estimatedAnnualValue, evaluateAll } from "@/lib/engine";
+import { cascadeSuggestions, evaluateAll } from "@/lib/engine";
 import { rankOffers } from "@/lib/offers";
 import { CONFIDENCE_COLOR, CONFIDENCE_LABEL, CONFIDENCE_ORDER } from "@/components/results/confidence";
 import { DisclosureGroup } from "@/components/ui/Disclosure";
@@ -13,7 +13,7 @@ import { ResultsControls } from "@/components/results/ResultsControls";
 import { CoverageNote } from "@/components/results/CoverageNote";
 import { NextSteps } from "@/components/results/NextSteps";
 import { ResultCard } from "@/components/results/ResultCard";
-import { ValueEstimate } from "@/components/results/ValueEstimate";
+import { ResultsDashboard } from "@/components/results/ResultsDashboard";
 import { CascadePanel } from "@/components/results/CascadePanel";
 import { PopulationSpotlight } from "@/components/results/PopulationSpotlight";
 
@@ -22,7 +22,6 @@ export function ResultsView() {
   const stateEntry = getState(household.state);
   const programs = stateEntry?.programs ?? EMPTY_PROGRAMS;
   const results = useMemo(() => evaluateAll(programs, household), [programs, household]);
-  const value = useMemo(() => estimatedAnnualValue(results), [results]);
   const cascades = useMemo(() => cascadeSuggestions(results), [results]);
   const offers = useMemo(() => rankOffers(household, results), [household, results]);
 
@@ -55,7 +54,7 @@ export function ResultsView() {
       </div>
 
       <div className="rise-in" style={{ "--stagger": 1 } as CSSProperties}>
-        <ValueEstimate min={value.min} max={value.max} />
+        <ResultsDashboard results={results} />
       </div>
 
       {stateEntry && (
