@@ -39,6 +39,20 @@ export const SEARCH_PAGES: Omit<SearchEntry, "kind" | "key">[] = [
     href: "/cliff-simulator",
     keywords: ["raise", "cliff", "promotion", "extra hours", "overtime", "net effect"],
   },
+  {
+    title: "Merit scholarships & contests",
+    subtitle: "Real awards with NO income test — verified official links",
+    href: "/scholarships",
+    keywords: [
+      "scholarship",
+      "merit",
+      "psat",
+      "national merit",
+      "essay contest",
+      "coca-cola",
+      "college money",
+    ],
+  },
 ];
 
 function scopeHref(id: string): string {

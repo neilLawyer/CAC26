@@ -13,6 +13,8 @@ import { DeepForm } from "@/components/intake/DeepForm";
 import { DisclosureGroup } from "@/components/ui/Disclosure";
 import { InfoBox } from "@/components/ui/InfoBox";
 import { ResultsControls } from "@/components/results/ResultsControls";
+import { ScholarshipList } from "@/components/ScholarshipList";
+import { SCHOLARSHIPS } from "@/data/scholarships";
 import { NearYouPanel } from "@/components/near-you/NearYouPanel";
 import { NextSteps } from "@/components/results/NextSteps";
 import { Icon } from "@/components/ui/Icon";
@@ -23,6 +25,10 @@ import {
   CONFIDENCE_LABEL,
   CONFIDENCE_ORDER,
 } from "@/components/results/confidence";
+
+// Rooms that carry the merit-scholarship track (data-keyed, same pattern as
+// NEAR_YOU — no scope-specific branching in the template itself).
+const SCHOLARSHIP_SCOPES = new Set<string>(["education", "students"]);
 
 // The one deep-dive template: intro + generated form + scope-filtered results.
 // Works for every category AND every persona purely by reading scope data —
@@ -141,6 +147,27 @@ export function ScopeScreen({ scopeId }: { scopeId: string }) {
               >
                 {scope.localPointer.finderName} →
               </a>
+            </InfoBox>
+          </div>
+        )}
+
+        {/* The merit track: scholarships with NO income test — collapsed to one
+            line, expanding to the tidy bullet list. */}
+        {SCHOLARSHIP_SCOPES.has(scope.id as string) && (
+          <div className="rise-in" style={{ "--stagger": 2 } as CSSProperties}>
+            <InfoBox
+              label="not income-gated"
+              title={`Merit scholarships & contests — show full list (${SCHOLARSHIPS.length})`}
+              tint={scope.color}
+            >
+              <p className="text-xs text-muted">
+                Real awards judged on merit, essays, or competition — no income test. Every
+                name links to its official page.{" "}
+                <Link href="/scholarships" className="scope-ink underline hover:no-underline">
+                  There&apos;s a full page too →
+                </Link>
+              </p>
+              <ScholarshipList />
             </InfoBox>
           </div>
         )}

@@ -163,6 +163,35 @@ test.describe("W1 — collapse system", () => {
     await expect(dialog.getByText(/Nothing matched/)).toBeVisible();
   });
 
+  test("scholarships: collapsed one-liner in the education room, full page, real links (W5)", async ({
+    page,
+  }) => {
+    // Education room: collapsed by default, expands to the bullet list.
+    await page.goto("/intake/education");
+    const box = page.getByRole("button", { name: /Merit scholarships & contests — show full list/ });
+    await expect(box).toHaveAttribute("aria-expanded", "false");
+    await box.click();
+    const nm = page.getByRole("link", { name: "National Merit Scholarship Program" });
+    await expect(nm).toBeVisible();
+    await expect(nm).toHaveAttribute("href", /nationalmerit\.org/);
+
+    // The dedicated page renders every entry with an official link.
+    await page.goto("/scholarships");
+    await expect(
+      page.getByRole("heading", { name: /don't ask what your family earns/ })
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "Coca-Cola Scholars Program" })).toHaveAttribute(
+      "href",
+      /coca-colascholarsfoundation\.org/
+    );
+    // The in-app explainer opens without leaving the page.
+    await page
+      .locator("li", { hasText: "Profile in Courage" })
+      .locator("summary")
+      .click();
+    await expect(page.getByText(/requires a nominating teacher/)).toBeVisible();
+  });
+
   test("cliff simulator: the three displayed numbers reconcile exactly (W9)", async ({
     page,
   }) => {
