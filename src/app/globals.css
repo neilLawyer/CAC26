@@ -426,6 +426,152 @@ a:hover .offer-arrow {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   The orbit menu (homepage showpiece). Three nested transforms per node —
+   ring spin (animated), arm angle (static), counter-spin (animated) + upright
+   angle (static) — cancel exactly, so chips orbit while labels stay level.
+   Everything is transform/opacity only. Reduced motion: a static ring.
+--------------------------------------------------------------------------- */
+.orbit {
+  /* 2 × (outer radius 264 + chip + label) with breathing room. */
+  width: min(92vw, 640px);
+  height: 690px;
+}
+.orbit-path {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--path-r) * 2);
+  height: calc(var(--path-r) * 2);
+  transform: translate(-50%, -50%);
+  border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+  border-radius: 9999px;
+  transition: opacity var(--dur-slow) ease;
+}
+.orbit-core {
+  width: 132px;
+  height: 132px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 14%, var(--card)),
+    var(--card) 75%
+  );
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow: 0 0 42px -8px color-mix(in srgb, var(--accent) 35%, transparent);
+  z-index: 2;
+  transition: transform var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) ease,
+    opacity var(--dur-slow) ease;
+}
+.orbit-core:hover,
+.orbit-core:focus-visible {
+  transform: translate(-50%, -50%) scale(1.06);
+  box-shadow: 0 0 56px -6px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+.orbit-ring,
+.orbit-arm,
+.orbit-counter {
+  width: 0;
+  height: 0;
+}
+.orbit-arm {
+  transform: rotate(var(--angle)) translateX(var(--radius));
+}
+.orbit-upright {
+  transform: rotate(calc(-1 * var(--angle)));
+}
+.orbit-node {
+  /* Explicit box: the positioning chain above is all 0×0 points, and a
+     zero-width link is invisible to hit-testing/a11y even when its children
+     paint fine. Labels wider than this center-overflow symmetrically. */
+  width: 96px;
+  transform: translate(-50%, -50%);
+  transition: transform var(--dur-base) var(--ease-spring), opacity var(--dur-base) ease;
+}
+.orbit-node:hover,
+.orbit-node:focus-visible {
+  transform: translate(-50%, -50%) scale(1.16);
+}
+.orbit-node:focus-visible {
+  outline: 2px solid var(--node-color, var(--accent));
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+.orbit-chip {
+  background: color-mix(in srgb, var(--node-color) 10%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--node-color) 45%, transparent);
+  box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.4);
+  transition: background-color var(--dur-quick) ease, border-color var(--dur-quick) ease,
+    box-shadow var(--dur-quick) ease;
+}
+.orbit-node:hover .orbit-chip,
+.orbit-node:focus-visible .orbit-chip {
+  background: color-mix(in srgb, var(--node-color) 20%, var(--card));
+  border-color: color-mix(in srgb, var(--node-color) 75%, transparent);
+  box-shadow: 0 0 26px -4px color-mix(in srgb, var(--node-color) 45%, transparent);
+}
+.orbit-label {
+  color: var(--muted);
+  transition: color var(--dur-quick) ease;
+}
+.orbit-node:hover .orbit-label,
+.orbit-node:focus-visible .orbit-label {
+  color: color-mix(in srgb, var(--node-color) 62%, var(--foreground));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes orbit-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes orbit-spin-rev {
+    to {
+      transform: rotate(-360deg);
+    }
+  }
+  /* Inner ring drifts one way, outer the other — depth without parallax JS. */
+  .orbit-ring-inner {
+    animation: orbit-spin-rev 75s linear infinite;
+  }
+  .orbit-ring-inner .orbit-counter {
+    animation: orbit-spin 75s linear infinite;
+  }
+  .orbit-ring-outer {
+    animation: orbit-spin 105s linear infinite;
+  }
+  .orbit-ring-outer .orbit-counter {
+    animation: orbit-spin-rev 105s linear infinite;
+  }
+  /* Reaching in (pointer or keyboard) pauses the sky. */
+  .orbit:hover .orbit-ring-inner,
+  .orbit:hover .orbit-ring-outer,
+  .orbit:hover .orbit-counter,
+  .orbit:focus-within .orbit-ring-inner,
+  .orbit:focus-within .orbit-ring-outer,
+  .orbit:focus-within .orbit-counter,
+  .orbit-flying .orbit-ring-inner,
+  .orbit-flying .orbit-ring-outer,
+  .orbit-flying .orbit-counter {
+    animation-play-state: paused;
+  }
+}
+
+/* Departure: the chosen door grows toward the viewer, the rest of the sky
+   recedes. (Reduced motion never adds these classes — navigation is instant.) */
+.orbit-fly-target {
+  transform: translate(-50%, -50%) scale(2.05) !important;
+  z-index: 3;
+  position: relative;
+}
+.orbit-fly-rest {
+  opacity: 0;
+}
+.orbit-flying .orbit-core,
+.orbit-flying .orbit-path {
+  opacity: 0.12;
+}
+
 /* Tier rules: section headers on results get a colored hairline that fades
    out — the palette's greens/ambers/reds doing structural work. */
 .tier-rule {

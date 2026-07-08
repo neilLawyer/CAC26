@@ -310,6 +310,10 @@ test.describe("with animations enabled", () => {
 
   test("health tile and health results tab both navigate (the reported bug)", async ({ page }) => {
     await page.goto("/");
+    // v4: the first health link is now an orbit node, which MOVES while
+    // animations run. Entering the orbit pauses the sky — same as a real
+    // pointer — and only then is the node click-stable.
+    await page.getByRole("navigation", { name: /Explore by situation/ }).hover();
     await page.locator('a[href="/intake/health"]').first().click();
     await expect(page).toHaveURL(/\/intake\/health$/);
 

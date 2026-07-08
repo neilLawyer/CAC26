@@ -3,38 +3,33 @@ import { Icon } from "@/components/ui/Icon";
 import { ICON_PATHS } from "@/components/ui/icons";
 import { POPULATIONS } from "@/data/populations";
 
-// "Built for real people" — one card per population module, data-driven. Each
-// routes straight to that population's /intake/[scope] deep-dive form (its
-// marketing landing stays reachable at /for/[id]).
-export function PopulationGrid() {
+// The persona tiles, bare (no section chrome) — the home page uses them as
+// the small-screen fallback for the orbit menu, which needs room to breathe.
+// Each routes straight to that population's /intake/[scope] deep-dive form
+// (its marketing landing stays reachable at /for/[id]).
+export function PopulationTiles() {
   return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
-      <h2 className="text-3xl font-bold text-center">Built for the moments life throws at you</h2>
-      <p className="text-center text-muted mt-2 max-w-xl mx-auto">
-        Whoever you are, start with the programs built around your situation.
-      </p>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-10">
-        {POPULATIONS.map((p) => (
-          <Link
-            key={p.id}
-            href={`/intake/${p.id}`}
-            className="hover-lift block rounded-2xl border border-card-border bg-card overflow-hidden"
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      {POPULATIONS.map((p) => (
+        <Link
+          key={p.id}
+          href={`/intake/${p.id}`}
+          className="hover-lift block rounded-2xl border border-card-border bg-card overflow-hidden"
+        >
+          <div
+            className="h-24 flex items-center justify-center"
+            style={{ backgroundColor: `${p.color}1f` }}
           >
-            <div
-              className="h-24 flex items-center justify-center"
-              style={{ backgroundColor: `${p.color}1f` }}
-            >
-              <Icon size={32} stroke={p.color}>
-                {ICON_PATHS[p.iconKey]}
-              </Icon>
-            </div>
-            <div className="p-4">
-              <h3 className="font-semibold text-sm">{p.label}</h3>
-              <p className="text-xs text-muted mt-1">{p.tagline}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </section>
+            <Icon size={32} stroke={p.color}>
+              {ICON_PATHS[p.iconKey]}
+            </Icon>
+          </div>
+          <div className="p-4">
+            <h3 className="font-semibold text-sm">{p.label}</h3>
+            <p className="text-xs text-muted mt-1">{p.tagline}</p>
+          </div>
+        </Link>
+      ))}
+    </div>
   );
 }

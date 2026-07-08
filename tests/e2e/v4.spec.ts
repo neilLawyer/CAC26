@@ -97,6 +97,39 @@ test.describe("W1 — collapse system", () => {
     await expect(ring).toBeVisible();
   });
 
+  test("orbit menu: 13 doors + the core, reduced motion navigates instantly (W3)", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const orbit = page.getByRole("navigation", {
+      name: "Explore by situation or by kind of help",
+    });
+    await expect(orbit).toBeVisible();
+    // 5 personas + 8 categories as REAL links, plus the core.
+    await expect(orbit.getByRole("link", { name: /open this door/ })).toHaveCount(13);
+    await expect(
+      orbit.getByRole("link", { name: /Start the three-minute eligibility check/ })
+    ).toBeVisible();
+
+    await orbit.getByRole("link", { name: "Health — open this door" }).click();
+    await expect(page).toHaveURL(/\/intake\/health$/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+
+  test("orbit menu: small screens fall back to the persona tiles (W3)", async ({ page }) => {
+    await page.setViewportSize({ width: 480, height: 900 });
+    await page.goto("/");
+    await expect(
+      page.getByRole("navigation", { name: "Explore by situation or by kind of help" })
+    ).toBeHidden();
+    // The compact tiles carry the load instead (the orbit's links exist in
+    // the DOM but are hidden — select the visible one).
+    const tile = page.locator('a[href="/intake/families"]:visible').first();
+    await expect(tile).toBeVisible();
+    await tile.click();
+    await expect(page).toHaveURL(/\/intake\/families$/);
+  });
+
   test("cliff simulator: the three displayed numbers reconcile exactly (W9)", async ({
     page,
   }) => {
