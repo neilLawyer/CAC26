@@ -122,6 +122,9 @@ export function ResultsView() {
         <Link href="/cliff-simulator" className="text-sm text-accent hover:underline">
           Try the benefits-cliff simulator →
         </Link>
+        <Link href="/deadlines" className="text-sm text-accent hover:underline">
+          My deadline timeline →
+        </Link>
         <button onClick={reset} className="text-sm text-muted hover:underline ml-auto">
           Clear my answers
         </button>

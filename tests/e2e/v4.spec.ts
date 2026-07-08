@@ -226,6 +226,34 @@ test.describe("W1 — collapse system", () => {
     await page.emulateMedia({ media: "screen" });
   });
 
+  test("deadlines: personal timeline + a real .ics download (W7)", async ({ page }) => {
+    await seedHousehold(page);
+    await page.goto("/results");
+    await page.getByRole("link", { name: /My deadline timeline/ }).click();
+    await expect(page).toHaveURL(/\/deadlines$/);
+
+    // NJ household: the NJ LIHEAP season card is there with its source stamp.
+    const liheap = page.locator("div", { hasText: /NJ LIHEAP season/ }).last();
+    await expect(page.getByText(/NJ LIHEAP season/)).toBeVisible();
+    await expect(page.getByText(/first-come, first-served/)).toBeVisible();
+
+    // The .ics actually downloads and is a real calendar.
+    const downloadPromise = page.waitForEvent("download");
+    await liheap.getByRole("button", { name: /Add to calendar/ }).click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/\.ics$/);
+    const stream = await download.createReadStream();
+    const chunks: Buffer[] = [];
+    for await (const c of stream) chunks.push(c as Buffer);
+    const ics = Buffer.concat(chunks).toString("utf-8");
+    expect(ics).toContain("BEGIN:VCALENDAR");
+    expect(ics).toContain("BEGIN:VEVENT");
+    expect(ics).toContain("LIHEAP");
+
+    // Contest deadlines render for everyone, with official links.
+    await expect(page.getByRole("heading", { name: /Voice of Democracy/ })).toBeVisible();
+  });
+
   test("cliff simulator: the three displayed numbers reconcile exactly (W9)", async ({
     page,
   }) => {

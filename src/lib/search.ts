@@ -40,6 +40,20 @@ export const SEARCH_PAGES: Omit<SearchEntry, "kind" | "key">[] = [
     keywords: ["raise", "cliff", "promotion", "extra hours", "overtime", "net effect"],
   },
   {
+    title: "My deadline timeline",
+    subtitle: "Enrollment windows + seasonal deadlines from your matches, as .ics downloads",
+    href: "/deadlines",
+    keywords: [
+      "deadline",
+      "calendar",
+      "open enrollment",
+      "fafsa deadline",
+      "when to apply",
+      "dates",
+      "reminder",
+    ],
+  },
+  {
     title: "Claim your tax credits (free-filing guide)",
     subtitle: "What filing is, the REAL free options, and a printable what-to-bring list",
     href: "/tax-guide",
