@@ -118,6 +118,17 @@ export const es: Record<TranslationKey, string> = {
   "search.kind.scope": "sala",
   "search.kind.page": "página",
 
+  // Accessibility panel
+  "a11y.openAria": "Opciones de accesibilidad",
+  "a11y.title": "Accesibilidad",
+  "a11y.closeAria": "Cerrar opciones de accesibilidad",
+  "a11y.textSize": "Tamaño del texto",
+  "a11y.textSizeAria": "Tamaño del texto",
+  "a11y.highContrast": "Alto contraste",
+  "a11y.dyslexiaFont": "Fuente para dislexia",
+  "a11y.reduceMotion": "Reducir movimiento",
+  "a11y.reset": "Restablecer",
+
   // Footer
   "footer.about": "Acerca de",
   "footer.how": "Cómo funciona",

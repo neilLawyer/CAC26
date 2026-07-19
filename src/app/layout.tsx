@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { HouseholdProvider } from "@/lib/household-store";
 import { NavHeader } from "@/components/NavHeader";
+import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -37,7 +38,7 @@ export default function RootLayout({
         <script
           // Runs before paint so there's no flash of the wrong theme or density.
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('opendoor-theme');document.documentElement.classList.toggle('dark', t !== 'light');if(localStorage.getItem('opendoor-density')==='compact')document.documentElement.setAttribute('data-density','compact');if(localStorage.getItem('opendoor-locale')==='es')document.documentElement.lang='es';}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('opendoor-theme');document.documentElement.classList.toggle('dark', t !== 'light');if(localStorage.getItem('opendoor-density')==='compact')document.documentElement.setAttribute('data-density','compact');if(localStorage.getItem('opendoor-locale')==='es')document.documentElement.lang='es';var a=JSON.parse(localStorage.getItem('opendoor-a11y')||'{}');var r=document.documentElement;if(a.textSize==='lg'||a.textSize==='xl')r.setAttribute('data-text-size',a.textSize);if(a.highContrast)r.setAttribute('data-contrast','high');if(a.dyslexiaFont)r.setAttribute('data-font','dyslexia');if(a.reduceMotion)r.setAttribute('data-motion','reduce');}catch(e){}})();`,
           }}
         />
       </head>
@@ -45,6 +46,7 @@ export default function RootLayout({
         <HouseholdProvider>
           <NavHeader />
           {children}
+          <AccessibilityMenu />
         </HouseholdProvider>
       </body>
     </html>

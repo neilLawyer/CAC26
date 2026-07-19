@@ -115,6 +115,17 @@ export const en = {
   "search.kind.scope": "room",
   "search.kind.page": "page",
 
+  // Accessibility panel
+  "a11y.openAria": "Accessibility options",
+  "a11y.title": "Accessibility",
+  "a11y.closeAria": "Close accessibility options",
+  "a11y.textSize": "Text Size",
+  "a11y.textSizeAria": "Text size",
+  "a11y.highContrast": "High Contrast",
+  "a11y.dyslexiaFont": "Dyslexia Font",
+  "a11y.reduceMotion": "Reduce Motion",
+  "a11y.reset": "Reset",
+
   // Footer
   "footer.about": "About",
   "footer.how": "How it works",

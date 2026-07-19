@@ -663,6 +663,68 @@ a:hover .offer-arrow {
   display: none;
 }
 
+/* ---------------------------------------------------------------------------
+   Accessibility panel (src/components/AccessibilityMenu.tsx). Four
+   independent, persisted overrides — see lib/a11y-store.ts.
+--------------------------------------------------------------------------- */
+
+/* Text size: scales the rem root, so every Tailwind text-* utility (all rem)
+   grows with it. Icons and fixed-px layout (e.g. the orbit) stay put. */
+html[data-text-size="lg"] {
+  font-size: 112.5%;
+}
+html[data-text-size="xl"] {
+  font-size: 125%;
+}
+
+/* High contrast: push both themes toward pure black/white and thicken the
+   lines that carry structure. */
+html[data-contrast="high"]:not(.dark) {
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-border: #000000;
+  --muted: #2b2b2b;
+}
+html.dark[data-contrast="high"] {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #000000;
+  --card-border: #ffffff;
+  --muted: #d8d8d8;
+}
+[data-contrast="high"] :is(a, button, input, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent) !important;
+  outline-offset: 2px !important;
+}
+[data-contrast="high"] .hover-lift,
+[data-contrast="high"] .rc-head {
+  border-width: 1.5px;
+}
+
+/* Dyslexia-friendly font: a wider, rounder system stack with looser spacing —
+   no external font file, so it works offline and loads instantly. */
+html[data-font="dyslexia"] body {
+  font-family: Verdana, Tahoma, "Comic Sans MS", var(--font-space-grotesk), sans-serif;
+}
+html[data-font="dyslexia"] :is(p, li, span, h1, h2, h3, h4, h5, h6, a, button, label, td, th, dt, dd) {
+  letter-spacing: 0.02em;
+  word-spacing: 0.12em;
+  line-height: 1.65;
+}
+
+/* Reduce motion: a user-toggled override that behaves exactly like the OS
+   prefers-reduced-motion query, for people who want it off on a shared or
+   borrowed device without changing system settings. */
+[data-motion="reduce"] *,
+[data-motion="reduce"] *::before,
+[data-motion="reduce"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
 /* Tier rules: section headers on results get a colored hairline that fades
    out — the palette's greens/ambers/reds doing structural work. */
 .tier-rule {
