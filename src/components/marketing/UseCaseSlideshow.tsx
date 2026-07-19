@@ -2,26 +2,29 @@
 
 import { useEffect, useRef, useState } from "react";
 
+// State-neutral scenarios — every program family named here exists in every
+// state's pack (state-administered versions supersede the federal baseline),
+// so the same copy is honest whether you're in NJ, TX, or Wyoming.
 const SCENARIOS = [
   {
     prompt: "Just had a baby?",
-    outcome: "WIC, NJ FamilyCare for your baby, and NJ Free School Meals down the road can all line up.",
+    outcome: "WIC, health coverage for your baby, and free school meals down the road can all line up.",
   },
   {
     prompt: "Lost your job?",
-    outcome: "NJ SNAP, NJ FamilyCare, and Work First New Jersey often kick in together.",
+    outcome: "SNAP, Medicaid, and cash assistance often kick in together.",
   },
   {
     prompt: "Turning 65?",
-    outcome: "PAAD, SSI, and Senior Freeze — three programs built specifically around this milestone.",
+    outcome: "Prescription help, SSI, and property-tax relief — programs built specifically around this milestone.",
   },
   {
     prompt: "Behind on utility bills?",
-    outcome: "LIHEAP and the Universal Service Fund exist for exactly this situation.",
+    outcome: "Energy assistance programs like LIHEAP exist for exactly this situation.",
   },
   {
     prompt: "Filing taxes this year?",
-    outcome: "The NJEITC could mean extra cash back you didn't know you qualified for.",
+    outcome: "The EITC and state tax credits could mean extra cash back you didn't know you qualified for.",
   },
 ];
 

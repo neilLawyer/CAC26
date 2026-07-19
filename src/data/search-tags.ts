@@ -12,35 +12,126 @@ export interface SearchTag {
   )[];
 }
 
+// Every deep state's SNAP entry — generic food-stamp phrases must reach the
+// state-administered version, since it supersedes us-snap in that state.
+const SNAP_TARGETS: SearchTag["targets"] = [
+  { kind: "program", id: "us-snap" },
+  { kind: "program", id: "nj-snap" },
+  { kind: "program", id: "ca-calfresh" },
+  { kind: "program", id: "tx-snap" },
+  { kind: "program", id: "fl-snap" },
+  { kind: "program", id: "ny-snap" },
+  { kind: "program", id: "pa-snap" },
+  { kind: "program", id: "il-snap" },
+];
+
+const WIC_TARGETS: SearchTag["targets"] = [
+  { kind: "program", id: "us-wic" },
+  { kind: "program", id: "nj-wic" },
+  { kind: "program", id: "ca-wic" },
+  { kind: "program", id: "tx-wic" },
+  { kind: "program", id: "fl-wic" },
+  { kind: "program", id: "ny-wic" },
+  { kind: "program", id: "pa-wic" },
+  { kind: "program", id: "il-wic" },
+];
+
+const LIHEAP_TARGETS: SearchTag["targets"] = [
+  { kind: "program", id: "us-liheap" },
+  { kind: "program", id: "nj-liheap" },
+  { kind: "program", id: "ca-liheap" },
+  { kind: "program", id: "tx-ceap" },
+  { kind: "program", id: "fl-liheap" },
+  { kind: "program", id: "ny-heap" },
+  { kind: "program", id: "pa-liheap" },
+  { kind: "program", id: "il-liheap" },
+];
+
+const MEDICAID_TARGETS: SearchTag["targets"] = [
+  { kind: "program", id: "us-medicaid" },
+  { kind: "program", id: "nj-familycare" },
+  { kind: "program", id: "ca-medi-cal" },
+  { kind: "program", id: "tx-medicaid-kids-chip" },
+  { kind: "program", id: "fl-kidcare" },
+  { kind: "program", id: "ny-medicaid" },
+  { kind: "program", id: "pa-medicaid" },
+  { kind: "program", id: "il-medicaid" },
+];
+
+const MARKETPLACE_TARGETS: SearchTag["targets"] = [
+  { kind: "program", id: "nj-get-covered-nj" },
+  { kind: "program", id: "ca-covered-ca" },
+  { kind: "program", id: "tx-marketplace" },
+  { kind: "program", id: "fl-marketplace" },
+  { kind: "program", id: "ny-marketplace" },
+  { kind: "program", id: "pa-pennie" },
+  { kind: "program", id: "il-marketplace" },
+];
+
+const TANF_TARGETS: SearchTag["targets"] = [
+  { kind: "program", id: "nj-wfnj" },
+  { kind: "program", id: "ca-calworks" },
+  { kind: "program", id: "tx-tanf" },
+  { kind: "program", id: "fl-tca" },
+  { kind: "program", id: "ny-family-assistance" },
+  { kind: "program", id: "pa-tanf" },
+  { kind: "program", id: "il-tanf" },
+];
+
+const SSI_TARGETS: SearchTag["targets"] = [
+  { kind: "program", id: "nj-ssi" },
+  { kind: "program", id: "ca-ssi-ssp" },
+  { kind: "program", id: "tx-ssi" },
+  { kind: "program", id: "fl-ssi" },
+  { kind: "program", id: "ny-ssi-ssp" },
+  { kind: "program", id: "pa-ssi-ssp" },
+  { kind: "program", id: "il-ssi" },
+];
+
+const EITC_TARGETS: SearchTag["targets"] = [
+  { kind: "program", id: "us-eitc" },
+  { kind: "program", id: "nj-eitc" },
+  { kind: "program", id: "ca-eitc" },
+  { kind: "program", id: "ny-eitc" },
+  { kind: "program", id: "il-eitc" },
+  { kind: "program", id: "pa-tax-forgiveness" },
+];
+
+const PROPERTY_TAX_TARGETS: SearchTag["targets"] = [
+  { kind: "program", id: "nj-senior-freeze" },
+  { kind: "program", id: "ca-ptp" },
+  { kind: "program", id: "tx-homestead" },
+  { kind: "program", id: "fl-senior-homestead" },
+  { kind: "program", id: "ny-enhanced-star" },
+  { kind: "program", id: "pa-ptrr" },
+  { kind: "program", id: "il-senior-freeze" },
+];
+
 export const SEARCH_TAGS: SearchTag[] = [
   // --- colloquial program names: food ----------------------------------------
   {
     phrase: "food stamps",
-    targets: [
-      { kind: "program", id: "us-snap" },
-      { kind: "program", id: "nj-snap" },
-      { kind: "program", id: "ca-calfresh" },
-    ],
+    targets: SNAP_TARGETS,
   },
   {
     phrase: "ebt",
-    targets: [
-      { kind: "program", id: "us-snap" },
-      { kind: "program", id: "nj-snap" },
-      { kind: "program", id: "ca-calfresh" },
-    ],
+    targets: SNAP_TARGETS,
   },
   {
     phrase: "snap",
-    targets: [
-      { kind: "program", id: "us-snap" },
-      { kind: "program", id: "nj-snap" },
-      { kind: "program", id: "ca-calfresh" },
-    ],
+    targets: SNAP_TARGETS,
   },
   {
     phrase: "calfresh",
     targets: [{ kind: "program", id: "ca-calfresh" }],
+  },
+  {
+    phrase: "lone star card",
+    targets: [{ kind: "program", id: "tx-snap" }],
+  },
+  {
+    phrase: "link card",
+    targets: [{ kind: "program", id: "il-snap" }],
   },
   {
     phrase: "grocery money",
@@ -55,11 +146,7 @@ export const SEARCH_TAGS: SearchTag[] = [
   },
   {
     phrase: "wic",
-    targets: [
-      { kind: "program", id: "us-wic" },
-      { kind: "program", id: "nj-wic" },
-      { kind: "program", id: "ca-wic" },
-    ],
+    targets: WIC_TARGETS,
   },
   {
     phrase: "free school lunch",
@@ -67,40 +154,26 @@ export const SEARCH_TAGS: SearchTag[] = [
       { kind: "program", id: "us-nslp" },
       { kind: "program", id: "nj-school-meals" },
       { kind: "program", id: "ca-school-meals" },
+      { kind: "program", id: "ny-school-meals" },
+      { kind: "program", id: "pa-school-meals" },
     ],
   },
   // --- colloquial program names: health ---------------------------------------
   {
     phrase: "obamacare",
-    targets: [
-      { kind: "program", id: "nj-get-covered-nj" },
-      { kind: "program", id: "ca-covered-ca" },
-      { kind: "scope", id: "health" },
-    ],
+    targets: [...MARKETPLACE_TARGETS, { kind: "scope", id: "health" }],
   },
   {
     phrase: "marketplace insurance",
-    targets: [
-      { kind: "program", id: "nj-get-covered-nj" },
-      { kind: "program", id: "ca-covered-ca" },
-    ],
+    targets: MARKETPLACE_TARGETS,
   },
   {
     phrase: "no health insurance",
-    targets: [
-      { kind: "program", id: "us-medicaid" },
-      { kind: "program", id: "nj-get-covered-nj" },
-      { kind: "program", id: "ca-covered-ca" },
-      { kind: "scope", id: "health" },
-    ],
+    targets: [...MEDICAID_TARGETS, { kind: "scope", id: "health" }],
   },
   {
     phrase: "medicaid",
-    targets: [
-      { kind: "program", id: "us-medicaid" },
-      { kind: "program", id: "nj-familycare" },
-      { kind: "program", id: "ca-medi-cal" },
-    ],
+    targets: MEDICAID_TARGETS,
   },
   {
     phrase: "medi-cal",
@@ -111,16 +184,63 @@ export const SEARCH_TAGS: SearchTag[] = [
     targets: [{ kind: "program", id: "nj-familycare" }],
   },
   {
+    phrase: "essential plan",
+    targets: [{ kind: "program", id: "ny-essential-plan" }],
+  },
+  {
+    phrase: "child health plus",
+    targets: [{ kind: "program", id: "ny-child-health-plus" }],
+  },
+  {
+    phrase: "kidcare",
+    targets: [{ kind: "program", id: "fl-kidcare" }],
+  },
+  {
+    phrase: "all kids",
+    targets: [{ kind: "program", id: "il-all-kids" }],
+  },
+  {
+    phrase: "pennie",
+    targets: [{ kind: "program", id: "pa-pennie" }],
+  },
+  {
     phrase: "chip",
-    targets: [{ kind: "program", id: "us-chip" }],
+    targets: [
+      { kind: "program", id: "us-chip" },
+      { kind: "program", id: "tx-medicaid-kids-chip" },
+      { kind: "program", id: "fl-kidcare" },
+      { kind: "program", id: "ny-child-health-plus" },
+      { kind: "program", id: "pa-chip" },
+      { kind: "program", id: "il-all-kids" },
+    ],
   },
   {
     phrase: "kids health insurance",
-    targets: [{ kind: "program", id: "us-chip" }, { kind: "scope", id: "health" }],
+    targets: [
+      { kind: "program", id: "us-chip" },
+      { kind: "program", id: "tx-medicaid-kids-chip" },
+      { kind: "program", id: "fl-kidcare" },
+      { kind: "program", id: "ny-child-health-plus" },
+      { kind: "program", id: "pa-chip" },
+      { kind: "program", id: "il-all-kids" },
+      { kind: "scope", id: "health" },
+    ],
   },
   {
     phrase: "prescription help",
-    targets: [{ kind: "program", id: "nj-paad" }, { kind: "program", id: "us-extra-help" }],
+    targets: [
+      { kind: "program", id: "nj-paad" },
+      { kind: "program", id: "pa-pace" },
+      { kind: "program", id: "us-extra-help" },
+    ],
+  },
+  {
+    phrase: "pace",
+    targets: [{ kind: "program", id: "pa-pace" }],
+  },
+  {
+    phrase: "pacenet",
+    targets: [{ kind: "program", id: "pa-pace" }],
   },
   {
     phrase: "medicare",
@@ -145,24 +265,31 @@ export const SEARCH_TAGS: SearchTag[] = [
   },
   {
     phrase: "property tax relief",
+    targets: [...PROPERTY_TAX_TARGETS, { kind: "scope", id: "housing" }],
+  },
+  {
+    phrase: "star",
+    targets: [{ kind: "program", id: "ny-enhanced-star" }],
+  },
+  {
+    phrase: "rent rebate",
+    targets: [{ kind: "program", id: "pa-ptrr" }],
+  },
+  {
+    phrase: "homestead exemption",
     targets: [
-      { kind: "program", id: "nj-senior-freeze" },
-      { kind: "program", id: "ca-ptp" },
-      { kind: "scope", id: "housing" },
+      { kind: "program", id: "tx-homestead" },
+      { kind: "program", id: "fl-senior-homestead" },
     ],
   },
   // --- colloquial program names: cash -----------------------------------------
   {
     phrase: "welfare",
-    targets: [
-      { kind: "scope", id: "cash" },
-      { kind: "program", id: "nj-wfnj" },
-      { kind: "program", id: "ca-calworks" },
-    ],
+    targets: [{ kind: "scope", id: "cash" }, ...TANF_TARGETS],
   },
   {
     phrase: "tanf",
-    targets: [{ kind: "program", id: "nj-wfnj" }, { kind: "program", id: "ca-calworks" }],
+    targets: TANF_TARGETS,
   },
   {
     phrase: "cash assistance",
@@ -174,7 +301,7 @@ export const SEARCH_TAGS: SearchTag[] = [
   },
   {
     phrase: "ssi",
-    targets: [{ kind: "program", id: "nj-ssi" }, { kind: "program", id: "ca-ssi-ssp" }],
+    targets: SSI_TARGETS,
   },
   {
     phrase: "ssdi",
@@ -186,12 +313,7 @@ export const SEARCH_TAGS: SearchTag[] = [
   },
   {
     phrase: "disabled",
-    targets: [
-      { kind: "program", id: "us-ssdi" },
-      { kind: "program", id: "nj-ssi" },
-      { kind: "program", id: "ca-ssi-ssp" },
-      { kind: "scope", id: "cash" },
-    ],
+    targets: [{ kind: "program", id: "us-ssdi" }, ...SSI_TARGETS, { kind: "scope", id: "cash" }],
   },
   {
     phrase: "capi",
@@ -204,11 +326,15 @@ export const SEARCH_TAGS: SearchTag[] = [
   // --- colloquial program names: energy / phone -------------------------------
   {
     phrase: "liheap",
-    targets: [
-      { kind: "program", id: "us-liheap" },
-      { kind: "program", id: "nj-liheap" },
-      { kind: "program", id: "ca-liheap" },
-    ],
+    targets: LIHEAP_TARGETS,
+  },
+  {
+    phrase: "heap",
+    targets: [{ kind: "program", id: "ny-heap" }],
+  },
+  {
+    phrase: "ceap",
+    targets: [{ kind: "program", id: "tx-ceap" }],
   },
   {
     phrase: "lifeline phone",
@@ -235,19 +361,15 @@ export const SEARCH_TAGS: SearchTag[] = [
   // --- colloquial program names: tax ------------------------------------------
   {
     phrase: "eitc",
-    targets: [
-      { kind: "program", id: "us-eitc" },
-      { kind: "program", id: "nj-eitc" },
-      { kind: "program", id: "ca-eitc" },
-    ],
+    targets: EITC_TARGETS,
   },
   {
     phrase: "earned income tax credit",
-    targets: [
-      { kind: "program", id: "us-eitc" },
-      { kind: "program", id: "nj-eitc" },
-      { kind: "program", id: "ca-eitc" },
-    ],
+    targets: EITC_TARGETS,
+  },
+  {
+    phrase: "tax forgiveness",
+    targets: [{ kind: "program", id: "pa-tax-forgiveness" }],
   },
   {
     phrase: "child tax credit",
@@ -314,24 +436,18 @@ export const SEARCH_TAGS: SearchTag[] = [
   {
     phrase: "pregnant",
     targets: [
-      { kind: "program", id: "us-wic" },
-      { kind: "program", id: "nj-wic" },
-      { kind: "program", id: "ca-wic" },
-      // Medicaid in all three shapes — the state packs SUPERSEDE us-medicaid,
-      // so a NJ/CA household never resolves the federal id.
-      { kind: "program", id: "us-medicaid" },
-      { kind: "program", id: "nj-familycare" },
-      { kind: "program", id: "ca-medi-cal" },
+      // WIC + Medicaid in every deep-state shape — the state packs SUPERSEDE
+      // the us-* ids, so each household resolves its own state's version.
+      ...WIC_TARGETS,
+      ...MEDICAID_TARGETS,
+      { kind: "program", id: "tx-pregnancy-medicaid" },
+      { kind: "program", id: "fl-pregnancy-medicaid" },
       { kind: "scope", id: "families" },
     ],
   },
   {
     phrase: "new baby",
-    targets: [
-      { kind: "program", id: "nj-wic" },
-      { kind: "program", id: "ca-wic" },
-      { kind: "scope", id: "families" },
-    ],
+    targets: [...WIC_TARGETS, { kind: "scope", id: "families" }],
   },
   {
     phrase: "having a baby",
@@ -369,25 +485,15 @@ export const SEARCH_TAGS: SearchTag[] = [
   // --- life situations: energy bills --------------------------------------------
   {
     phrase: "heat bill",
-    targets: [
-      { kind: "program", id: "nj-liheap" },
-      { kind: "program", id: "ca-liheap" },
-      { kind: "program", id: "us-liheap" },
-      { kind: "scope", id: "energy" },
-    ],
+    targets: [...LIHEAP_TARGETS, { kind: "scope", id: "energy" }],
   },
   {
     phrase: "electric bill",
-    targets: [
-      { kind: "program", id: "nj-liheap" },
-      { kind: "program", id: "ca-liheap" },
-      { kind: "program", id: "us-liheap" },
-      { kind: "scope", id: "energy" },
-    ],
+    targets: [...LIHEAP_TARGETS, { kind: "scope", id: "energy" }],
   },
   {
     phrase: "can't afford heat",
-    targets: [{ kind: "program", id: "nj-liheap" }, { kind: "program", id: "ca-liheap" }],
+    targets: LIHEAP_TARGETS,
   },
   {
     phrase: "utility assistance",
@@ -470,15 +576,11 @@ export const SEARCH_TAGS: SearchTag[] = [
   // --- Spanish -----------------------------------------------------------------------
   {
     phrase: "estampillas de comida",
-    targets: [
-      { kind: "program", id: "us-snap" },
-      { kind: "program", id: "nj-snap" },
-      { kind: "program", id: "ca-calfresh" },
-    ],
+    targets: SNAP_TARGETS,
   },
   {
     phrase: "cupones de alimentos",
-    targets: [{ kind: "program", id: "us-snap" }],
+    targets: SNAP_TARGETS,
   },
   {
     phrase: "seguro médico",
@@ -498,19 +600,11 @@ export const SEARCH_TAGS: SearchTag[] = [
   },
   {
     phrase: "embarazada",
-    targets: [
-      { kind: "program", id: "us-wic" },
-      { kind: "program", id: "nj-wic" },
-      { kind: "program", id: "ca-wic" },
-    ],
+    targets: WIC_TARGETS,
   },
   {
     phrase: "factura de luz",
-    targets: [
-      { kind: "program", id: "nj-liheap" },
-      { kind: "program", id: "ca-liheap" },
-      { kind: "program", id: "us-liheap" },
-    ],
+    targets: LIHEAP_TARGETS,
   },
   {
     phrase: "impuestos",

@@ -74,17 +74,35 @@ describe("matchedDeadlines", () => {
   });
 
   it("a federal-tier household falls back to the federal windows", () => {
+    // GA is still federal-tier (TX was promoted to a deep pack in V5).
+    const ga = STATES.find((s) => s.code === "GA")!;
+    const household: Household = {
+      state: "GA",
+      householdSize: 3,
+      monthlyIncomeMin: 1500,
+      monthlyIncomeMax: 2000,
+      flags: {},
+    };
+    const { personal } = matchedDeadlines(evaluateAll(ga.programs, household), household, now);
+    const ids = personal.map((m) => m.rule.id);
+    expect(ids).toContain("aca-oep-federal");
+    expect(ids).toContain("liheap-general");
+  });
+
+  it("a deep-state household (TX) gets its own LIHEAP season, not a dead end", () => {
     const tx = STATES.find((s) => s.code === "TX")!;
     const household: Household = {
       state: "TX",
       householdSize: 3,
       monthlyIncomeMin: 1500,
       monthlyIncomeMax: 2000,
-      flags: {},
+      flags: { paysHomeEnergy: true },
     };
     const { personal } = matchedDeadlines(evaluateAll(tx.programs, household), household, now);
     const ids = personal.map((m) => m.rule.id);
+    // TX has no state marketplace — the federal OEP window applies.
     expect(ids).toContain("aca-oep-federal");
+    // tx-ceap matches the varies-by-state LIHEAP rule.
     expect(ids).toContain("liheap-general");
   });
 

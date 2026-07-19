@@ -4,7 +4,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { BrowserFrame } from "@/components/ui/BrowserFrame";
 import { ButtonLink } from "@/components/ui/Button";
-import { deepStates, totalProgramCount } from "@/data/states";
+import { deepStates, getState, totalProgramCount } from "@/data/states";
+import { useHousehold } from "@/lib/household-store";
 import { useT } from "@/lib/i18n";
 import type { TranslationKey } from "@/data/i18n/en";
 
@@ -17,13 +18,17 @@ const TRUST_PILL_KEYS: TranslationKey[] = [
 
 export function Hero() {
   const t = useT();
+  const { household } = useHousehold();
 
-  // Illustrative preview shown in the hero mockup (not live data).
-  const mockupRows = [
-    { name: "NJ SNAP", conf: t("hero.mockLikely"), color: "#2dd4bf" },
-    { name: "NJ FamilyCare", conf: t("hero.mockLikely"), color: "#2dd4bf" },
-    { name: "PAAD", conf: t("hero.mockPossible"), color: "#f9d34c" },
-  ];
+  // Illustrative preview shown in the hero mockup (not live data) — drawn
+  // from the visitor's own state's program pack so no single state is
+  // hardcoded into the marketing copy.
+  const statePrograms = getState(household.state)?.programs ?? [];
+  const mockupRows = statePrograms.slice(0, 3).map((p, i) => ({
+    name: p.shortName,
+    conf: i < 2 ? t("hero.mockLikely") : t("hero.mockPossible"),
+    color: i < 2 ? "#2dd4bf" : "#f9d34c",
+  }));
 
   return (
     <section className="relative overflow-hidden border-b border-card-border">
@@ -35,10 +40,8 @@ export function Hero() {
         <div>
           {/* Derived from the state registry — no hardcoded state claims. */}
           <Badge className="label-mono text-[11px] text-accent border border-accent/30 px-3 py-1">
-            {totalProgramCount()} programs · every state · full coverage in{" "}
-            {deepStates()
-              .map((s) => s.code)
-              .join(" & ")}
+            {totalProgramCount()} programs · every state · full coverage in {deepStates().length}{" "}
+            states
           </Badge>
           <h1 className="mt-6 text-5xl sm:text-6xl font-bold leading-[1.05] tracking-tight">
             {t("hero.headline1")}

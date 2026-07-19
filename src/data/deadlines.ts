@@ -52,9 +52,42 @@ export const DEADLINE_RULES: DeadlineRule[] = [
     closes: { month: 1, day: 31, label: "Open Enrollment ends" },
   },
   {
+    id: "aca-oep-ny",
+    programIds: ["ny-marketplace", "ny-essential-plan"],
+    title: "NY State of Health Open Enrollment",
+    detail:
+      "New York's marketplace enrolls anyone November 1 through January 31; enroll by December 15 for coverage that starts January 1. (Essential Plan and Medicaid enroll year-round.)",
+    sourceUrl: "https://info.nystateofhealth.ny.gov/news/press-release-new-york-state-department-health-announces-open-enrollment-2026-coverage",
+    lastVerified: "2026-07-19",
+    opens: { month: 11, day: 1, label: "Open Enrollment starts" },
+    closes: { month: 1, day: 31, label: "Open Enrollment ends" },
+  },
+  {
+    id: "aca-oep-pa",
+    programIds: ["pa-pennie"],
+    title: "Pennie Open Enrollment",
+    detail:
+      "Pennsylvania's marketplace enrolls anyone November 1 through January 31; enroll by December 15 for coverage that starts January 1.",
+    sourceUrl: "https://agency.pennie.com/pennies-2026-open-enrollment-period-is-underway-protect-your-health-by-enrolling-in-a-high-quality-health-plan-through-pennie/",
+    lastVerified: "2026-07-19",
+    opens: { month: 11, day: 1, label: "Open Enrollment starts" },
+    closes: { month: 1, day: 31, label: "Open Enrollment ends" },
+  },
+  {
+    id: "aca-oep-il",
+    programIds: ["il-marketplace"],
+    title: "Get Covered Illinois Open Enrollment",
+    detail:
+      "Illinois' own marketplace (new for 2026) enrolls anyone November 1 through January 15.",
+    sourceUrl: "https://getcovered.illinois.gov/get-started/about-the-marketplace.html",
+    lastVerified: "2026-07-19",
+    opens: { month: 11, day: 1, label: "Open Enrollment starts" },
+    closes: { month: 1, day: 15, label: "Open Enrollment ends" },
+  },
+  {
     id: "aca-oep-federal",
     always: true,
-    supersededBy: ["aca-oep-nj", "aca-oep-ca"],
+    supersededBy: ["aca-oep-nj", "aca-oep-ca", "aca-oep-ny", "aca-oep-pa", "aca-oep-il"],
     title: "HealthCare.gov Open Enrollment",
     detail:
       "The federal marketplace's yearly window to enroll in or change a health plan. Enroll by December 15 for coverage that starts January 1.",
@@ -88,7 +121,15 @@ export const DEADLINE_RULES: DeadlineRule[] = [
   },
   {
     id: "liheap-general",
-    programIds: ["us-liheap", "ca-liheap"],
+    programIds: [
+      "us-liheap",
+      "ca-liheap",
+      "tx-ceap",
+      "fl-liheap",
+      "ny-heap",
+      "pa-liheap",
+      "il-liheap",
+    ],
     supersededBy: ["liheap-nj"],
     title: "LIHEAP season (heating/cooling help)",
     detail:

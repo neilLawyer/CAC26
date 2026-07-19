@@ -4,6 +4,16 @@ import { NJ_META } from "@/data/states/NJ/meta";
 import { NJ_PROGRAMS } from "@/data/states/NJ/programs";
 import { CA_META } from "@/data/states/CA/meta";
 import { CA_PROGRAMS } from "@/data/states/CA/programs";
+import { TX_META } from "@/data/states/TX/meta";
+import { TX_PROGRAMS } from "@/data/states/TX/programs";
+import { FL_META } from "@/data/states/FL/meta";
+import { FL_PROGRAMS } from "@/data/states/FL/programs";
+import { NY_META } from "@/data/states/NY/meta";
+import { NY_PROGRAMS } from "@/data/states/NY/programs";
+import { PA_META } from "@/data/states/PA/meta";
+import { PA_PROGRAMS } from "@/data/states/PA/programs";
+import { IL_META } from "@/data/states/IL/meta";
+import { IL_PROGRAMS } from "@/data/states/IL/programs";
 import { assertAddOnlyInvariant } from "@/lib/data-invariants";
 import type { Program, StateMeta } from "@/lib/types";
 
@@ -36,6 +46,11 @@ function composeState(meta: StateMeta, statePack: Program[]): StateEntry {
 export const STATES: StateEntry[] = [
   composeState(NJ_META, NJ_PROGRAMS),
   composeState(CA_META, CA_PROGRAMS),
+  composeState(TX_META, TX_PROGRAMS),
+  composeState(FL_META, FL_PROGRAMS),
+  composeState(NY_META, NY_PROGRAMS),
+  composeState(PA_META, PA_PROGRAMS),
+  composeState(IL_META, IL_PROGRAMS),
   ...FEDERAL_TIER_STATES.map((m) => composeState(m, [])),
 ].sort((a, b) => a.name.localeCompare(b.name));
 

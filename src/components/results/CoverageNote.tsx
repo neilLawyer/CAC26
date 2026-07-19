@@ -10,9 +10,11 @@ import { InfoBox } from "@/components/ui/InfoBox";
 export function CoverageNote({ stateEntry }: { stateEntry: StateEntry }) {
   if (stateEntry.tier === "deep") return null;
 
-  const deep = deepStates()
-    .map((s) => s.name)
-    .join(" & ");
+  const deepNames = deepStates().map((s) => s.name);
+  const deep =
+    deepNames.length > 1
+      ? `${deepNames.slice(0, -1).join(", ")} and ${deepNames[deepNames.length - 1]}`
+      : deepNames.join("");
 
   return (
     <InfoBox
