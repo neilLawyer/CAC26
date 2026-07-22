@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import {
   clearSnapshot,
   diffSnapshot,
@@ -9,6 +10,9 @@ import {
   saveSnapshot,
   type SnapshotDiff,
 } from "@/lib/snapshot";
+import { useHousehold } from "@/lib/household-store";
+import { downloadBenefitsPdf } from "@/lib/benefits-pdf";
+import { getState } from "@/data/states";
 import type { EligibilityResult } from "@/lib/types";
 
 // The "since last time" panel. Reads the on-device snapshot AFTER mount (it's
@@ -23,6 +27,8 @@ export function SnapshotPanel({
   results: EligibilityResult[];
   state: string;
 }) {
+  const { isSignedIn } = useUser();
+  const { household } = useHousehold();
   const [status, setStatus] = useState<
     | { kind: "loading" }
     | { kind: "none" }
@@ -41,6 +47,18 @@ export function SnapshotPanel({
   function save() {
     saveSnapshot(makeSnapshot(state, results));
     setStatus({ kind: "justSaved" });
+    if (isSignedIn) {
+      const confidences = Object.fromEntries(results.map((r) => [r.program.id, r.confidence]));
+      fetch("/api/account/screening", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ household, confidences }),
+      }).catch(() => {});
+    } else {
+      // No account to sync to — the tangible "saved" is a real file. Built
+      // entirely client-side (see benefits-pdf.ts), nothing is uploaded.
+      downloadBenefitsPdf(household, results, getState(state)?.name ?? state);
+    }
   }
 
   function remove() {
@@ -55,7 +73,10 @@ export function SnapshotPanel({
       <div className="flex flex-wrap items-center gap-3 rounded-xl border border-card-border bg-card/60 px-4 py-3">
         <p className="text-sm text-muted min-w-0 flex-1">
           Save a snapshot of today&apos;s results — next visit, we&apos;ll show only what
-          changed. Stays on this device; nothing is sent anywhere.
+          changed.{" "}
+          {isSignedIn
+            ? "Synced to your account, so it follows you to any device."
+            : "A PDF of your results downloads to this device too — nothing is sent anywhere."}
         </p>
         <button
           type="button"
@@ -72,8 +93,15 @@ export function SnapshotPanel({
     return (
       <div className="rounded-xl border border-accent/30 bg-accent/8 px-4 py-3">
         <p className="text-sm text-muted">
-          Snapshot saved on this device. Come back after things change — a new job, a new
-          baby, a new program in our library — and this box will tell you what moved.
+          Snapshot saved{isSignedIn ? " and synced to your account" : ""}
+          {!isSignedIn && (
+            <>
+              , and a PDF{" "}
+              <strong className="text-foreground font-semibold">downloaded to your device</strong>
+            </>
+          )}
+          . Come back after things change — a new job, a new baby, a new program in our
+          library — and this box will tell you what moved.
         </p>
       </div>
     );

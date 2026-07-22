@@ -3,6 +3,7 @@ import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { HouseholdProvider } from "@/lib/household-store";
 import { NavHeader } from "@/components/NavHeader";
 import { AccessibilityMenu } from "@/components/AccessibilityMenu";
+import { ClerkThemeProvider } from "@/components/ClerkThemeProvider";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -20,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "OpenDoor — Find benefits you may qualify for",
   description:
-    "A free, informational tool that helps you find public benefit programs you may qualify for. No login, nothing stored on a server.",
+    "A free, informational tool that helps you find public benefit programs you may qualify for. No account needed — an optional free account lets you save your results across devices.",
 };
 
 export default function RootLayout({
@@ -43,11 +44,13 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <HouseholdProvider>
-          <NavHeader />
-          {children}
-          <AccessibilityMenu />
-        </HouseholdProvider>
+        <ClerkThemeProvider>
+          <HouseholdProvider>
+            <NavHeader />
+            {children}
+            <AccessibilityMenu />
+          </HouseholdProvider>
+        </ClerkThemeProvider>
       </body>
     </html>
   );

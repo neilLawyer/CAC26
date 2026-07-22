@@ -13,8 +13,13 @@ in [`OpenDoor_feature_plan.md`](./OpenDoor_feature_plan.md).
 - **Informational only, never official.** OpenDoor never makes an official
   eligibility decision — every result says "you may qualify" and links to the
   real agency to confirm.
-- **No login, nothing stored on a server.** Your answers live in your browser's
-  local storage only.
+- **No account needed, ever.** The full tool works anonymously — every answer
+  lives in your browser's local storage only, and nothing is sent to a server.
+- **Accounts are optional, minimal, and deletable.** Signing in only unlocks
+  saving your results across devices (`src/app/api/account/screening`,
+  Clerk + Neon Postgres) — one row per account, the same shape as the
+  on-device snapshot, deletable in one click from `/account`. Nothing about
+  the screener itself is ever gated behind login.
 - **Open data and open-source only.** No paid or license-restricted data feeds.
 
 ## How it works
@@ -74,6 +79,24 @@ HUD_TOKEN=your-token-here
 
 Without a token, geocoding, LIHTC properties, and health centers still work —
 only rent/income-limit benchmarks are unavailable.
+
+## Optional accounts (save results across devices)
+
+Signing in is never required — it only unlocks saving your results so you can
+pick them up on another device. Auth is [Clerk](https://clerk.com)
+(`src/app/sign-in`, `src/app/sign-up`, `src/proxy.ts`); storage is a single
+Neon Postgres table (`src/db/schema.ts`) holding one row per account — the
+same `{household, confidences}` shape as the on-device snapshot
+(`src/lib/snapshot.ts`), nothing more. `src/app/api/account/screening/route.ts`
+is the only route that touches it, gated by `auth()` on every handler.
+`/account` shows the saved screening and a one-click delete.
+
+Both are provisioned via the Vercel Marketplace
+(`vercel integration add clerk` / `vercel integration add neon`), which
+auto-populates `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, and
+`DATABASE_URL` — see `.env.example`. Without them set, the guest flow (intake,
+results, cliff-simulator, packet) is completely unaffected; only the
+sign-in/sign-up pages and the save button would need them configured to work.
 
 ## Collaborating
 

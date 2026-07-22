@@ -10,16 +10,20 @@ export const en = {
   "nav.search": "Search",
   "nav.searchAria": "Search programs and pages",
   "nav.localPrivate": "local & private",
+  "nav.signIn": "Sign in",
+  "nav.myAccount": "Saved results",
+  "nav.startOver": "Start over",
+  "nav.startOverAria": "Clear this device's answers and start over — for shared or public computers",
 
   // Hero
   "hero.headline1": "Open every door",
   "hero.headline2": "you already",
   "hero.headlineAccent": "qualify for.",
   "hero.sub":
-    "Food, health, energy, and cash assistance — explained in plain language, with a real application link for every result. No login. No guesswork.",
+    "Food, health, energy, and cash assistance — explained in plain language, with a real application link for every result. No login required. No guesswork.",
   "hero.cta": "Check my eligibility",
   "hero.how": "See how it works →",
-  "hero.pill0": "No login, ever",
+  "hero.pill0": "No login required",
   "hero.pill1": "Not a government site",
   "hero.pill2": "Free forever",
   "hero.pill3": "Open data only",
@@ -132,6 +136,7 @@ export const en = {
   "footer.check": "Check eligibility",
   "footer.disclaimer":
     "OpenDoor is informational only — not affiliated with any government agency. Built for the Congressional App Challenge 2026.",
+  "footer.credit": "Built by Neil Kumar and Rishanth Yavasani",
 } as const;
 
 export type TranslationKey = keyof typeof en;

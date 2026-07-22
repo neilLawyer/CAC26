@@ -13,16 +13,20 @@ export const es: Record<TranslationKey, string> = {
   "nav.search": "Buscar",
   "nav.searchAria": "Buscar programas y páginas",
   "nav.localPrivate": "local y privado",
+  "nav.signIn": "Iniciar sesión",
+  "nav.myAccount": "Resultados guardados",
+  "nav.startOver": "Empezar de nuevo",
+  "nav.startOverAria": "Borra las respuestas de este dispositivo y empieza de nuevo — para computadoras compartidas o públicas",
 
   // Hero
   "hero.headline1": "Abre cada puerta",
   "hero.headline2": "que ya te",
   "hero.headlineAccent": "corresponde.",
   "hero.sub":
-    "Ayuda con comida, salud, energía y dinero en efectivo — explicada en lenguaje sencillo, con el enlace oficial para solicitar cada resultado. Sin cuenta. Sin adivinar.",
+    "Ayuda con comida, salud, energía y dinero en efectivo — explicada en lenguaje sencillo, con el enlace oficial para solicitar cada resultado. Sin cuenta obligatoria. Sin adivinar.",
   "hero.cta": "Ver si califico",
   "hero.how": "Cómo funciona →",
-  "hero.pill0": "Nunca pide cuenta",
+  "hero.pill0": "Sin cuenta obligatoria",
   "hero.pill1": "No es un sitio del gobierno",
   "hero.pill2": "Gratis para siempre",
   "hero.pill3": "Solo datos abiertos",
@@ -135,4 +139,5 @@ export const es: Record<TranslationKey, string> = {
   "footer.check": "Ver si califico",
   "footer.disclaimer":
     "OpenDoor es solo informativo — no está afiliado a ninguna agencia del gobierno. Creado para el Congressional App Challenge 2026.",
+  "footer.credit": "Creado por Neil Kumar y Rishanth Yavasani",
 };

@@ -28,7 +28,7 @@ const GROUND_RULES = [
   },
   {
     title: "Private by default",
-    body: "No account, no server. Your answers stay in your browser's local storage — never stored, sold, or shared.",
+    body: "No account needed. Your answers stay in your browser's local storage and are never sold or shared. An optional free account lets you save your results and pick up where you left off on another device — you can delete that saved data at any time.",
   },
   {
     title: "Humans and agencies decide",
